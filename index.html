@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARC'WARE VN — Premium Arc'teryx Gear in Vietnam</title>
+<meta name="description" content="ARC'WARE VN — Vietnam's premium source for Arc'teryx outdoor gear. Authentic jackets, fleece, footwear & backpacks. Order via Instagram or WhatsApp.">
+<meta property="og:title" content="ARC'WARE VN — Premium Outdoor Gear">
+<meta property="og:description" content="Vietnam's premium source for Arc'teryx. Authentic products, competitive prices.">
+<meta property="og:type" content="website">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ════ THEMES & BASE ════ */
+:root {
+  --navy: #ffffff; --navy-2: #f7f7f7; --navy-3: #eeeeee; 
+  --border: #e2e2e2; --border-light: #f0f0f0; 
+  --text: #000000; --text-dim: #555555; --text-muted: #888888; 
+  --white: #000000; --blue: #000000; --blue-bright: #333333; 
+  --gold: #000000; --red: #d32f2f;
+  --font-main: 'Inter', sans-serif;
+  --logo-color: #000000; --btn-text: #ffffff;
+}
+[data-theme="dark"] {
+  --navy: #0d1117; --navy-2: #161b22; --navy-3: #21262d; 
+  --border: #30363d; --border-light: #484f58; 
+  --text: #c9d1d9; --text-dim: #8b949e; --text-muted: #6e7681; 
+  --white: #ffffff; --blue: #ffffff; --blue-bright: #cccccc; 
+  --gold: #ffffff; --red: #ff7b72;
+  --logo-color: #ffffff; --btn-text: #000000;
+}
+body, header, .modal, .admin-panel, .product-card { transition: background-color 0.3s ease, color 0.3s ease; }
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--navy);color:var(--text);font-family:var(--font-main);font-weight:400;overflow-x:hidden; -webkit-font-smoothing: antialiased;}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border)}
+
+/* ════ HEADER ════ */
+header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:70px;background:var(--navy);border-bottom:1px solid var(--border)}
+.logo-wrap{display:flex;align-items:center;gap:12px;text-decoration:none; cursor:pointer;}
+.logo-text{font-size:22px;font-weight:800;letter-spacing:0.1em;color:var(--white);}
+.header-center{font-size:11px;font-weight:600;letter-spacing:0.25em;color:var(--text-muted);text-transform:uppercase}
+.header-right {display:flex; align-items:center; gap:24px;}
+.theme-btn {background:none; border:none; color:var(--text); cursor:pointer; padding:4px;}
+.theme-btn:hover {color:var(--white); transition: 0.2s;}
+.lang-toggle{display:flex; gap:12px;}
+.lang-btn{font-size:11px;font-weight:600;letter-spacing:0.1em;padding:4px 0;border:none;background:none;color:var(--text-muted);cursor:pointer; border-bottom: 1px solid transparent; transition:0.2s;}
+.lang-btn.active{color:var(--white); border-bottom-color: var(--white);}
+.lang-btn:hover{color:var(--white);}
+
+/* ════ HERO ════ */
+.hero{min-height:85vh;display:flex;flex-direction:column;justify-content:center;padding:120px 64px 80px;background:var(--navy);}
+.hero-content{max-width:800px}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.3em;color:var(--text-muted);margin-bottom:20px;text-transform:uppercase;}
+.hero-title{font-size:clamp(50px, 9vw, 120px);font-weight:800;line-height:1;color:var(--white);margin-bottom:24px; text-transform: uppercase; letter-spacing: -0.03em;}
+.hero-desc{font-size:16px;line-height:1.6;color:var(--text-dim);max-width:550px;margin-bottom:40px; font-weight:400;}
+.btn-primary{font-family:var(--font-main);font-size:12px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;background:var(--blue);color:var(--btn-text);border:1px solid var(--blue);padding:18px 48px;cursor:pointer;text-decoration:none;display:inline-flex; transition: 0.3s;}
+.btn-primary:hover{background:transparent; color:var(--white);}
+
+/* ════ BANNER ════ */
+.banner-strip{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 48px;display:flex;align-items:center;justify-content:center;gap:60px;flex-wrap:wrap; background:var(--navy-2);}
+.banner-item{font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim)}
+
+/* ════ PRODUCTS ════ */
+.section-header{padding:80px 48px 40px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px}
+.section-title{font-size:20px;font-weight:700;color:var(--white);text-transform:uppercase; letter-spacing: 0.1em;}
+.filter-tabs{display:flex;gap:24px;flex-wrap:wrap}
+.filter-tab{font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;padding:6px 0;border:none;border-bottom:1px solid transparent;background:none;color:var(--text-muted);cursor:pointer; transition:0.2s;}
+.filter-tab:hover,.filter-tab.active{color:var(--white); border-bottom-color:var(--white);}
+
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px; padding:0 48px 100px}
+.product-card{display:flex;flex-direction:column;cursor:pointer; transition:0.2s;}
+.product-card:hover .card-img img{transform:scale(1.03)}
+.card-img{width:100%;aspect-ratio:1/1;background:var(--navy-2);position:relative; overflow:hidden;}
+.card-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);}
+.card-badge{position:absolute;top:12px;left:12px;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--navy);color:var(--text);padding:6px 12px; border:1px solid var(--border);}
+.card-body{padding:20px 0;flex:1;display:flex;flex-direction:column}
+.card-cat{font-size:10px;font-weight:600;letter-spacing:0.15em;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px}
+.card-name{font-size:16px;font-weight:600;color:var(--white);margin-bottom:10px; line-height: 1.4;}
+.card-foot{display:flex;align-items:center;justify-content:space-between; margin-top:auto;}
+.card-price{font-size:15px;font-weight:700;color:var(--white);}
+
+/* ════ MODALS BASE ════ */
+.overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--navy);width:100%;max-height:95vh;overflow-y:auto; transform:translateY(20px);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); position:relative;}
+.overlay.open .modal{transform:translateY(0)}
+.modal-close-abs{position:absolute;top:24px;right:32px;background:none;border:none;font-size:24px;font-weight:300;cursor:pointer;color:var(--text-muted);z-index:10; transition:0.2s;}
+.modal-close-abs:hover{color:var(--white);}
+
+/* ════ PREMIUM ORDER MODAL (V17 ARCHITECH) ════ */
+.order-modal{max-width: 1200px; padding: 0; box-shadow: 0 20px 60px rgba(0,0,0,0.3);}
+.product-split{display:grid; grid-template-columns: 1.5fr 1fr;}
+
+/* Left: Gallery */
+.gallery-section{background: var(--navy-2); padding: 50px; display:flex; flex-direction:column; justify-content:center; align-items:center;}
+.gallery-main{width:100%; max-width:600px; aspect-ratio:1/1; background:var(--navy-3); margin-bottom:20px; position:relative; cursor:zoom-in; border:1px solid var(--border);}
+.gallery-main img{width:100%; height:100%; object-fit:contain;}
+.gallery-thumbs{display:flex; gap:12px; overflow-x:auto; width:100%; max-width:600px; justify-content:center;}
+.gallery-thumbs img{width:80px; height:80px; object-fit:cover; cursor:pointer; border:1px solid var(--border-light); opacity:0.5; transition:0.2s; background:var(--navy-3);}
+.gallery-thumbs img:hover, .gallery-thumbs img.active{opacity:1; border-color:var(--text);}
+
+/* Right: Info (Structured Hierarchy) */
+.info-section{padding: 60px 60px 60px 40px; display:flex; flex-direction:column;}
+.info-cat{font-size:11px;font-weight:600;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;}
+.info-title{font-size:36px;font-weight:700;color:var(--white);margin-bottom:12px; line-height:1.2; letter-spacing:-0.03em;}
+.info-price{font-size:24px;font-weight:700;color:var(--white); margin-bottom:10px;}
+.info-price-note{font-size:12px; font-weight:700; color:var(--text); background:var(--border-light); padding:8px 12px; margin-bottom:6px; display:inline-block; border-left: 3px solid var(--text); align-self: flex-start;}
+.ship-note{font-size:11px; color:var(--text-muted); font-style:italic; margin-bottom:30px;}
+
+.spec-grid{display:grid; grid-template-columns: 1fr; border-top:1px solid var(--border); border-bottom:1px solid var(--border); margin-bottom:30px;}
+.spec-item{display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid var(--border-light);}
+.spec-item:last-child{border-bottom:none;}
+.spec-label{font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);}
+.spec-value{font-size:14px;font-weight:600;color:var(--white); text-align:right;}
+
+.info-desc{font-size:14px; line-height:1.7; color:var(--text-dim); margin-bottom:40px; font-weight:400;}
+
+.policy-box{border: 1px solid var(--border-light); padding:20px; margin-bottom:40px; background:var(--navy-2);}
+.policy-title{font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--white); margin-bottom:10px;}
+.policy-box p{font-size:12px; color:var(--text-dim); line-height:1.6; margin-bottom:6px;}
+.policy-box p:last-child{margin-bottom:0;}
+
+.cta-group{display:flex; flex-direction:column; gap:12px; margin-top:auto;}
+.cta-btn{width:100%;text-align:center;padding:18px;font-family:var(--font-main);font-size:12px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--btn-text);background:var(--blue);border:1px solid var(--blue);cursor:pointer;transition:0.3s;}
+.cta-btn:hover{background:transparent;color:var(--white);}
+
+.size-help-wrap{margin-top:20px; text-align:center;}
+.size-help-text{font-size:12px; color:var(--text-muted); margin-bottom:12px;}
+.size-help-links{display:flex; justify-content:center; gap:24px;}
+.size-link{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim); text-decoration:none; cursor:pointer; border-bottom:1px solid transparent; padding-bottom:2px; transition:0.2s;}
+.size-link:hover{color:var(--white); border-bottom-color:var(--white);}
+
+/* ════ SOCIAL COPY MODAL ════ */
+#copyOverlay { z-index: 10005; background:rgba(0,0,0,0.9); }
+.copy-modal { background:var(--navy); max-width:450px; padding:40px; text-align:center; border:1px solid var(--border); }
+.copy-title { font-size:16px; font-weight:700; letter-spacing:0.1em; color:var(--white); margin-bottom:16px; text-transform:uppercase;}
+.copy-text { font-family:monospace; font-size:12px; background:var(--navy-2); padding:16px; color:var(--text-dim); border:1px solid var(--border); margin-bottom:24px; text-align:left; line-height:1.5; white-space:pre-wrap;}
+.copy-sub { font-size:13px; color:var(--text-muted); margin-bottom:24px;}
+
+/* ════ LIGHTBOX (FULL SIZE IMAGE) ════ */
+.lightbox{position:fixed;inset:0;z-index:11000;background:rgba(0,0,0,0.95);display:none;align-items:center;justify-content:center; opacity:0; transition:opacity 0.3s;}
+.lightbox.show{display:flex; opacity:1;}
+.lightbox img{max-width:95vw; max-height:95vh; object-fit:contain; cursor:zoom-out;}
+.lightbox-close{position:absolute; top:30px; right:40px; background:none; border:none; color:#fff; font-size:30px; font-weight:300; cursor:pointer;}
+
+/* ════ FORMS & ADMIN ════ */
+.form-group{margin-bottom:24px}
+.form-label{display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px; color:var(--text-dim);}
+.form-input, .form-select, .form-textarea{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);padding:10px 0;font-family:var(--font-main);font-size:14px;color:var(--text);outline:none; transition:0.2s;}
+.form-input:focus, .form-textarea:focus{border-bottom-color:var(--white);}
+.form-select option{background:var(--navy);}
+
+.admin-panel{position:fixed;inset:0;background:var(--navy);z-index:9999;overflow-y:auto;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);}
+.admin-panel.open{transform:translateX(0)}
+.admin-hd{padding:0 40px;height:80px;background:var(--navy);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.admin-hd-title{font-size:16px;font-weight:700; letter-spacing: 0.1em; text-transform:uppercase; color:var(--white);}
+.admin-tabs{display:flex;padding:0 40px;border-bottom:1px solid var(--border); overflow-x:auto;}
+.admin-tab{font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:20px 24px;background:none;border:none;border-bottom:1px solid transparent;cursor:pointer;color:var(--text-muted); white-space:nowrap; transition:0.2s;}
+.admin-tab.active{color:var(--white);border-color:var(--white)}
+.tab-panel{display:none; padding:40px; max-width: 900px;}
+.tab-panel.active{display:block}
+
+.admin-item{display:flex;align-items:center;padding:16px 0;border-bottom:1px solid var(--border);}
+.admin-thumb{width:40px;height:40px;object-fit:cover;background:var(--navy-3);margin-right:20px;}
+.btn-del{background:transparent; color:var(--red); border:none; cursor:pointer; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; margin-left:16px;}
+.btn-edit{background:transparent; color:var(--text-dim); border:none; cursor:pointer; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; transition:0.2s;}
+.btn-edit:hover{color:var(--white);}
+
+.toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--white);color:var(--btn-text);font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:16px 32px;z-index:99999;opacity:0;transition:all 0.3s;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:900px){
+  .product-split{grid-template-columns: 1fr;}
+  .gallery-section{padding: 30px;}
+  .info-section{padding: 40px 30px;}
+  .order-modal{max-width: 600px;}
+}
+@media(max-width:768px){
+  header{padding:0 20px} .header-center{display:none}
+  .hero{padding:100px 24px 60px;} .hero-title{font-size:40px;}
+  .section-header, .products-grid{padding:30px 24px;}
+  .tab-panel{padding:24px;}
+  .admin-hd, .admin-tabs{padding: 0 24px;}
+  #dictEditorContainer > div > div { grid-template-columns: 1fr !important; gap: 10px !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="lightbox" id="imageLightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">✕</button>
+  <img id="lightboxImg" src="" alt="Full Size">
+</div>
+
+<header>
+  <div class="logo-wrap" ondblclick="openPass()">
+    <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 75 L40 25 L65 75" stroke="var(--logo-color)" stroke-width="6" stroke-linejoin="miter"/><path d="M45 60 L70 20 L90 60" stroke="var(--logo-color)" stroke-width="6" stroke-linejoin="miter"/><path d="M40 75 L55 50 L70 75 Z" fill="var(--logo-color)"/></svg>
+    <span class="logo-text">ARC'WARE</span>
+  </div>
+  <div class="header-center" data-i18n="tagline">OFFICIAL STORE</div>
+  <div class="header-right">
+    <button class="theme-btn" onclick="toggleTheme()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
+      <button class="lang-btn" onclick="setLang('vi',this)">VI</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow" data-i18n="heroEyebrow">ARCWARE VN — OFFICIAL STORE</div>
+    <h1 class="hero-title" data-i18n="heroTitle">GEAR<br>YOU LIVE IN</h1>
+    <p class="hero-desc" data-i18n="heroDesc">Vietnam's premium source for Arc'teryx — one of the world's most technical outdoor gear.</p>
+    <div style="margin-top:20px;">
+      <a class="btn-primary" href="#products" data-i18n="shopBtn">SHOP COLLECTION</a>
+    </div>
+  </div>
+</section>
+
+<div class="banner-strip">
+  <div class="banner-item" data-i18n="b1">AUTHENTIC PRODUCTS</div>
+  <div class="banner-item" data-i18n="b2">WORLDWIDE SHIPPING</div>
+  <div class="banner-item" data-i18n="b3">SECURE PAYMENTS</div>
+</div>
+
+<section id="products">
+  <div class="section-header">
+    <div class="section-title" data-i18n="curCol">COLLECTION</div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterProducts('all',this)" data-i18n="fAll">ALL</button>
+      <button class="filter-tab" onclick="filterProducts('Shell Jacket',this)">SHELL JACKET</button>
+      <button class="filter-tab" onclick="filterProducts('Insulated Layer',this)">INSULATED LAYER</button>
+      <button class="filter-tab" onclick="filterProducts('Footwear',this)">FOOTWEAR</button>
+      <button class="filter-tab" onclick="filterProducts('Backpack',this)">BACKPACK</button>
+      <button class="filter-tab" onclick="filterProducts('Others',this)" data-i18n="fOth">OTHERS</button>
+    </div>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<footer style="padding: 60px 48px 30px; background: var(--navy); border-top: 1px solid var(--border);">
+  <div style="display: flex; gap: 80px; flex-wrap: wrap; margin-bottom: 60px;">
+    <div>
+      <h4 style="font-size:10px; font-weight:700; letter-spacing:0.15em; color:var(--white); margin-bottom:20px; text-transform:uppercase;" data-i18n="ftContact">CONTACT US</h4>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <span style="font-size:12px; color:var(--text-dim);" data-i18n="ftAddress">HCMC</span>
+        <span style="font-size:12px; color:var(--text-dim);" data-i18n="ftPhone">090 123 4567</span>
+        <span style="font-size:12px; color:var(--text-dim);" data-i18n="ftEmail">contact@arcware.vn</span>
+      </div>
+    </div>
+    <div>
+      <h4 style="font-size:10px; font-weight:700; letter-spacing:0.15em; color:var(--white); margin-bottom:20px; text-transform:uppercase;" data-i18n="ftHours">WORKING HOURS</h4>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <span style="font-size:12px; color:var(--text-dim);" data-i18n="ftDays">24/7</span>
+        <span style="font-size:12px; color:var(--text-dim);" data-i18n="ftTime">Online Support</span>
+      </div>
+    </div>
+  </div>
+  
+  <div style="display:flex; justify-content:center; align-items:center; border-top: 1px solid var(--border); padding-top: 24px;">
+    <div style="font-size:10px; color:var(--text-muted); cursor:pointer; letter-spacing: 0.05em;" onclick="openPass()">© 2026 ARC'WARE. All rights reserved.</div>
+  </div>
+</footer>
+<div class="toast" id="toast"></div>
+
+<div class="overlay" id="intOverlay">
+  <div class="modal order-modal">
+    <button class="modal-close-abs" onclick="closeOverlay('intOverlay')">✕</button>
+    <div id="intModalBody"></div>
+  </div>
+</div>
+
+<div class="overlay" id="copyOverlay">
+  <div class="modal copy-modal">
+    <div class="copy-title" id="copyTitle">COPIED TO CLIPBOARD</div>
+    <div class="copy-text" id="copyMsg"></div>
+    <div class="copy-sub" id="copySub">Now opening app. Just paste this message in our DM.</div>
+    <button class="btn-primary" style="width:100%;" onclick="proceedToSocial()" id="copyGoBtn">OPEN</button>
+    <button class="btn-primary" style="width:100%; background:transparent; color:var(--text); border:none; margin-top:10px;" onclick="closeOverlay('copyOverlay')" data-i18n="igCancel">CANCEL</button>
+  </div>
+</div>
+
+<div class="overlay" id="passOverlay">
+  <div class="modal" style="max-width:400px; padding:40px;">
+    <button class="modal-close-abs" style="top:20px; right:20px;" onclick="closeOverlay('passOverlay')">✕</button>
+    <h2 style="font-size:16px; font-weight:600; letter-spacing:0.1em; color:var(--white); margin-bottom:30px; text-transform:uppercase;">Admin Access</h2>
+    <div class="form-group">
+      <input type="password" class="form-input" id="passInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkPass()">
+      <div id="passError" style="color:var(--red); font-size:12px; display:none; margin-top:10px;">Incorrect password.</div>
+    </div>
+    <button class="btn-primary" style="width:100%;" onclick="checkPass()">LOGIN</button>
+  </div>
+</div>
+
+<div class="overlay" id="productOverlay" style="z-index: 10000;">
+  <div class="modal" style="max-width:650px; padding:40px;">
+    <button class="modal-close-abs" style="top:20px; right:20px;" onclick="closeOverlay('productOverlay')">✕</button>
+    <h2 style="font-size:16px; font-weight:600; letter-spacing:0.1em; color:var(--white); margin-bottom:30px; text-transform:uppercase;" id="productModalTitle">Add / Edit Product</h2>
+    
+      <div class="form-group">
+        <label class="form-label">Product Name *</label>
+        <input type="text" class="form-input" id="pName">
+      </div>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="pCat">
+            <option value="Shell Jacket">Shell Jacket</option><option value="Insulated Layer">Insulated Layer</option><option value="Footwear">Footwear</option><option value="Backpack">Backpack</option><option value="Others">Others</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Condition</label>
+          <select class="form-select" id="pCond">
+            <option value="Brand new with tags (BNWT)">Brand new with tags (BNWT)</option>
+            <option value="Brand new no tags">Brand new no tags</option>
+            <option value="Like new">Like new</option>
+            <option value="Excellent">Excellent</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Price (VND)</label>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input type="text" class="form-input" id="pPriceVND" placeholder="e.g. 8500000" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+          <button class="btn-primary" style="padding:12px 20px;" onclick="convertCurrency()">TO USD</button>
+        </div>
+        <input type="text" class="form-input" id="pPriceFinal" placeholder="Auto-generated: 8,500,000 VND / ~$350" style="margin-top:10px; color:var(--text-dim);">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Price Policy *</label>
+        <select class="form-select" id="pPriceType">
+          <option value="diff">Price might be different between sizes, please DM for support</option>
+          <option value="same">Same price for all sizes</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Available Sizes</label>
+        <input type="text" class="form-input" id="pSizes" placeholder="e.g. S, M, L or US 9, US 10">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" style="color:var(--red);">Upload Images (Auto-cropped to 1:1 Square)</label>
+        <input type="file" id="imgUpload" accept="image/*" multiple style="font-size:12px; color:var(--text-dim);" onchange="handleMultipleImages(this)">
+        <div id="imgPreviewGrid" style="display:flex; gap:10px; margin-top:16px; overflow-x:auto;"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Badge (Optional)</label>
+        <input type="text" class="form-input" id="pBadge" placeholder="e.g. NEW / HOT / RARE" style="margin-bottom:10px;">
+      </div>
+
+      <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+        <div>
+          <label class="form-label">Description (EN)</label>
+          <textarea class="form-textarea" id="pDescEN" placeholder="English description..." rows="4"></textarea>
+        </div>
+        <div>
+          <label class="form-label">Description (VI)</label>
+          <textarea class="form-textarea" id="pDescVI" placeholder="Mô tả tiếng Việt..." rows="4"></textarea>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="width:100%;" onclick="saveProduct()" id="saveProductBtn">SAVE PRODUCT</button>
+  </div>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-hd">
+    <div class="admin-hd-title">MANAGEMENT</div>
+    <button class="btn-primary" style="padding:10px 24px;" onclick="closeAdmin()">CLOSE</button>
+  </div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" onclick="switchTab('products')">Products</button>
+    <button class="admin-tab" onclick="switchTab('translations')">Content & Text</button>
+    <button class="admin-tab" onclick="switchTab('settings')">Settings</button>
+    <button class="admin-tab" onclick="switchTab('database')">Database</button>
+  </div>
+  
+  <div class="tab-panel active" id="tab-products">
+    <div id="dbStatusAlert" style="padding:16px; margin-bottom:30px; font-size:12px; font-weight:600; border:1px solid var(--border); letter-spacing:0.05em;"></div>
+    <button class="btn-primary" style="margin-bottom:30px;" onclick="openAddProduct()">ADD NEW PRODUCT</button>
+    <div id="adminList" style="border-top:1px solid var(--border);"></div>
+  </div>
+
+  <div class="tab-panel" id="tab-translations">
+    <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 30px;">
+      Edit all text across the website. Use <b>&lt;br&gt;</b> to force a new line (e.g. in the Hero Title).
+    </div>
+    <div id="dictEditorContainer"></div>
+    <button class="btn-primary" style="margin-top:20px; width: 100%;" onclick="saveDictionary()">SAVE ALL CONTENT</button>
+  </div>
+
+  <div class="tab-panel" id="tab-settings">
+    <div class="form-group"><label class="form-label">Instagram Handle</label><input type="text" class="form-input" id="sIg" placeholder="arcwarevn"></div>
+    <div class="form-group"><label class="form-label">WhatsApp Number</label><input type="text" class="form-input" id="sWa" placeholder="84901234567"></div>
+    <div class="form-group" style="margin-top:40px;"><label class="form-label">Admin Password</label><input type="text" class="form-input" id="sPass"></div>
+    <button class="btn-primary" onclick="saveSettings()">SAVE SETTINGS</button>
+  </div>
+
+  <div class="tab-panel" id="tab-database">
+    <div class="form-group"><label class="form-label">Project URL</label><input type="text" class="form-input" id="dbUrl" placeholder="https://xyz.supabase.co"></div>
+    <div class="form-group"><label class="form-label">Anon Key</label><input type="text" class="form-input" id="dbKey" placeholder="eyJhb..."></div>
+    <div style="display:flex; gap:10px;">
+        <button class="btn-primary" onclick="connectDb()">CONNECT</button>
+        <button class="btn-primary" style="background:transparent; color:var(--text); border-color:var(--border);" onclick="disconnectDb()">DISCONNECT</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- UTILS ---
+function getSafeObject(key, defaultObj) {
+  try { let val = localStorage.getItem(key); let parsed = val ? JSON.parse(val) : null; if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return defaultObj; return { ...defaultObj, ...parsed }; } catch(e) { return defaultObj; }
+}
+function getSafeArray(key) {
+  try { let val = localStorage.getItem(key); let parsed = val ? JSON.parse(val) : null; if (!Array.isArray(parsed)) return []; return parsed; } catch(e) { return []; }
+}
+
+// --- MASTER DICTIONARY SCHEMA ---
+const dictKeys = {
+  heroEyebrow: "Hero Section - Top Line",
+  heroTitle: "Hero Section - Main Title (<br> for new line)",
+  heroDesc: "Hero Section - Description",
+  tagline: "Header - Tagline",
+  shopBtn: "Hero Section - Button Text",
+  b1: "Banner Item 1",
+  b2: "Banner Item 2",
+  b3: "Banner Item 3",
+  curCol: "Collection - Section Title",
+  fAll: "Filter - ALL",
+  fOth: "Filter - OTHERS",
+  sz: "Product Info - Size Label",
+  cnd: "Product Info - Condition Label",
+  noPr: "Product Info - No Price Text",
+  feeNt: "Product Card - Shipping Note",
+  priceDiff: "Policy - Price Varies By Size",
+  priceSame: "Policy - Same Price All Sizes",
+  shipNoteFull: "Policy - Full Shipping Note",
+  payPol: "Policy - Payment Title",
+  payPolGl: "Policy - Payment Global",
+  payPolVn: "Policy - Payment Vietnam",
+  ordIg: "Button - Order via Instagram",
+  ordWa: "Button - Order via WhatsApp",
+  szHelp: "Size Help - Question Text",
+  askSzIg: "Size Help - Ask IG Button",
+  askSzWa: "Size Help - Ask WA Button",
+  igCopied: "IG Modal - Copied Title",
+  igSub: "IG Modal - Subtext",
+  igGo: "IG Modal - Open App Button",
+  igCancel: "Modal - Cancel Button",
+  waCopied: "WA Modal - Copied Title",
+  waSub: "WA Modal - Subtext",
+  waGo: "WA Modal - Open App Button",
+  ftAbout: "Footer - About Title",
+  ftAboutText: "Footer - About Description",
+  ftContact: "Footer - Contact Title",
+  ftAddress: "Footer - Address",
+  ftPhone: "Footer - Phone Number",
+  ftEmail: "Footer - Email Address",
+  ftHours: "Footer - Working Hours Title",
+  ftDays: "Footer - Working Days",
+  ftTime: "Footer - Time"
+};
+
+const defaultEN = {
+  heroEyebrow: "ARCWARE VN — OFFICIAL STORE",
+  heroTitle: "GEAR<br>YOU LIVE IN",
+  heroDesc: "Vietnam's premium source for Arc'teryx — one of the world's most technical outdoor gear.",
+  tagline: "OFFICIAL STORE", shopBtn: "SHOP COLLECTION", b1: "AUTHENTIC PRODUCTS", b2: "WORLDWIDE SHIPPING", b3: "SECURE PAYMENTS",
+  curCol: "COLLECTION", fAll: "ALL", fOth: "OTHERS",
+  sz: "SIZE", cnd: "CONDITION", noPr: "Contact for price", feeNt: "*Shipping fees not included",
+  priceDiff: "Price might be different between sizes, please DM for support.", priceSame: "Same price for all sizes.",
+  shipNoteFull: "Shipping fees are not included and may vary depending on regions.",
+  payPol: "PAYMENT POLICIES", payPolGl: "GLOBAL: 100% Payment via PayPal G&S.", payPolVn: "VIETNAM: 50% Deposit, 50% COD.",
+  ordIg: "ORDER VIA INSTAGRAM", ordWa: "ORDER VIA WHATSAPP",
+  szHelp: "Not sure about your size?", askSzIg: "ASK VIA INSTAGRAM", askSzWa: "ASK VIA WHATSAPP",
+  igCopied: "COPIED TO CLIPBOARD", igSub: "Now opening Instagram. Just paste this message in our DM.", igGo: "OPEN INSTAGRAM", igCancel: "CANCEL",
+  waCopied: "COPIED TO CLIPBOARD", waSub: "Now opening WhatsApp. Just paste this message in our chat.", waGo: "OPEN WHATSAPP",
+  ftAbout: "ABOUT ARC'WARE", ftAboutText: "Vietnam's premium source for technical outdoor gear. Built for the elements.",
+  ftContact: "CONTACT US", ftAddress: "Sa Dec, Dong Thap, Vietnam", ftPhone: "+84 90 123 4567", ftEmail: "contact@arcware.vn",
+  ftHours: "WORKING HOURS", ftDays: "Monday - Sunday", ftTime: "09:00 AM - 09:00 PM"
+};
+
+const defaultVI = {
+  heroEyebrow: "ARCWARE VN — CỬA HÀNG CHÍNH THỨC",
+  heroTitle: "TRANG BỊ<br>DÀNH CHO BẠN",
+  heroDesc: "Nguồn phân phối Arc'teryx cao cấp tại Việt Nam — thương hiệu đồ outdoor kỹ thuật hàng đầu thế giới.",
+  tagline: "CỬA HÀNG CHÍNH THỨC", shopBtn: "XEM BỘ SƯU TẬP", b1: "CHÍNH HÃNG 100%", b2: "GIAO HÀNG TOÀN QUỐC", b3: "THANH TOÁN AN TOÀN",
+  curCol: "BỘ SƯU TẬP", fAll: "TẤT CẢ", fOth: "KHÁC",
+  sz: "KÍCH CỠ", cnd: "TÌNH TRẠNG", noPr: "Liên hệ báo giá", feeNt: "*Giá chưa bao gồm phí vận chuyển",
+  priceDiff: "Giá có thể thay đổi tuỳ theo size. Vui lòng nhắn tin để được hỗ trợ.", priceSame: "Đồng giá cho tất cả các size.",
+  shipNoteFull: "Phí vận chuyển chưa bao gồm và có thể thay đổi tuỳ theo khu vực.",
+  payPol: "CHÍNH SÁCH THANH TOÁN", payPolGl: "QUỐC TẾ: Thanh toán 100% qua PayPal G&S.", payPolVn: "VIỆT NAM: Cọc 50%, thanh toán 50% COD.",
+  ordIg: "ĐẶT HÀNG QUA INSTAGRAM", ordWa: "ĐẶT HÀNG QUA WHATSAPP",
+  szHelp: "Bạn cần tư vấn size?", askSzIg: "HỎI QUA INSTAGRAM", askSzWa: "HỎI QUA WHATSAPP",
+  igCopied: "ĐÃ SAO CHÉP NỘI DUNG", igSub: "Hệ thống đang mở Instagram. Bạn chỉ cần 'Dán' (Paste) đoạn tin nhắn này cho chúng tôi.", igGo: "MỞ INSTAGRAM", igCancel: "HỦY",
+  waCopied: "ĐÃ SAO CHÉP NỘI DUNG", waSub: "Hệ thống đang mở WhatsApp. Bạn chỉ cần 'Dán' (Paste) đoạn tin nhắn này cho chúng tôi.", waGo: "MỞ WHATSAPP",
+  ftAbout: "VỀ ARC'WARE", ftAboutText: "Nguồn phân phối trang phục outdoor kỹ thuật cao cấp tại Việt Nam.",
+  ftContact: "LIÊN HỆ", ftAddress: "Sa Đéc, Đồng Tháp, Việt Nam", ftPhone: "090 123 4567", ftEmail: "contact@arcware.vn",
+  ftHours: "GIỜ LÀM VIỆC", ftDays: "Thứ Hai - Chủ Nhật", ftTime: "09:00 Sáng - 09:00 Tối"
+};
+
+let currentLang = 'en';
+let customEN = getSafeObject('aw_custom_en', defaultEN);
+let customVI = getSafeObject('aw_custom_vi', defaultVI);
+
+function t(key) {
+  if (!key) return "";
+  let res;
+  if (currentLang === 'vi') {
+    res = customVI[key] !== undefined ? customVI[key] : defaultVI[key];
+    if (res === undefined) res = customEN[key] !== undefined ? customEN[key] : defaultEN[key];
+  } else {
+    res = customEN[key] !== undefined ? customEN[key] : defaultEN[key];
+  }
+  return res !== undefined ? res : key;
+}
+
+function setLang(langCode, btnElement) {
+  currentLang = langCode;
+  localStorage.setItem('aw_lang', langCode);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  if(btnElement) btnElement.classList.add('active');
+  
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    let key = el.getAttribute('data-i18n');
+    el.innerHTML = t(key);
+  });
+  renderProducts();
+}
+
+function buildDictionaryEditor() {
+  let html = '';
+  Object.keys(dictKeys).forEach(key => {
+    let enVal = customEN[key] !== undefined ? customEN[key] : defaultEN[key];
+    let viVal = customVI[key] !== undefined ? customVI[key] : defaultVI[key];
+    
+    html += `
+      <div style="margin-bottom: 24px; border: 1px solid var(--border); padding: 16px; border-radius: 4px; background: var(--navy-2);">
+        <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.1em; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">
+          ${dictKeys[key]}
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div>
+            <label style="display:block; font-size:10px; font-weight: 600; color:var(--text-muted); margin-bottom:4px; letter-spacing: 0.1em;">ENGLISH</label>
+            <input type="text" class="form-input" style="background:var(--navy);" id="dict_en_${key}" value="${enVal.replace(/"/g, '&quot;')}">
+          </div>
+          <div>
+            <label style="display:block; font-size:10px; font-weight: 600; color:var(--text-muted); margin-bottom:4px; letter-spacing: 0.1em;">VIETNAMESE</label>
+            <input type="text" class="form-input" style="background:var(--navy);" id="dict_vi_${key}" value="${viVal.replace(/"/g, '&quot;')}">
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById('dictEditorContainer').innerHTML = html;
+}
+
+async function saveDictionary() {
+  Object.keys(dictKeys).forEach(key => {
+    let enEl = document.getElementById(`dict_en_${key}`);
+    let viEl = document.getElementById(`dict_vi_${key}`);
+    if(enEl) customEN[key] = enEl.value;
+    if(viEl) customVI[key] = viEl.value;
+  });
+  // Save locally as fallback
+  localStorage.setItem('aw_custom_en', JSON.stringify(customEN));
+  localStorage.setItem('aw_custom_vi', JSON.stringify(customVI));
+  // Save to Supabase so every device gets it
+  await saveToCloud('content_en', JSON.stringify(customEN));
+  await saveToCloud('content_vi', JSON.stringify(customVI));
+  showToast("CONTENT SAVED ✓");
+  setLang(currentLang, document.querySelector(currentLang==='vi' ? '.lang-btn:nth-child(2)' : '.lang-btn:nth-child(1)'));
+}
+
+// --- STATE & APP ---
+let dbMode = 'local'; 
+let products = [];
+let currentFilter = 'all';
+let sbClient = null; 
+let editingId = null;
+let uploadedImagesArray = []; 
+
+let settings = getSafeObject('aw_settings', { password: 'admin123', ig: 'arcwarevn', wa: '84901234567' });
+
+window.onload = async () => {
+  const savedLang = localStorage.getItem('aw_lang') || 'en';
+  currentLang = savedLang;
+  buildDictionaryEditor();
+  setLang(savedLang, document.querySelector(savedLang === 'vi' ? '.lang-btn:nth-child(2)' : '.lang-btn:nth-child(1)'));
+  await initApp();
+};
+
+function toggleTheme() {
+  const root = document.documentElement;
+  const newTheme = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+  root.setAttribute('data-theme', newTheme);
+  localStorage.setItem('aw_theme', newTheme);
+}
+// Force load default saved theme, or dark if not set
+if(localStorage.getItem('aw_theme') === 'light') {
+  document.documentElement.setAttribute('data-theme', 'light');
+} else {
+  document.documentElement.setAttribute('data-theme', 'dark');
+}
+
+async function initApp() {
+  const url = localStorage.getItem('aw_sb_url');
+  const key = localStorage.getItem('aw_sb_key');
+  if (url && key && typeof window.supabase !== 'undefined') {
+    try {
+      sbClient = window.supabase.createClient(url, key);
+      // Test connection
+      const { error } = await sbClient.from('products').select('id').limit(1);
+      if (error) throw error;
+      dbMode = 'supabase';
+      // Load all settings from Supabase — this syncs across every device
+      await loadSettingsFromCloud();
+    } catch (e) { dbMode = 'local'; }
+  } else { dbMode = 'local'; }
+  await refreshProducts();
+}
+
+// ── LOAD ALL SETTINGS FROM SUPABASE ──
+async function loadSettingsFromCloud() {
+  try {
+    const { data, error } = await sbClient.from('site_settings').select('*');
+    if (error) throw error;
+    if (!data || !data.length) return;
+    // Build a key-value map
+    const map = {};
+    data.forEach(row => { map[row.key] = row.value; });
+    // Apply settings (ig, wa, password)
+    if (map['ig']) settings.ig = map['ig'];
+    if (map['wa']) settings.wa = map['wa'];
+    if (map['password']) settings.password = map['password'];
+    localStorage.setItem('aw_settings', JSON.stringify(settings));
+    // Apply content/translations
+    if (map['content_en']) {
+      try { customEN = { ...defaultEN, ...JSON.parse(map['content_en']) }; localStorage.setItem('aw_custom_en', JSON.stringify(customEN)); } catch(e){}
+    }
+    if (map['content_vi']) {
+      try { customVI = { ...defaultVI, ...JSON.parse(map['content_vi']) }; localStorage.setItem('aw_custom_vi', JSON.stringify(customVI)); } catch(e){}
+    }
+    // Rebuild the content editor with loaded values and re-apply language
+    buildDictionaryEditor();
+    setLang(currentLang, document.querySelector(currentLang==='vi' ? '.lang-btn:nth-child(2)' : '.lang-btn:nth-child(1)'));
+  } catch(e) { /* settings table may not exist yet — that's fine */ }
+}
+
+// ── SAVE SETTING TO SUPABASE ──
+async function saveToCloud(key, value) {
+  if (dbMode !== 'supabase') return;
+  try {
+    await sbClient.from('site_settings').upsert({ key, value }, { onConflict: 'key' });
+  } catch(e) {}
+}
+
+async function refreshProducts() {
+  if (dbMode === 'supabase') {
+    try {
+      const { data, error } = await sbClient.from('products').select('*').order('created_at', {ascending: false});
+      if (error) throw error;
+      products = data || [];
+      document.getElementById('dbStatusAlert').innerHTML = "STATUS: ONLINE (SUPABASE CONNECTED)";
+    } catch (e) { 
+      dbMode = 'local'; 
+      products = getSafeArray('aw_local_products'); 
+      document.getElementById('dbStatusAlert').innerHTML = "STATUS: OFFLINE (SUPABASE ERROR)";
+    }
+  } else {
+    products = getSafeArray('aw_local_products');
+    document.getElementById('dbStatusAlert').innerHTML = "STATUS: OFFLINE (LOCAL STORAGE)";
+  }
+  renderProducts(); renderAdminList();
+}
+
+async function convertCurrency() {
+  const vndInput = document.getElementById('pPriceVND').value;
+  if(!vndInput) return alert('Input VND');
+  try {
+    document.getElementById('pPriceFinal').value = "Loading rate...";
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    const data = await res.json();
+    const usd = Math.round(parseInt(vndInput) / data.rates.VND);
+    const formattedVND = new Intl.NumberFormat('vi-VN').format(vndInput);
+    document.getElementById('pPriceFinal').value = `${formattedVND} VND / ~$${usd}`;
+  } catch(e) {
+    const usdFallback = Math.round(parseInt(vndInput) / 25000);
+    const formattedVND = new Intl.NumberFormat('vi-VN').format(vndInput);
+    document.getElementById('pPriceFinal').value = `${formattedVND} VND / ~$${usdFallback}`;
+  }
+}
+
+function compressAndCropSquare(file, callback) {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = event => {
+    const img = new Image();
+    img.src = event.target.result;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const size = Math.min(img.width, img.height);
+      const sx = (img.width - size) / 2;
+      const sy = (img.height - size) / 2;
+      const targetSize = Math.min(size, 1000); 
+      
+      canvas.width = targetSize; 
+      canvas.height = targetSize;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, targetSize, targetSize);
+      ctx.drawImage(img, sx, sy, size, size, 0, 0, targetSize, targetSize);
+      
+      callback(canvas.toDataURL('image/jpeg', 0.8));
+    };
+  };
+}
+
+function handleMultipleImages(input) {
+  const files = Array.from(input.files).slice(0,5); 
+  uploadedImagesArray = [];
+  document.getElementById('imgPreviewGrid').innerHTML = '';
+  files.forEach(file => {
+    compressAndCropSquare(file, (croppedBase64) => {
+      uploadedImagesArray.push(croppedBase64);
+      const img = document.createElement('img');
+      img.src = croppedBase64;
+      img.style.width = '60px'; img.style.height = '60px'; img.style.objectFit = 'cover'; img.style.border = '1px solid var(--border)';
+      document.getElementById('imgPreviewGrid').appendChild(img);
+    });
+  });
+}
+
+// ── CRUD ──
+async function saveProduct() {
+  const name = document.getElementById('pName').value.trim();
+  if(!name) return alert("Product Name is required!"); 
+  
+  const productData = {
+    name: name, category: document.getElementById('pCat').value, condition: document.getElementById('pCond').value,
+    price: document.getElementById('pPriceFinal').value || document.getElementById('pPriceVND').value,
+    price_type: document.getElementById('pPriceType').value,
+    sizes: document.getElementById('pSizes').value.trim(), badge: document.getElementById('pBadge').value.trim(), 
+    description_en: document.getElementById('pDescEN').value.trim(),
+    description_vi: document.getElementById('pDescVI').value.trim(),
+    gallery: JSON.stringify(uploadedImagesArray), image: uploadedImagesArray[0] || '' 
+  };
+
+  const btn = document.getElementById('saveProductBtn');
+  btn.textContent = "SAVING..."; btn.disabled = true;
+
+  try {
+    if (dbMode === 'supabase') {
+      let errObj;
+      if(editingId) { const { error } = await sbClient.from('products').update(productData).eq('id', editingId); errObj = error; } 
+      else { const { error } = await sbClient.from('products').insert([productData]); errObj = error; }
+      if (errObj) throw new Error(errObj.message);
+    } else {
+      if(editingId) { const idx = products.findIndex(p => p.id === editingId); products[idx] = { ...productData, id: editingId }; } 
+      else { products.unshift({ ...productData, id: Date.now().toString() }); }
+      localStorage.setItem('aw_local_products', JSON.stringify(products));
+    }
+    closeOverlay('productOverlay'); showToast("SAVED"); await refreshProducts();
+  } catch(e) { alert("ERROR: " + e.message); } 
+  finally { btn.textContent = "SAVE PRODUCT"; btn.disabled = false; }
+}
+
+async function deleteProduct(id) {
+  if(!confirm("Delete?")) return;
+  try {
+    if (dbMode === 'supabase') { await sbClient.from('products').delete().eq('id', id); } 
+    else { products = products.filter(p => p.id !== id); localStorage.setItem('aw_local_products', JSON.stringify(products)); }
+    showToast("DELETED"); await refreshProducts();
+  } catch(e) { alert("ERROR: " + e.message); }
+}
+
+// ── RENDER ──
+function renderProducts() {
+  const grid = document.getElementById('productsGrid');
+  const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
+  if (!filtered.length) { grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-size:12px; letter-spacing:0.1em; color:var(--text-muted);">EMPTY</div>`; return; }
+  
+  grid.innerHTML = filtered.map(p => `
+    <div class="product-card" onclick="openInterest('${p.id}')">
+      <div class="card-img"><img src="${p.image||''}" onerror="this.style.display='none'">${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}</div>
+      <div class="card-body">
+        <div class="card-cat">${t(p.category)||p.category} · ${t(p.condition)||p.condition||'N/A'}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-foot">
+          <div class="card-price">${p.price||t('noPr')}</div>
+        </div>
+        <p style="font-size:10px; color:var(--text-muted); margin-top:8px;">${t('feeNt')}</p>
+      </div>
+    </div>`).join('');
+}
+
+// ── LIGHTBOX ──
+function openLightbox(src) {
+  const lb = document.getElementById('imageLightbox');
+  document.getElementById('lightboxImg').src = src;
+  lb.classList.add('show');
+}
+function closeLightbox() {
+  document.getElementById('imageLightbox').classList.remove('show');
+}
+
+function swapMainImage(src) {
+  document.getElementById('mainGalleryImage').src = src;
+  const thumbs = document.querySelectorAll('.gallery-thumbs img');
+  thumbs.forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// ── PREMIUM ORDER POPUP (THE ARCHITECH) ──
+function openInterest(id) {
+  const p = products.find(x => x.id === id); if (!p) return;
+  
+  let galHtml = ''; let firstImg = p.image || '';
+  try {
+    const galArr = JSON.parse(p.gallery);
+    if(galArr && galArr.length > 0) {
+      firstImg = galArr[0];
+      if(galArr.length > 1) {
+        galHtml = `<div class="gallery-thumbs">` + galArr.map((img, i) => `<img src="${img}" onclick="swapMainImage('${img}')" class="${i===0?'active':''}">`).join('') + `</div>`;
+      }
+    }
+  } catch(e){}
+
+  const prefillOrder = currentLang === 'vi' 
+    ? `Tôi muốn đặt:\n${p.name}\n${p.price} | Size: ${p.sizes||'N/A'} | Cond: ${t(p.condition)||p.condition||'N/A'}`
+    : `I want to order:\n${p.name}\n${p.price} | Size: ${p.sizes||'N/A'} | Cond: ${p.condition||'N/A'}`;
+    
+  const prefillSize = currentLang === 'vi' 
+    ? `Tư vấn size giúp mình mẫu này:\n${p.name}`
+    : `I need sizing advice for:\n${p.name}`;
+
+  const priceNoteText = (p.price_type === 'same') ? t('priceSame') : t('priceDiff');
+  const shipNoteText = t('shipNoteFull');
+  const displayDesc = currentLang === 'vi' ? (p.description_vi || p.description_en || p.description || '') : (p.description_en || p.description || '');
+
+  document.getElementById('intModalBody').innerHTML = `
+    <div class="product-split">
+      <div class="gallery-section">
+        <div class="gallery-main"><img id="mainGalleryImage" src="${firstImg}" onclick="openLightbox(this.src)"></div>
+        ${galHtml}
+      </div>
+      <div class="info-section">
+        <div class="info-cat">${t(p.category)||p.category}</div>
+        <div class="info-title">${p.name}</div>
+        <div class="info-price">${p.price||t('noPr')}</div>
+        <div class="info-price-note">${priceNoteText}</div>
+        <div class="ship-note">${shipNoteText}</div>
+        
+        <div class="spec-grid">
+          <div class="spec-item"><span class="spec-label">${t('sz')}</span><span class="spec-value">${p.sizes||'N/A'}</span></div>
+          <div class="spec-item"><span class="spec-label">${t('cnd')}</span><span class="spec-value">${t(p.condition)||p.condition||'N/A'}</span></div>
+        </div>
+        
+        <div class="info-desc">${displayDesc.replace(/\n/g, '<br>')}</div>
+        
+        <div class="policy-box">
+          <div class="policy-title">${t('payPol')}</div>
+          <p>${t('payPolGl')}</p>
+          <p>${t('payPolVn')}</p>
+        </div>
+        
+        <div class="cta-group">
+          <button class="cta-btn" onclick="openCopyModal('IG', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordIg')}</button>
+          <button class="cta-btn" onclick="openCopyModal('WA', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordWa')}</button>
+        </div>
+        
+        <div class="size-help-wrap">
+          <div class="size-help-text">${t('szHelp')}</div>
+          <div class="size-help-links">
+            <span class="size-link" onclick="openCopyModal('IG', '${prefillSize.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('askSzIg')}</span>
+            <span class="size-link" onclick="openCopyModal('WA', '${prefillSize.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('askSzWa')}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  openOverlay('intOverlay');
+}
+
+// ── CUSTOM COPY MODAL (IG & WA) ──
+let currentSocialPlatform = 'IG';
+function openCopyModal(platform, msg) {
+  currentSocialPlatform = platform;
+  navigator.clipboard.writeText(msg).then(() => {
+    document.getElementById('copyMsg').textContent = msg;
+    if (platform === 'IG') {
+      document.getElementById('copyTitle').textContent = t('igCopied');
+      document.getElementById('copySub').textContent = t('igSub');
+      document.getElementById('copyGoBtn').textContent = t('igGo');
+    } else {
+      document.getElementById('copyTitle').textContent = t('waCopied');
+      document.getElementById('copySub').textContent = t('waSub');
+      document.getElementById('copyGoBtn').textContent = t('waGo');
+    }
+    openOverlay('copyOverlay');
+  }).catch(err => { alert("Manual copy required."); });
+}
+
+function proceedToSocial() {
+  if (currentSocialPlatform === 'IG') {
+    window.open(`https://instagram.com/${settings.ig}`, '_blank');
+  } else {
+    const msg = document.getElementById('copyMsg').textContent;
+    window.open(`https://wa.me/${settings.wa}?text=${encodeURIComponent(msg)}`, '_blank');
+  }
+  closeOverlay('copyOverlay');
+}
+
+function filterProducts(cat, el) { currentFilter = cat; document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active')); el.classList.add('active'); renderProducts(); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+function openOverlay(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+function closeOverlay(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+
+// --- ADMIN ---
+function openPass() { document.getElementById('passInput').value=''; document.getElementById('passError').style.display='none'; openOverlay('passOverlay'); setTimeout(()=>document.getElementById('passInput').focus(), 100); }
+function checkPass() { if(document.getElementById('passInput').value === settings.password) { closeOverlay('passOverlay'); openAdmin(); } else { document.getElementById('passError').style.display='block'; } }
+function closeAdmin() { document.getElementById('adminPanel').classList.remove('open'); }
+function switchTab(t) { document.querySelectorAll('.admin-tab').forEach(el=>el.classList.remove('active')); document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active')); document.querySelector('.admin-tab[onclick="switchTab(\''+t+'\')"]').classList.add('active'); document.getElementById('tab-'+t).classList.add('active'); }
+
+function renderAdminList() {
+  const list = document.getElementById('adminList');
+  if(!products.length) { list.innerHTML = `<div style="padding:20px; text-align:center; font-size:12px;">EMPTY</div>`; return; }
+  list.innerHTML = products.map(p => `
+    <div class="admin-item">
+      <img class="admin-thumb" src="${p.image||''}" onerror="this.style.display='none'">
+      <div style="flex:1"><div style="font-weight:600; color:var(--white);">${p.name}</div><div style="font-size:12px; color:var(--text-muted); margin-top:4px;">${p.price||''}</div></div>
+      <button class="btn-edit" onclick="openEditProduct('${p.id}')">EDIT</button><button class="btn-del" onclick="deleteProduct('${p.id}')">DEL</button>
+    </div>`).join('');
+}
+
+function openAdmin() { 
+  document.getElementById('sIg').value = settings.ig || '';
+  document.getElementById('sWa').value = settings.wa || '';
+  document.getElementById('dbUrl').value = localStorage.getItem('aw_sb_url')||'';
+  document.getElementById('dbKey').value = localStorage.getItem('aw_sb_key')||'';
+  document.getElementById('adminPanel').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openAddProduct() { 
+  editingId = null; uploadedImagesArray = []; document.getElementById('imgPreviewGrid').innerHTML='';
+  document.getElementById('productModalTitle').textContent = "ADD PRODUCT"; 
+  ['pName','pPriceVND','pPriceFinal','pBadge','pDescEN','pDescVI','pSizes'].forEach(id => document.getElementById(id).value = ''); 
+  document.getElementById('pPriceType').value = 'diff';
+  openOverlay('productOverlay'); 
+}
+
+function openEditProduct(id) { 
+  const p = products.find(x => x.id === id); if(!p) return; 
+  editingId = id; document.getElementById('productModalTitle').textContent = "EDIT PRODUCT"; 
+  document.getElementById('pName').value = p.name; document.getElementById('pCat').value = p.category || 'Shell Jacket'; document.getElementById('pCond').value = p.condition || 'Brand new with tags (BNWT)'; document.getElementById('pPriceFinal').value = p.price || ''; document.getElementById('pPriceVND').value = ''; document.getElementById('pSizes').value = p.sizes || ''; document.getElementById('pBadge').value = p.badge || ''; 
+  document.getElementById('pDescEN').value = p.description_en || p.description || '';
+  document.getElementById('pDescVI').value = p.description_vi || p.description || '';
+  document.getElementById('pPriceType').value = p.price_type || 'diff';
+  try { const g = JSON.parse(p.gallery || '[]'); uploadedImagesArray = Array.isArray(g) ? g : (p.image ? [p.image] : []); } catch(e) { uploadedImagesArray = p.image ? [p.image] : []; }
+  const grid = document.getElementById('imgPreviewGrid');
+  grid.innerHTML = uploadedImagesArray.map(src => `<img src="${src}" style="width:60px;height:60px;object-fit:cover;border:1px solid var(--border);opacity:0.7;">`).join('') + (uploadedImagesArray.length ? `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;width:100%;">↑ Existing photos — upload new images only to replace them.</div>` : '');
+  openOverlay('productOverlay'); 
+}
+
+async function saveSettings() {
+  settings.ig = document.getElementById('sIg').value.trim();
+  settings.wa = document.getElementById('sWa').value.trim();
+  const p = document.getElementById('sPass').value.trim();
+  if (p) settings.password = p;
+  // Save locally as fallback
+  localStorage.setItem('aw_settings', JSON.stringify(settings));
+  // Save to Supabase so every device gets it
+  await saveToCloud('ig', settings.ig);
+  await saveToCloud('wa', settings.wa);
+  await saveToCloud('password', settings.password);
+  showToast("SETTINGS SAVED ✓");
+}
+async function connectDb() {
+  const u = document.getElementById('dbUrl').value.trim();
+  const k = document.getElementById('dbKey').value.trim();
+  if (!u || !k) { showToast("ENTER BOTH URL AND KEY"); return; }
+  localStorage.setItem('aw_sb_url', u);
+  localStorage.setItem('aw_sb_key', k);
+  showToast("CONNECTING...");
+  document.getElementById('adminPanel').classList.remove('open');
+  document.body.style.overflow = '';
+  await initApp();
+  if (dbMode === 'supabase') {
+    showToast("CONNECTED ✓");
+    openAdmin();
+  } else {
+    showToast("CONNECTION FAILED — CHECK URL AND KEY");
+  }
+}
+async function disconnectDb() { localStorage.removeItem('aw_sb_url'); localStorage.removeItem('aw_sb_key'); document.getElementById('dbUrl').value = ''; document.getElementById('dbKey').value = ''; showToast("DISCONNECTED"); closeAdmin(); await initApp(); }
+</script>
+</body>
+</html>
