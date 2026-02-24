@@ -40,6 +40,7 @@ body{background:var(--navy);color:var(--text);font-family:var(--font-main);font-
 
 /* ════ HEADER ════ */
 header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:70px;background:var(--navy);border-bottom:1px solid var(--border)}
+.header-inner { display:flex; align-items:center; justify-content:space-between; height: 100%; }
 .logo-wrap{display:flex;align-items:center;gap:12px;text-decoration:none; cursor:pointer;}
 .logo-text{font-size:22px;font-weight:800;letter-spacing:0.1em;color:var(--white);}
 .header-center{font-size:11px;font-weight:600;letter-spacing:0.25em;color:var(--text-muted);text-transform:uppercase}
@@ -531,16 +532,14 @@ window.onload = async () => {
 };
 
 async function initApp() {
-  // SỬA LỖI CỦA CLAUDE: Sử dụng trực tiếp KEY CỨNG, bỏ hoàn toàn localStorage cho kết nối database
   if (SUPABASE_URL !== "YOUR_SUPABASE_PROJECT_URL_HERE" && typeof window.supabase !== 'undefined') {
     try {
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      // Test kết nối bằng cách lấy bừa 1 ID
+      // Test kết nối
       const { error } = await sbClient.from('products').select('id').limit(1);
       if (error) throw error;
       
       dbMode = 'supabase';
-      // Load toàn bộ text và settings từ Cloud về thay thế cho cái cũ rích trong máy
       await loadSettingsFromCloud();
     } catch (e) { dbMode = 'local'; console.error("Lỗi kết nối Supabase:", e); }
   } else { dbMode = 'local'; }
@@ -711,7 +710,6 @@ async function handleMultipleImages(input) {
   uploadedImagesArray = [];
   document.getElementById('imgPreviewGrid').innerHTML = '';
   
-  // Ép xử lý từng tấm một theo đúng thứ tự 1-2-3-4-5
   for (let file of files) {
     const croppedBase64 = await new Promise(resolve => compressAndCropSquare(file, resolve));
     uploadedImagesArray.push(croppedBase64);
@@ -823,30 +821,46 @@ function openInterest(id) {
         </div>
         <div class="info-desc">${displayDesc.replace(/\n/g, '<br>')}</div>
         <div class="policy-box"><div class="policy-title">${t('payPol')}</div><p>${t('payPolGl')}</p><p>${t('payPolVn')}</p></div>
+        
         <div class="cta-group">
-          <button class="cta-btn" onclick="openCopyModal('${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordWa')} / ${t('ordIg')}</button>
+          <button class="cta-btn" onclick="openCopyModal('IG', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordIg')}</button>
+          <button class="cta-btn" onclick="openCopyModal('WA', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordWa')}</button>
         </div>
+        
         <div class="size-help-wrap">
           <div class="size-help-text">${t('szHelp')}</div>
-          <div class="size-help-links"><span class="size-link" onclick="openCopyModal('${prefillSize.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('askSzWa')} / IG</span></div>
+          <div class="size-help-links">
+            <span class="size-link" onclick="openCopyModal('IG', '${prefillSize.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('askSzIg')}</span>
+            <span class="size-link" onclick="openCopyModal('WA', '${prefillSize.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('askSzWa')}</span>
+          </div>
         </div>
+        
       </div>
     </div>`;
   openOverlay('intOverlay');
 }
 
 let currentSocialPlatform = 'IG';
-function openCopyModal(msg) {
+function openCopyModal(platform, msg) {
+  currentSocialPlatform = platform;
   navigator.clipboard.writeText(msg).then(() => {
     document.getElementById('copyMsg').textContent = msg;
-    document.getElementById('copyTitle').textContent = t('igCopied');
-    document.getElementById('copySub').textContent = t('igSub');
+    if (platform === 'IG') {
+      document.getElementById('copyTitle').textContent = t('igCopied');
+      document.getElementById('copySub').textContent = t('igSub');
+      document.getElementById('copyGoBtn').textContent = t('igGo');
+    } else {
+      document.getElementById('copyTitle').textContent = t('waCopied');
+      document.getElementById('copySub').textContent = t('waSub');
+      document.getElementById('copyGoBtn').textContent = t('waGo');
+    }
     openOverlay('copyOverlay');
   }).catch(err => { alert("Manual copy required."); });
 }
-function proceedToSocial(platform) {
+
+function proceedToSocial() {
   const msg = document.getElementById('copyMsg').textContent;
-  if (platform === 'IG') { window.open(`https://instagram.com/${settings.ig}`, '_blank'); } 
+  if (currentSocialPlatform === 'IG') { window.open(`https://instagram.com/${settings.ig}`, '_blank'); } 
   else { window.open(`https://wa.me/${settings.wa}?text=${encodeURIComponent(msg)}`, '_blank'); }
   closeOverlay('copyOverlay');
 }
