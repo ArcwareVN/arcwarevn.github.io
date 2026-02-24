@@ -706,19 +706,20 @@ function compressAndCropSquare(file, callback) {
   };
 }
 
-function handleMultipleImages(input) {
+async function handleMultipleImages(input) {
   const files = Array.from(input.files).slice(0,5); 
   uploadedImagesArray = [];
   document.getElementById('imgPreviewGrid').innerHTML = '';
-  files.forEach(file => {
-    compressAndCropSquare(file, (croppedBase64) => {
-      uploadedImagesArray.push(croppedBase64);
-      const img = document.createElement('img');
-      img.src = croppedBase64;
-      img.style.width = '60px'; img.style.height = '60px'; img.style.objectFit = 'cover'; img.style.border = '1px solid var(--border)';
-      document.getElementById('imgPreviewGrid').appendChild(img);
-    });
-  });
+  
+  // Ép xử lý từng tấm một theo đúng thứ tự 1-2-3-4-5
+  for (let file of files) {
+    const croppedBase64 = await new Promise(resolve => compressAndCropSquare(file, resolve));
+    uploadedImagesArray.push(croppedBase64);
+    const img = document.createElement('img');
+    img.src = croppedBase64;
+    img.style.width = '60px'; img.style.height = '60px'; img.style.objectFit = 'cover'; img.style.border = '1px solid var(--border)';
+    document.getElementById('imgPreviewGrid').appendChild(img);
+  }
 }
 
 // ── CRUD ──
