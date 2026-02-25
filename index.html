@@ -130,7 +130,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 /* ════ MODALS BASE ════ */
 .overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s}
 .overlay.open{opacity:1;pointer-events:all}
-.modal{background:var(--navy);width:100%;max-height:95vh;overflow-y:auto; transform:translateY(20px);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); position:relative;}
+.modal{background:var(--navy);width:100%;max-height:95vh;overflow-y:auto; -webkit-overflow-scrolling: touch; transform:translateY(20px);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); position:relative;}
 .overlay.open .modal{transform:translateY(0)}
 .modal-close-abs{position:absolute;top:24px;right:32px;background:none;border:none;font-size:24px;font-weight:300;cursor:pointer;color:var(--text-muted);z-index:10; transition:0.2s;}
 .modal-close-abs:hover{color:var(--white);}
@@ -199,7 +199,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .form-input:focus, .form-textarea:focus{border-bottom-color:var(--white);}
 .form-select option{background:var(--navy);}
 
-.admin-panel{position:fixed;inset:0;background:var(--navy);z-index:9999;overflow-y:auto;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);}
+.admin-panel{position:fixed;inset:0;background:var(--navy);z-index:9999;overflow-y:auto; -webkit-overflow-scrolling: touch; transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);}
 .admin-panel.open{transform:translateX(0)}
 .admin-hd{padding:0 40px;height:80px;background:var(--navy);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .admin-hd-title{font-size:16px;font-weight:700; letter-spacing: 0.1em; text-transform:uppercase; color:var(--white);}
@@ -274,10 +274,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .tab-panel{padding:24px;}
   .admin-hd, .admin-tabs{padding: 0 24px;}
   .dict-container{ grid-template-columns: 1fr; }
-  .dict-sidebar{ border-right:none; border-bottom:1px solid var(--border); flex-direction:row; overflow-x:auto; }
+  
+  /* FIX ADMIN DICTIONARY & TABS CHO MOBILE */
+  .dict-sidebar{ border-right:none; border-bottom:1px solid var(--border); flex-direction:row; overflow-x:auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .dict-sidebar::-webkit-scrollbar { display: none; }
   .dict-menu-btn{ border-left:none; border-bottom:3px solid transparent; white-space:nowrap; }
   .dict-menu-btn.active{ border-left-color:transparent; border-bottom-color:var(--white); }
-  #dictEditorContainer > div > div { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .dict-grid { grid-template-columns: 1fr !important; gap: 16px !important; }
   
   /* FIX IOS Auto Zoom Form Input (Bắt buộc 16px) */
   .form-input, .form-select, .form-textarea { font-size: 16px; }
@@ -770,6 +773,7 @@ window.onload = async () => {
   
   if (checkSession()) {
     document.getElementById('adminPanel').classList.add('open');
+    document.body.style.overflow = 'hidden';
     startAdminTimer();
   }
 };
@@ -825,6 +829,7 @@ async function initApp() {
 function openPass() { 
   if (checkSession()) {
     document.getElementById('adminPanel').classList.add('open');
+    document.body.style.overflow = 'hidden';
     startAdminTimer();
     return;
   }
@@ -854,6 +859,7 @@ async function checkPass() {
     localStorage.setItem('aw_admin_session', Date.now());
     closeOverlay('passOverlay'); 
     document.getElementById('adminPanel').classList.add('open');
+    document.body.style.overflow = 'hidden';
     startAdminTimer();
   } 
 }
@@ -1347,5 +1353,4 @@ function openEditProduct(id) {
 }
 </script>
 </body>
-
 </html>
