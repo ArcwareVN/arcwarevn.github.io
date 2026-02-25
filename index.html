@@ -1201,7 +1201,7 @@ function openInterest(id) {
   if(hwArr.length > 0 || p.video_link) {
       mediaHtml += `<div class="media-btn-grid">`;
       if(hwArr.length > 0) { mediaHtml += `<div class="how-it-wears-box" onclick="openLookbook('${p.id}')"><div><div class="hw-title"> ${t('hwTitle')}</div><div class="hw-sub">${t('hwSub')}</div></div><div class="hw-right">→</div></div>`; }
-      if(p.video_link) { mediaHtml += `<div class="how-it-wears-box" onclick="openVideo('${p.video_link}')"><div><div class="hw-title">▶ ${t('vidTitle')}</div><div class="hw-sub">${t('vidSub')}</div></div><div class="hw-right">→</div></div>`; }
+      if(p.video_link) { mediaHtml += `<div class="how-it-wears-box" onclick="openVideo('${p.video_link}')"><div><div class="hw-title"> ${t('vidTitle')}</div><div class="hw-sub">${t('vidSub')}</div></div><div class="hw-right">→</div></div>`; }
       mediaHtml += `</div>`;
   }
 
@@ -1347,4 +1347,5 @@ function openEditProduct(id) {
 }
 </script>
 </body>
+
 </html>
