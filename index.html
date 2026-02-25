@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="dark" style="scroll-behavior: smooth;">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,20 +30,20 @@
   --gold: #ffffff; --red: #ff7b72;
   --logo-color: #ffffff; --btn-text: #000000;
 }
-body, header, .modal, .admin-panel, .product-card { transition: background-color 0.3s ease, color 0.3s ease; }
+body, header, .modal, .admin-panel, .product-card { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--navy);color:var(--text);font-family:var(--font-main);font-weight:400;overflow-x:hidden; -webkit-font-smoothing: antialiased;}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--border)}
 
-/* ════ WIDE CONTAINER ════ */
-.container { max-width: 1600px; margin: 0 auto; width: 100%; padding: 0 60px; }
-
-/* ════ HEADER ════ */
-header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:70px;background:var(--navy);border-bottom:1px solid var(--border)}
-.header-inner { display:flex; align-items:center; justify-content:space-between; height: 100%; }
+/* ════ HEADER & NAV ════ */
+header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:70px;background:var(--navy);border-bottom:1px solid var(--border)}
 .logo-wrap{display:flex;align-items:center;gap:12px;text-decoration:none; cursor:pointer;}
 .logo-text{font-size:22px;font-weight:800;letter-spacing:0.1em;color:var(--white);}
-.header-center{font-size:11px;font-weight:600;letter-spacing:0.25em;color:var(--text-muted);text-transform:uppercase}
+
+.header-nav { display: flex; gap: 32px; align-items: center; justify-content: center; flex: 1;}
+.nav-link { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; text-decoration: none; transition: 0.2s; }
+.nav-link:hover { color: var(--white); }
+
 .header-right {display:flex; align-items:center; gap:24px;}
 .theme-btn {background:none; border:none; color:var(--text); cursor:pointer; padding:4px;}
 .theme-btn:hover {color:var(--white); transition: 0.2s;}
@@ -52,37 +52,56 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .lang-btn.active{color:var(--white); border-bottom-color: var(--white);}
 .lang-btn:hover{color:var(--white);}
 
+.mobile-nav { display: none; margin-top: 30px; gap: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.mobile-nav::-webkit-scrollbar { display: none; }
+.mobile-nav .nav-link { white-space: nowrap; font-size: 10px; }
+
 /* ════ HERO ════ */
-.hero{min-height:85vh;display:flex;flex-direction:column;justify-content:center;padding:120px 64px 80px;background:var(--navy);}
-.hero-content{max-width:800px}
+.hero{min-height:85vh;display:flex;flex-direction:column;justify-content:center;padding:120px 64px 80px;background:var(--navy); border-bottom: 1px solid var(--border);}
+.hero-content{max-width:800px;}
 .hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.3em;color:var(--text-muted);margin-bottom:20px;text-transform:uppercase;}
 .hero-title{font-size:clamp(50px, 9vw, 120px);font-weight:800;line-height:1;color:var(--white);margin-bottom:24px; text-transform: uppercase; letter-spacing: -0.03em;}
 .hero-desc{font-size:16px;line-height:1.6;color:var(--text-dim);max-width:550px;margin-bottom:40px; font-weight:400;}
 .btn-primary{font-family:var(--font-main);font-size:12px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;background:var(--blue);color:var(--btn-text);border:1px solid var(--blue);padding:18px 48px;cursor:pointer;text-decoration:none;display:inline-flex; transition: 0.3s;}
 .btn-primary:hover{background:transparent; color:var(--white);}
 
-/* ════ BANNER ════ */
-.banner-strip{border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:14px 48px;display:flex;align-items:center;justify-content:center;gap:60px;flex-wrap:wrap; background:var(--navy-2);}
-.banner-item{font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-dim)}
-
 /* ════ PRODUCTS ════ */
-.section-header{padding:80px 48px 40px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px}
-.section-title{font-size:20px;font-weight:700;color:var(--white);text-transform:uppercase; letter-spacing: 0.1em;}
-.filter-tabs{display:flex;gap:24px;flex-wrap:wrap}
-.filter-tab{font-size:11px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;padding:6px 0;border:none;border-bottom:1px solid transparent;background:none;color:var(--text-muted);cursor:pointer; transition:0.2s;}
-.filter-tab:hover,.filter-tab.active{color:var(--white); border-bottom-color:var(--white);}
+#products { padding: 0 0 100px 0; }
+.section-header { padding: 80px 48px 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.section-title { font-size: 20px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.1em; padding-bottom: 20px; }
+.filter-tabs { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: -1px; justify-content: flex-end; }
+.filter-tab { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; padding: 0 0 20px 0; border: none; border-bottom: 2px solid transparent; background: none; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+.filter-tab:hover, .filter-tab.active { color: var(--white); border-bottom-color: var(--white); }
 
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px; padding:0 48px 100px}
-.product-card{display:flex;flex-direction:column;cursor:pointer; transition:0.2s;}
-.product-card:hover .card-img img{transform:scale(1.03)}
-.card-img{width:100%;aspect-ratio:1/1;background:var(--navy-2);position:relative; overflow:hidden;}
-.card-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);}
-.card-badge{position:absolute;top:12px;left:12px;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--navy);color:var(--text);padding:6px 12px; border:1px solid var(--border);}
-.card-body{padding:20px 0;flex:1;display:flex;flex-direction:column}
-.card-cat{font-size:10px;font-weight:600;letter-spacing:0.15em;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px}
-.card-name{font-size:16px;font-weight:600;color:var(--white);margin-bottom:10px; line-height: 1.4;}
-.card-foot{display:flex;align-items:center;justify-content:space-between; margin-top:auto;}
-.card-price{font-size:15px;font-weight:700;color:var(--white);}
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; padding: 0 48px; }
+.product-card { display: flex; flex-direction: column; cursor: pointer; background: var(--navy); border: 1px solid var(--border); transition: 0.3s ease; height: 100%; }
+.product-card:hover { border-color: var(--text-dim); transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+.product-card:hover .card-img img { transform: scale(1.03); }
+.card-img { width: 100%; aspect-ratio: 1/1; background: var(--navy-2); position: relative; overflow: hidden; border-bottom: 1px solid var(--border); }
+.card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.card-badge { position: absolute; top: 16px; left: 16px; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; background: var(--navy); color: var(--text); padding: 6px 12px; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
+.card-body { padding: 24px; flex: 1; display: flex; flex-direction: column; }
+.card-cat { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+.card-name { font-size: 16px; font-weight: 600; color: var(--white); margin-bottom: 12px; line-height: 1.4; }
+.card-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+.card-price { font-size: 15px; font-weight: 700; color: var(--white); }
+.card-fee { font-size: 10px; color: var(--text-muted); margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+/* ════ EDITORIAL SECTIONS ════ */
+.editorial-wrapper { padding: 100px 48px; border-top: 1px solid var(--border); }
+.editorial-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 60px; }
+.ed-title { font-size: 14px; font-weight: 800; letter-spacing: 0.15em; color: var(--white); text-transform: uppercase; position: sticky; top: 100px; }
+.ed-content-box { background: var(--navy-2); border: 1px solid var(--border); padding: 48px; border-radius: 2px; }
+.ed-content-box p { font-size: 15px; line-height: 1.8; color: var(--text-dim); margin-bottom: 24px; }
+.ed-content-box p:last-child { margin-bottom: 0; }
+.ed-content-box strong { color: var(--white); font-weight: 600; }
+
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+.contact-card { background: var(--navy-2); border: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; align-items: flex-start; transition: 0.3s; cursor: pointer; text-decoration: none; border-radius: 2px; }
+.contact-card:hover { border-color: var(--white); background: transparent; transform: translateY(-3px); }
+.contact-icon { font-size: 20px; margin-bottom: 16px; color: var(--white); }
+.contact-label { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 8px; }
+.contact-sub { font-size: 12px; color: var(--text-muted); }
 
 /* ════ MODALS BASE ════ */
 .overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s}
@@ -92,11 +111,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .modal-close-abs{position:absolute;top:24px;right:32px;background:none;border:none;font-size:24px;font-weight:300;cursor:pointer;color:var(--text-muted);z-index:10; transition:0.2s;}
 .modal-close-abs:hover{color:var(--white);}
 
-/* ════ PREMIUM ORDER MODAL (V17 ARCHITECH) ════ */
+/* ════ PREMIUM ORDER MODAL ════ */
 .order-modal{max-width: 1200px; padding: 0; box-shadow: 0 20px 60px rgba(0,0,0,0.3);}
 .product-split{display:grid; grid-template-columns: 1.5fr 1fr;}
 
-/* Left: Gallery */
 .gallery-section{background: var(--navy-2); padding: 50px; display:flex; flex-direction:column; justify-content:center; align-items:center;}
 .gallery-main{width:100%; max-width:600px; aspect-ratio:1/1; background:var(--navy-3); margin-bottom:20px; position:relative; cursor:zoom-in; border:1px solid var(--border);}
 .gallery-main img{width:100%; height:100%; object-fit:contain;}
@@ -104,7 +122,6 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .gallery-thumbs img{width:80px; height:80px; object-fit:cover; cursor:pointer; border:1px solid var(--border-light); opacity:0.5; transition:0.2s; background:var(--navy-3);}
 .gallery-thumbs img:hover, .gallery-thumbs img.active{opacity:1; border-color:var(--text);}
 
-/* Right: Info */
 .info-section{padding: 60px 60px 60px 40px; display:flex; flex-direction:column;}
 .info-cat{font-size:11px;font-weight:600;letter-spacing:0.2em;color:var(--text-muted);text-transform:uppercase;margin-bottom:16px;}
 .info-title{font-size:36px;font-weight:700;color:var(--white);margin-bottom:12px; line-height:1.2; letter-spacing:-0.03em;}
@@ -119,6 +136,21 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .spec-value{font-size:14px;font-weight:600;color:var(--white); text-align:right;}
 
 .info-desc{font-size:14px; line-height:1.7; color:var(--text-dim); margin-bottom:40px; font-weight:400;}
+
+/* HOW IT WEARS & VIDEO COMPONENT */
+.media-btn-grid { display: grid; grid-template-columns: 1fr; gap: 12px; width: 100%; max-width: 600px; margin-top: 30px; }
+.how-it-wears-box { display:flex; justify-content:space-between; align-items:center; background: linear-gradient(135deg, var(--navy-2) 0%, var(--navy-3) 100%); padding: 20px; border: 1px solid var(--border-light); cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; border-radius: 2px;}
+.how-it-wears-box::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent); transform: skewX(-20deg); transition: 0.5s; }
+.how-it-wears-box:hover::before { left: 150%; }
+.how-it-wears-box:hover { border-color: var(--white); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+.hw-title { font-size: 12px; font-weight: 800; letter-spacing: 0.15em; color: var(--white); margin-bottom: 4px; text-transform:uppercase; display:flex; align-items:center; gap:8px;}
+.hw-sub { font-size: 11px; color: var(--text-dim); font-style:italic;}
+.hw-right { font-size: 20px; color: var(--text-muted); transition: 0.3s; }
+.how-it-wears-box:hover .hw-right { color: var(--white); transform: translateX(5px); }
+
+/* Video Modal */
+.video-modal { max-width: 450px; background: #000; padding: 0; border: 1px solid var(--border); }
+.video-modal iframe { width: 100%; height: 75vh; max-height: 800px; border: none; display: block; }
 
 .policy-box{border: 1px solid var(--border-light); padding:20px; margin-bottom:40px; background:var(--navy-2);}
 .policy-title{font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--white); margin-bottom:10px;}
@@ -135,14 +167,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .size-link{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-dim); text-decoration:none; cursor:pointer; border-bottom:1px solid transparent; padding-bottom:2px; transition:0.2s;}
 .size-link:hover{color:var(--white); border-bottom-color:var(--white);}
 
-/* ════ SOCIAL COPY MODAL ════ */
+/* ════ COPY & LIGHTBOX MODALS ════ */
 #copyOverlay { z-index: 10005; background:rgba(0,0,0,0.9); }
 .copy-modal { background:var(--navy); max-width:450px; padding:40px; text-align:center; border:1px solid var(--border); }
 .copy-title { font-size:16px; font-weight:700; letter-spacing:0.1em; color:var(--white); margin-bottom:16px; text-transform:uppercase;}
 .copy-text { font-family:monospace; font-size:12px; background:var(--navy-2); padding:16px; color:var(--text-dim); border:1px solid var(--border); margin-bottom:24px; text-align:left; line-height:1.5; white-space:pre-wrap;}
 .copy-sub { font-size:13px; color:var(--text-muted); margin-bottom:24px;}
 
-/* ════ LIGHTBOX (FULL SIZE IMAGE) ════ */
 .lightbox{position:fixed;inset:0;z-index:11000;background:rgba(0,0,0,0.95);display:none;align-items:center;justify-content:center; opacity:0; transition:opacity 0.3s;}
 .lightbox.show{display:flex; opacity:1;}
 .lightbox img{max-width:95vw; max-height:95vh; object-fit:contain; cursor:zoom-out;}
@@ -171,21 +202,58 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .btn-edit{background:transparent; color:var(--text-dim); border:none; cursor:pointer; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; transition:0.2s;}
 .btn-edit:hover{color:var(--white);}
 
-.toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--white);color:var(--btn-text);font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:16px 32px;z-index:99999;opacity:0;transition:all 0.3s;}
+.toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--white);color:var(--btn-text);font-size:12px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:16px 32px;z-index:99999;opacity:0;transition:all 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.2);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ════ DICTIONARY GROUP MENU CSS ════ */
+.dict-container { display: grid; grid-template-columns: 220px 1fr; gap: 0; border: 1px solid var(--border); border-radius: 4px; background: var(--navy-2); overflow: hidden; }
+.dict-sidebar { border-right: 1px solid var(--border); background: var(--navy-3); display: flex; flex-direction: column; }
+.dict-menu-btn { width: 100%; text-align: left; padding: 15px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); background: none; border: none; cursor: pointer; border-left: 3px solid transparent; transition: 0.2s; text-transform: uppercase; }
+.dict-menu-btn:hover { color: var(--white); background: rgba(255,255,255,0.05); }
+.dict-menu-btn.active { color: var(--white); background: var(--navy); border-left-color: var(--white); }
+.dict-editor { padding: 30px; overflow-y: auto; max-height: 60vh; background: var(--navy); }
+
+/* ════ TÍNH NĂNG CRO CSS ════ */
+@keyframes shimmer { 0% {background-position: -1000px 0;} 100% {background-position: 1000px 0;} }
+.skeleton { background: linear-gradient(90deg, var(--navy-2) 25%, var(--border) 50%, var(--navy-2) 75%); background-size: 1000px 100%; animation: shimmer 2s infinite linear; border:none;}
+@keyframes fomoPulse { 0% {opacity: 1;} 50% {opacity: 0.5; color: var(--red);} 100% {opacity: 1;} }
+.fomo-tag { font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; animation: fomoPulse 2s infinite; display:inline-block; margin-top:6px;}
+
+.mobile-sticky-cta { display: none; position: sticky; bottom: 0; left: 0; right: 0; background: var(--navy); padding: 16px 24px; border-top: 1px solid var(--border); z-index: 50; }
+
+/* ════ RESPONSIVE ════ */
 @media(max-width:900px){
   .product-split{grid-template-columns: 1fr;}
   .gallery-section{padding: 30px;}
-  .info-section{padding: 40px 30px;}
+  .info-section{padding: 40px 30px 100px;} 
   .order-modal{max-width: 600px;}
+  .editorial-grid { grid-template-columns: 1fr; gap: 30px; }
+  .ed-title { position: static; margin-bottom: -10px;}
+  .mobile-sticky-cta { display: flex; gap: 10px; }
+  .mobile-sticky-cta .cta-btn { padding: 14px; font-size: 11px; }
+  .desktop-cta-group { display: none; }
 }
 @media(max-width:768px){
-  header{padding:0 20px} .header-center{display:none}
-  .hero{padding:100px 24px 60px;} .hero-title{font-size:40px;}
-  .section-header, .products-grid{padding:30px 24px;}
+  header{padding:0 24px} 
+  .header-nav { display:none; } 
+  .mobile-nav { display: flex; } 
+  .hero{padding: 100px 24px 60px;} 
+  .hero-title{font-size:40px;}
+  #products { padding: 0 0 60px 0; }
+  .section-header { padding: 40px 24px 20px; flex-direction: column; align-items: flex-start; }
+  .products-grid { padding: 0 24px; gap: 20px;}
+  .editorial-wrapper { padding: 60px 24px; }
+  .filter-tabs { width: 100%; overflow-x: auto; justify-content: flex-start; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 24px; margin-bottom: 0;}
+  .filter-tabs::-webkit-scrollbar { display: none; }
+  .filter-tab { white-space: nowrap; flex-shrink: 0; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .ed-content-box { padding: 30px 24px; }
   .tab-panel{padding:24px;}
   .admin-hd, .admin-tabs{padding: 0 24px;}
+  .dict-container{ grid-template-columns: 1fr; }
+  .dict-sidebar{ border-right:none; border-bottom:1px solid var(--border); flex-direction:row; overflow-x:auto; }
+  .dict-menu-btn{ border-left:none; border-bottom:3px solid transparent; white-space:nowrap; }
+  .dict-menu-btn.active{ border-left-color:transparent; border-bottom-color:var(--white); }
   #dictEditorContainer > div > div { grid-template-columns: 1fr !important; gap: 10px !important; }
 }
 </style>
@@ -197,12 +265,35 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   <img id="lightboxImg" src="" alt="Full Size">
 </div>
 
+<div class="overlay" id="lookbookOverlay" style="z-index: 10500;">
+  <div class="modal" style="max-width: 1200px; padding: 40px; background: transparent; box-shadow: none;">
+    <button class="modal-close-abs" style="top:0px; right:20px; color:#fff; font-size: 40px;" onclick="closeOverlay('lookbookOverlay')">✕</button>
+    <div id="lookbookGrid" style="display:flex; flex-wrap:nowrap; gap:24px; overflow-x:auto; padding-bottom:20px;"></div>
+    <div style="text-align:center; color:rgba(255,255,255,0.7); font-size:12px; margin-top:20px; letter-spacing:0.1em; text-transform:uppercase;" data-i18n="lbHint">Click image to zoom in · Swipe to see more</div>
+  </div>
+</div>
+
+<div class="overlay" id="videoOverlay" style="z-index: 10500;">
+  <div class="modal video-modal">
+    <button class="modal-close-abs" style="top:10px; right:10px; color:#fff; font-size: 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" onclick="closeVideo()">✕</button>
+    <iframe id="videoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  </div>
+</div>
+
 <header>
   <div class="logo-wrap" ondblclick="openPass()">
     <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 75 L40 25 L65 75" stroke="var(--logo-color)" stroke-width="6" stroke-linejoin="miter"/><path d="M45 60 L70 20 L90 60" stroke="var(--logo-color)" stroke-width="6" stroke-linejoin="miter"/><path d="M40 75 L55 50 L70 75 Z" fill="var(--logo-color)"/></svg>
     <span class="logo-text">ARC'WARE</span>
   </div>
-  <div class="header-center" data-i18n="tagline">OFFICIAL STORE</div>
+  
+  <div class="header-nav">
+    <a href="#products" class="nav-link" data-i18n="navShop">SHOP</a>
+    <a href="#about" class="nav-link" data-i18n="navAbout">ABOUT</a>
+    <a href="#guarantee" class="nav-link" data-i18n="navGuar">GUARANTEE</a>
+    <a href="#policies" class="nav-link" data-i18n="navPol">POLICIES</a>
+    <a href="#contact" class="nav-link" data-i18n="navContact">CONTACT</a>
+  </div>
+
   <div class="header-right">
     <button class="theme-btn" onclick="toggleTheme()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
     <div class="lang-toggle">
@@ -220,28 +311,91 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <div style="margin-top:20px;">
       <a class="btn-primary" href="#products" data-i18n="shopBtn">SHOP COLLECTION</a>
     </div>
+    
+    <div class="mobile-nav">
+      <a href="#products" class="nav-link" data-i18n="navShop">SHOP</a>
+      <a href="#about" class="nav-link" data-i18n="navAbout">ABOUT</a>
+      <a href="#guarantee" class="nav-link" data-i18n="navGuar">GUARANTEE</a>
+      <a href="#policies" class="nav-link" data-i18n="navPol">POLICIES</a>
+      <a href="#contact" class="nav-link" data-i18n="navContact">CONTACT</a>
+    </div>
   </div>
 </section>
-
-<div class="banner-strip">
-  <div class="banner-item" data-i18n="b1">AUTHENTIC PRODUCTS</div>
-  <div class="banner-item" data-i18n="b2">WORLDWIDE SHIPPING</div>
-  <div class="banner-item" data-i18n="b3">SECURE PAYMENTS</div>
-</div>
 
 <section id="products">
   <div class="section-header">
     <div class="section-title" data-i18n="curCol">COLLECTION</div>
     <div class="filter-tabs">
       <button class="filter-tab active" onclick="filterProducts('all',this)" data-i18n="fAll">ALL</button>
-      <button class="filter-tab" onclick="filterProducts('Shell Jacket',this)">SHELL JACKET</button>
-      <button class="filter-tab" onclick="filterProducts('Insulated Layer',this)">INSULATED LAYER</button>
-      <button class="filter-tab" onclick="filterProducts('Footwear',this)">FOOTWEAR</button>
-      <button class="filter-tab" onclick="filterProducts('Backpack',this)">BACKPACK</button>
+      <button class="filter-tab" onclick="filterProducts('Shell Jacket',this)" data-i18n="fShell">SHELL JACKET</button>
+      <button class="filter-tab" onclick="filterProducts('Insulated Layer',this)" data-i18n="fInsul">INSULATED LAYER</button>
+      <button class="filter-tab" onclick="filterProducts('Footwear',this)" data-i18n="fFoot">FOOTWEAR</button>
+      <button class="filter-tab" onclick="filterProducts('Backpack',this)" data-i18n="fPack">BACKPACK</button>
       <button class="filter-tab" onclick="filterProducts('Others',this)" data-i18n="fOth">OTHERS</button>
     </div>
   </div>
-  <div class="products-grid" id="productsGrid"></div>
+  <div class="products-grid" id="productsGrid">
+      <div class="product-card"><div class="card-img skeleton"></div><div class="card-body"><div class="skeleton" style="height:10px; width:50%; margin-bottom:10px;"></div><div class="skeleton" style="height:16px; width:80%; margin-bottom:20px;"></div><div class="skeleton" style="height:14px; width:40%;"></div></div></div>
+  </div>
+</section>
+
+<section id="about" class="editorial-wrapper">
+  <div class="editorial-grid">
+    <div class="ed-title" data-i18n="secAboutTitle">THE ARC'WARE STORY</div>
+    <div class="ed-content-box" data-i18n="secAboutText">
+      <p>Born from a profound passion for the elements.</p>
+    </div>
+  </div>
+</section>
+
+<section id="guarantee" class="editorial-wrapper">
+  <div class="editorial-grid">
+    <div class="ed-title" data-i18n="secGuarTitle">AUTHENTIC GUARANTEE & CARE</div>
+    <div class="ed-content-box" data-i18n="secGuarText">
+      <p><strong>100% Authentic Guarantee.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section id="policies" class="editorial-wrapper">
+  <div class="editorial-grid">
+    <div class="ed-title" data-i18n="secPolTitle">PAYMENT POLICIES</div>
+    <div class="ed-content-box" data-i18n="secPolText">
+      <p><strong>International Orders:</strong> Fully protected.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="editorial-wrapper">
+  <div class="editorial-grid">
+    <div class="ed-title" data-i18n="secContactTitle">GET IN TOUCH</div>
+    <div style="width: 100%;">
+      <p style="font-size: 15px; color: var(--text-dim); margin-bottom: 30px;" data-i18n="secContactSub">Need sizing advice?</p>
+      
+      <div class="contact-grid">
+        <a class="contact-card" onclick="openSupportModal('IG')">
+          <div class="contact-icon">✦</div>
+          <div class="contact-label" data-i18n="ctIg">INSTAGRAM</div>
+          <div class="contact-sub" id="displayIgCard">@arcwarevn</div>
+        </a>
+        <a class="contact-card" onclick="openSupportModal('WA')">
+          <div class="contact-icon">✦</div>
+          <div class="contact-label" data-i18n="ctWa">WHATSAPP</div>
+          <div class="contact-sub" data-i18n="ctWaSub">Global Fast Support</div>
+        </a>
+        <a class="contact-card" onclick="openZaloModal()">
+          <div class="contact-icon">✦</div>
+          <div class="contact-label" data-i18n="btnZalo">MESSAGE ZALO</div>
+          <div class="contact-sub" data-i18n="ctZaloSub">Vietnam Fast Support</div>
+        </a>
+        <a class="contact-card" onclick="copyPhoneOnly()">
+          <div class="contact-icon">✦</div>
+          <div class="contact-label" data-i18n="btnPhone">PHONE NUMBER</div>
+          <div class="contact-sub" id="displayPhoneCard">090 123 4567</div>
+        </a>
+      </div>
+    </div>
+  </div>
 </section>
 
 <footer style="padding: 60px 48px 30px; background: var(--navy); border-top: 1px solid var(--border);">
@@ -249,8 +403,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <div>
       <h4 style="font-size:10px; font-weight:700; letter-spacing:0.15em; color:var(--white); margin-bottom:20px; text-transform:uppercase;" data-i18n="ftContact">CONTACT US</h4>
       <div style="display:flex; flex-direction:column; gap:10px;">
-        <span style="font-size:12px; color:var(--text-dim);" data-i18n="ftAddress">HCMC</span>
-        <span style="font-size:12px; color:var(--text-dim);" data-i18n="ftPhone">090 123 4567</span>
+        <span style="font-size:12px; color:var(--text-dim);" data-i18n="ftAddress">HCMC, Vietnam</span>
+        <span style="font-size:12px; color:var(--text-dim);" id="footerPhone">090 123 4567</span>
         <span style="font-size:12px; color:var(--text-dim);" data-i18n="ftEmail">contact@arcware.vn</span>
       </div>
     </div>
@@ -263,16 +417,38 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     </div>
   </div>
   
-  <div style="display:flex; justify-content:center; align-items:center; border-top: 1px solid var(--border); padding-top: 24px;">
-    <div style="font-size:10px; color:var(--text-muted); cursor:pointer; letter-spacing: 0.05em;" onclick="openPass()">© 2026 ARC'WARE. All rights reserved.</div>
+  <div style="display:flex; justify-content:space-between; align-items:center; border-top: 1px solid var(--border); padding-top: 24px;">
+    <div style="font-size:10px; font-weight:700; color:var(--white); letter-spacing:0.1em;" data-i18n="ftBrand">ARC'WARE VN</div>
+    <div style="font-size:10px; color:var(--text-muted); cursor:pointer; letter-spacing: 0.05em;" onclick="openPass()" data-i18n="ftCopy">© 2026 ARC'WARE. All rights reserved.</div>
   </div>
 </footer>
+
 <div class="toast" id="toast"></div>
 
 <div class="overlay" id="intOverlay">
   <div class="modal order-modal">
     <button class="modal-close-abs" onclick="closeOverlay('intOverlay')">✕</button>
     <div id="intModalBody"></div>
+  </div>
+</div>
+
+<div class="overlay" id="zaloOverlay">
+  <div class="modal copy-modal" style="max-width:400px; padding:40px;">
+    <button class="modal-close-abs" onclick="closeOverlay('zaloOverlay')">✕</button>
+    <div class="copy-title" data-i18n="zlTitle">CHOOSE CONTACT</div>
+    <div class="copy-sub" style="margin-bottom: 24px;" data-i18n="zlSub">Please select a number to message directly via Zalo.</div>
+    
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <button class="cta-btn" style="padding: 16px;" onclick="window.open('https://zalo.me/' + settings.zalo1, '_blank')">
+        <span style="display: block; font-size: 16px; margin-bottom: 4px; letter-spacing: 0.1em;" id="modalZalo1"></span>
+        <span style="font-size: 10px; font-weight: 500; opacity: 0.8; text-transform: none; letter-spacing: 0;" data-i18n="zlSales">Sales & Sizing Advice</span>
+      </button>
+      
+      <button class="cta-btn" style="padding: 16px; background: transparent; color: var(--white); border-color: var(--border);" onclick="window.open('https://zalo.me/' + settings.zalo2, '_blank')" onmouseover="this.style.borderColor='var(--white)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="display: block; font-size: 16px; margin-bottom: 4px; letter-spacing: 0.1em;" id="modalZalo2"></span>
+        <span style="font-size: 10px; font-weight: 500; color: var(--text-dim); text-transform: none; letter-spacing: 0;" data-i18n="zlTech">Technical & Warranty</span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -337,10 +513,11 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
       <div class="form-group">
         <label class="form-label">Price Policy *</label>
-        <select class="form-select" id="pPriceType">
-          <option value="diff">Price might be different between sizes, please DM for support</option>
-          <option value="same">Same price for all sizes</option>
-        </select>
+        <input type="text" class="form-input" id="pPriceType" list="priceOptions" placeholder="Type custom or select 'diff' / 'same'">
+        <datalist id="priceOptions">
+          <option value="diff" label="Default: Price might be different between sizes">
+          <option value="same" label="Default: Same price for all sizes">
+        </datalist>
       </div>
 
       <div class="form-group">
@@ -349,14 +526,23 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
       </div>
 
       <div class="form-group">
-        <label class="form-label" style="color:var(--red);">Upload Images (Auto-cropped to 1:1 Square)</label>
+        <label class="form-label" style="color:var(--red);">Upload Images (To Supabase Storage)</label>
         <input type="file" id="imgUpload" accept="image/*" multiple style="font-size:12px; color:var(--text-dim);" onchange="handleMultipleImages(this)">
         <div id="imgPreviewGrid" style="display:flex; gap:10px; margin-top:16px; overflow-x:auto;"></div>
+      </div>
+      
+      <div class="form-group" style="padding: 20px; border: 1px dashed var(--border-light); background: var(--navy-2);">
+        <label class="form-label" style="color:var(--white);">Upload Lookbook / Feedback</label>
+        <input type="file" id="imgHowItWears" accept="image/*" multiple style="font-size:12px; color:var(--text-dim);" onchange="handleHowItWearsImages(this)">
+        <div id="howItWearsPreviewGrid" style="display:flex; gap:10px; margin-top:16px; overflow-x:auto;"></div>
+        
+        <label class="form-label" style="color:var(--white); margin-top:20px;">Or Video Link (TikTok / YouTube)</label>
+        <input type="text" class="form-input" id="pVideoLink" placeholder="Paste link here..." style="background:var(--navy);">
       </div>
 
       <div class="form-group">
         <label class="form-label">Badge (Optional)</label>
-        <input type="text" class="form-input" id="pBadge" placeholder="e.g. NEW / HOT / RARE" style="margin-bottom:10px;">
+        <input type="text" class="form-input" id="pBadge" placeholder="e.g. RARE / HOT / NEW" style="margin-bottom:10px;">
       </div>
 
       <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
@@ -377,14 +563,14 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 <div class="admin-panel" id="adminPanel">
   <div class="admin-hd">
     <div class="admin-hd-title">MANAGEMENT</div>
-    <button class="btn-primary" style="padding:10px 24px;" onclick="closeAdmin()">CLOSE</button>
+    <button class="btn-primary" style="padding:10px 24px;" onclick="closeAdmin()">LOGOUT & CLOSE</button>
   </div>
   
   <div class="admin-tabs">
     <button class="admin-tab active" onclick="switchTab('products')">Products</button>
     <button class="admin-tab" onclick="switchTab('translations')">Content & Text</button>
     <button class="admin-tab" onclick="switchTab('settings')">Settings</button>
-    </div>
+  </div>
   
   <div class="tab-panel active" id="tab-products">
     <div id="dbStatusAlert" style="padding:16px; margin-bottom:30px; font-size:12px; font-weight:600; border:1px solid var(--border); letter-spacing:0.05em;"></div>
@@ -393,158 +579,176 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   </div>
 
   <div class="tab-panel" id="tab-translations">
-    <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 30px;">
-      Edit all text across the website. Use <b>&lt;br&gt;</b> to force a new line (e.g. in the Hero Title).
+    <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 20px;">
+      Edit all text across the website. Use <b>&lt;br&gt;</b> to force a new line. Changes update live in the background, remember to click SAVE ALL.
     </div>
-    <div id="dictEditorContainer"></div>
+    <div class="dict-container">
+      <div class="dict-sidebar" id="dictSidebar"></div>
+      <div class="dict-editor" id="dictEditorContainer"></div>
+    </div>
     <button class="btn-primary" style="margin-top:20px; width: 100%;" onclick="saveDictionary()">SAVE ALL CONTENT</button>
   </div>
 
   <div class="tab-panel" id="tab-settings">
     <div class="form-group"><label class="form-label">Instagram Handle</label><input type="text" class="form-input" id="sIg" placeholder="arcwarevn"></div>
     <div class="form-group"><label class="form-label">WhatsApp Number</label><input type="text" class="form-input" id="sWa" placeholder="84901234567"></div>
-    <div class="form-group" style="margin-top:40px;"><label class="form-label">Admin Password</label><input type="text" class="form-input" id="sPass"></div>
+    <div class="form-group"><label class="form-label">Zalo Number 1 (Sales)</label><input type="text" class="form-input" id="sZalo1" placeholder="84900000000"></div>
+    <div class="form-group"><label class="form-label">Zalo Number 2 (Technical)</label><input type="text" class="form-input" id="sZalo2" placeholder="84911111111"></div>
+    <div class="form-group"><label class="form-label">Display Phone Number</label><input type="text" class="form-input" id="sPhone" placeholder="090 123 4567"></div>
     <button class="btn-primary" onclick="saveSettings()">SAVE SETTINGS</button>
   </div>
 </div>
 
 <script>
 // =========================================================================
-// 🚨 BẮT BUỘC: ĐIỀN URL VÀ ANON KEY CỦA BẠN VÀO ĐÂY 🚨
-// Nếu không điền, khách vào web bằng điện thoại sẽ thấy web trống trơn!
+// 🚨 ĐIỀN URL VÀ ANON KEY CỦA BẠN VÀO ĐÂY 🚨
 // =========================================================================
 const SUPABASE_URL = "https://ooashjkxkkteuhqfswlt.supabase.co"; 
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9vYXNoamt4a2t0ZXVocWZzd2x0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5MzQ0NjgsImV4cCI6MjA4NzUxMDQ2OH0.HJuuBbZMDsnc44exViJTNEVpqrHf6NCVXNHAcS5YkB4";
 // =========================================================================
 
-// --- UTILS ---
-function getSafeObject(key, defaultObj) {
-  try { let val = localStorage.getItem(key); let parsed = val ? JSON.parse(val) : null; if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return defaultObj; return { ...defaultObj, ...parsed }; } catch(e) { return defaultObj; }
-}
-function getSafeArray(key) {
-  try { let val = localStorage.getItem(key); let parsed = val ? JSON.parse(val) : null; if (!Array.isArray(parsed)) return []; return parsed; } catch(e) { return []; }
-}
+function getSafeObject(key, defaultObj) { try { let val = localStorage.getItem(key); let parsed = val ? JSON.parse(val) : null; if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return defaultObj; return { ...defaultObj, ...parsed }; } catch(e) { return defaultObj; } }
 
-const dictKeys = {
-  heroEyebrow: "Hero Section - Top Line",
-  heroTitle: "Hero Section - Main Title (<br> for new line)",
-  heroDesc: "Hero Section - Description",
-  tagline: "Header - Tagline",
-  shopBtn: "Hero Section - Button Text",
-  b1: "Banner Item 1",
-  b2: "Banner Item 2",
-  b3: "Banner Item 3",
-  curCol: "Collection - Section Title",
-  fAll: "Filter - ALL",
-  fOth: "Filter - OTHERS",
-  sz: "Product Info - Size Label",
-  cnd: "Product Info - Condition Label",
-  noPr: "Product Info - No Price Text",
-  feeNt: "Product Card - Shipping Note",
-  priceDiff: "Policy - Price Varies By Size",
-  priceSame: "Policy - Same Price All Sizes",
-  shipNoteFull: "Policy - Full Shipping Note",
-  payPol: "Policy - Payment Title",
-  payPolGl: "Policy - Payment Global",
-  payPolVn: "Policy - Payment Vietnam",
-  ordIg: "Button - Order via Instagram",
-  ordWa: "Button - Order via WhatsApp",
-  szHelp: "Size Help - Question Text",
-  askSzIg: "Size Help - Ask IG Button",
-  askSzWa: "Size Help - Ask WA Button",
-  igCopied: "IG Modal - Copied Title",
-  igSub: "IG Modal - Subtext",
-  igGo: "IG Modal - Open App Button",
-  igCancel: "Modal - Cancel Button",
-  waCopied: "WA Modal - Copied Title",
-  waSub: "WA Modal - Subtext",
-  waGo: "WA Modal - Open App Button",
-  ftAbout: "Footer - About Title",
-  ftAboutText: "Footer - About Description",
-  ftContact: "Footer - Contact Title",
-  ftAddress: "Footer - Address",
-  ftPhone: "Footer - Phone Number",
-  ftEmail: "Footer - Email Address",
-  ftHours: "Footer - Working Hours Title",
-  ftDays: "Footer - Working Days",
-  ftTime: "Footer - Time"
+// ── ĐÃ BỔ SUNG TOÀN BỘ TEXT CÒN THIẾT VÀO DICT ──
+const dictKeys = { 
+  navShop: "Nav - Shop", navAbout: "Nav - About", navGuar: "Nav - Guarantee", navPol: "Nav - Policies", navContact: "Nav - Contact", 
+  heroEyebrow: "Hero - Top Line", heroTitle: "Hero - Main Title", heroDesc: "Hero - Description", shopBtn: "Hero - Button Text", 
+  curCol: "Collection - Title", fAll: "Filter - ALL", fShell: "Filter - Shell Jacket", fInsul: "Filter - Insulated Layer", fFoot: "Filter - Footwear", fPack: "Filter - Backpack", fOth: "Filter - OTHERS", 
+  sz: "Product Info - Size", cnd: "Product Info - Condition", noPr: "Product Info - No Price", feeNt: "Product Card - Shipping Note", 
+  hwTitle: "How It Wears - Image Title", hwSub: "How It Wears - Subtitle", vidTitle: "How It Wears - Video Title", vidSub: "How It Wears - Video Subtitle", 
+  priceDiff: "Policy - Price Varies By Size", priceSame: "Policy - Same Price All Sizes", shipNoteFull: "Policy - Full Shipping Note", 
+  payPol: "Policy - Payment Title", payPolGl: "Policy - Payment Global", payPolVn: "Policy - Payment Vietnam", 
+  ordIg: "Button - Order IG", ordWa: "Button - Order WA", szHelp: "Size Help - Text", askSzIg: "Size Help - Ask IG Button", askSzWa: "Size Help - Ask WA Button", 
+  igCopied: "Modal - Copied Title", igSub: "IG Modal - Subtext", igGo: "IG Modal - Open App", igCancel: "Modal - Cancel", 
+  waCopied: "WA Modal - Copied Title", waSub: "WA Modal - Subtext", waGo: "WA Modal - Open App", 
+  secAboutTitle: "Section - About Title", secAboutText: "Section - About Text", secGuarTitle: "Section - Guarantee Title", secGuarText: "Section - Guarantee Text", secPolTitle: "Section - Policies Title", secPolText: "Section - Policies Text", secContactTitle: "Section - Contact Title", secContactSub: "Section - Contact Subtext", 
+  btnZalo: "Button - Zalo", btnPhone: "Button - Phone", supportPrompt: "Pre-filled Support Message", phoneCopiedToast: "Phone Copied Toast", 
+  ftContact: "Footer - Contact Title", ftAddress: "Footer - Address", ftEmail: "Footer - Email", ftHours: "Footer - Working Hours Title", ftDays: "Footer - Working Days", ftTime: "Footer - Time",
+  lbHint: "Lookbook - Hint Text", ctIg: "Contact - IG Label", ctWa: "Contact - WA Label", ctWaSub: "Contact - WA Subtext", ctZaloSub: "Contact - Zalo Subtext",
+  zlTitle: "Zalo Modal - Title", zlSub: "Zalo Modal - Subtext", zlSales: "Zalo Modal - Sales Label", zlTech: "Zalo Modal - Tech Label",
+  ftBrand: "Footer - Brand Name", ftCopy: "Footer - Copyright",
+  msgOrder: "Pre-fill - Order Msg", msgSize: "Pre-fill - Size Msg", emptyCol: "Empty Collection Text", fastSell: "Badge - Fast Selling Text"
 };
 
-const defaultEN = {
-  heroEyebrow: "ARCWARE VN — OFFICIAL STORE",
-  heroTitle: "GEAR<br>YOU LIVE IN",
-  heroDesc: "Vietnam's premium source for Arc'teryx — one of the world's most technical outdoor gear.",
-  tagline: "OFFICIAL STORE", shopBtn: "SHOP COLLECTION", b1: "AUTHENTIC PRODUCTS", b2: "WORLDWIDE SHIPPING", b3: "SECURE PAYMENTS",
-  curCol: "COLLECTION", fAll: "ALL", fOth: "OTHERS",
-  sz: "SIZE", cnd: "CONDITION", noPr: "Contact for price", feeNt: "*Shipping fees not included",
-  priceDiff: "Price might be different between sizes, please DM for support.", priceSame: "Same price for all sizes.",
-  shipNoteFull: "Shipping fees are not included and may vary depending on regions.",
-  payPol: "PAYMENT POLICIES", payPolGl: "GLOBAL: 100% Payment via PayPal G&S.", payPolVn: "VIETNAM: 50% Deposit, 50% COD.",
-  ordIg: "ORDER VIA INSTAGRAM", ordWa: "ORDER VIA WHATSAPP",
-  szHelp: "Not sure about your size?", askSzIg: "ASK VIA INSTAGRAM", askSzWa: "ASK VIA WHATSAPP",
-  igCopied: "COPIED TO CLIPBOARD", igSub: "Now opening Instagram. Just paste this message in our DM.", igGo: "OPEN INSTAGRAM", igCancel: "CANCEL",
-  waCopied: "COPIED TO CLIPBOARD", waSub: "Now opening WhatsApp. Just paste this message in our chat.", waGo: "OPEN WHATSAPP",
-  ftAbout: "ABOUT ARC'WARE", ftAboutText: "Vietnam's premium source for technical outdoor gear. Built for the elements.",
-  ftContact: "CONTACT US", ftAddress: "Sa Dec, Dong Thap, Vietnam", ftPhone: "+84 90 123 4567", ftEmail: "contact@arcware.vn",
-  ftHours: "WORKING HOURS", ftDays: "Monday - Sunday", ftTime: "09:00 AM - 09:00 PM"
+const defaultEN = { 
+  navShop: "SHOP", navAbout: "ABOUT", navGuar: "GUARANTEE", navPol: "POLICIES", navContact: "CONTACT", 
+  heroEyebrow: "ARCWARE VN — OFFICIAL STORE", heroTitle: "GEAR<br>YOU LIVE IN", heroDesc: "Vietnam's premium source for Arc'teryx — one of the world's most technical outdoor gear.", shopBtn: "SHOP COLLECTION", 
+  curCol: "THE COLLECTION", fAll: "ALL", fShell: "SHELL JACKET", fInsul: "INSULATED LAYER", fFoot: "FOOTWEAR", fPack: "BACKPACK", fOth: "OTHERS", 
+  sz: "SIZE", cnd: "CONDITION", noPr: "Contact for price", feeNt: "*Shipping fees not included", 
+  hwTitle: "HOW IT WEARS", hwSub: "Will it suit you?", vidTitle: "ON-BODY VIDEO", vidSub: "See it in motion", 
+  priceDiff: "Price might be different between sizes, please DM for support.", priceSame: "Same price for all sizes.", shipNoteFull: "Shipping fees are not included and may vary depending on regions.", 
+  payPol: "PAYMENT POLICIES", payPolGl: "GLOBAL: 100% Payment via PayPal G&S.", payPolVn: "VIETNAM: 50% Deposit, 50% COD.", 
+  ordIg: "ORDER VIA INSTAGRAM", ordWa: "ORDER VIA WHATSAPP", szHelp: "Not sure about your size?", askSzIg: "ASK VIA INSTAGRAM", askSzWa: "ASK VIA WHATSAPP", 
+  igCopied: "COPIED TO CLIPBOARD", igSub: "Now opening Instagram. Just paste this message in our DM.", igGo: "OPEN INSTAGRAM", igCancel: "CANCEL", 
+  waCopied: "COPIED TO CLIPBOARD", waSub: "Now opening WhatsApp. Just paste this message in our chat.", waGo: "OPEN WHATSAPP", 
+  secAboutTitle: "THE ARC'WARE STORY", secAboutText: "<p>Born from a profound passion for the elements.</p>", secGuarTitle: "AUTHENTIC GUARANTEE & CARE", secGuarText: "<p><strong>100% Authentic Guarantee.</strong> We meticulously authenticate every piece.</p>", secPolTitle: "PAYMENT POLICIES", secPolText: "<p><strong>International Orders:</strong> Fully protected under PayPal Goods & Services guidelines.</p>", secContactTitle: "GET IN TOUCH", secContactSub: "Need sizing advice, product sourcing, or just want to talk gear? Reach out directly.", 
+  btnZalo: "MESSAGE ZALO", btnPhone: "PHONE NUMBER", supportPrompt: "Hi Arc'ware, I need some support and advice!", phoneCopiedToast: "PHONE NUMBER COPIED ✓", 
+  ftContact: "CONTACT US", ftAddress: "Sa Dec, Dong Thap, Vietnam", ftEmail: "contact@arcware.vn", ftHours: "WORKING Hours", ftDays: "Monday - Sunday", ftTime: "09:00 AM - 09:00 PM",
+  lbHint: "Click image to zoom in · Swipe to see more", ctIg: "INSTAGRAM", ctWa: "WHATSAPP", ctWaSub: "Global Fast Support", ctZaloSub: "Vietnam Fast Support",
+  zlTitle: "CHOOSE CONTACT", zlSub: "Please select a number to message directly via Zalo.", zlSales: "Sales & Sizing Advice", zlTech: "Technical & Warranty",
+  ftBrand: "ARC'WARE VN", ftCopy: "© 2026 ARC'WARE. All rights reserved.",
+  msgOrder: "I want to order:\n[NAME]\n[PRICE] | Size: [SIZE]", msgSize: "I need sizing advice for:\n[NAME]", emptyCol: "EMPTY COLLECTION", fastSell: "Fast Selling"
 };
 
-const defaultVI = {
-  heroEyebrow: "ARCWARE VN — CỬA HÀNG CHÍNH THỨC",
-  heroTitle: "TRANG BỊ<br>DÀNH CHO BẠN",
-  heroDesc: "Nguồn phân phối Arc'teryx cao cấp tại Việt Nam — thương hiệu đồ outdoor kỹ thuật hàng đầu thế giới.",
-  tagline: "CỬA HÀNG CHÍNH THỨC", shopBtn: "XEM BỘ SƯU TẬP", b1: "CHÍNH HÃNG 100%", b2: "GIAO HÀNG TOÀN QUỐC", b3: "THANH TOÁN AN TOÀN",
-  curCol: "BỘ SƯU TẬP", fAll: "TẤT CẢ", fOth: "KHÁC",
-  sz: "KÍCH CỠ", cnd: "TÌNH TRẠNG", noPr: "Liên hệ báo giá", feeNt: "*Giá chưa bao gồm phí vận chuyển",
-  priceDiff: "Giá có thể thay đổi tuỳ theo size. Vui lòng nhắn tin để được hỗ trợ.", priceSame: "Đồng giá cho tất cả các size.",
-  shipNoteFull: "Phí vận chuyển chưa bao gồm và có thể thay đổi tuỳ theo khu vực.",
-  payPol: "CHÍNH SÁCH THANH TOÁN", payPolGl: "QUỐC TẾ: Thanh toán 100% qua PayPal G&S.", payPolVn: "VIỆT NAM: Cọc 50%, thanh toán 50% COD.",
-  ordIg: "ĐẶT HÀNG QUA INSTAGRAM", ordWa: "ĐẶT HÀNG QUA WHATSAPP",
-  szHelp: "Bạn cần tư vấn size?", askSzIg: "HỎI QUA INSTAGRAM", askSzWa: "HỎI QUA WHATSAPP",
-  igCopied: "ĐÃ SAO CHÉP NỘI DUNG", igSub: "Hệ thống đang mở Instagram. Bạn chỉ cần 'Dán' (Paste) đoạn tin nhắn này cho chúng tôi.", igGo: "MỞ INSTAGRAM", igCancel: "HỦY",
-  waCopied: "ĐÃ SAO CHÉP NỘI DUNG", waSub: "Hệ thống đang mở WhatsApp. Bạn chỉ cần 'Dán' (Paste) đoạn tin nhắn này cho chúng tôi.", waGo: "MỞ WHATSAPP",
-  ftAbout: "VỀ ARC'WARE", ftAboutText: "Nguồn phân phối trang phục outdoor kỹ thuật cao cấp tại Việt Nam.",
-  ftContact: "LIÊN HỆ", ftAddress: "Sa Đéc, Đồng Tháp, Việt Nam", ftPhone: "090 123 4567", ftEmail: "contact@arcware.vn",
-  ftHours: "GIỜ LÀM VIỆC", ftDays: "Thứ Hai - Chủ Nhật", ftTime: "09:00 Sáng - 09:00 Tối"
+const defaultVI = { 
+  navShop: "SẢN PHẨM", navAbout: "CÂU CHUYỆN", navGuar: "CAM KẾT", navPol: "CHÍNH SÁCH", navContact: "LIÊN HỆ", 
+  heroEyebrow: "ARCWARE VN — CỬA HÀNG CHÍNH THỨC", heroTitle: "TRANG BỊ<br>DÀNH CHO BẠN", heroDesc: "Nguồn phân phối Arc'teryx cao cấp tại Việt Nam.", shopBtn: "XEM BỘ SƯU TẬP", 
+  curCol: "THE COLLECTION", fAll: "TẤT CẢ", fShell: "ÁO KHOÁC SHELL", fInsul: "ÁO GIỮ NHIỆT", fFoot: "GIÀY DÉP", fPack: "BALO", fOth: "KHÁC", 
+  sz: "KÍCH CỠ", cnd: "TÌNH TRẠNG", noPr: "Liên hệ báo giá", feeNt: "*Giá chưa bao gồm phí vận chuyển", 
+  hwTitle: "ẢNH LÊN DÁNG", hwSub: "Sản phẩm này mặc lên sẽ thế nào?", vidTitle: "VIDEO LÊN DÁNG", vidSub: "Xem review sản phẩm thực tế", 
+  priceDiff: "Giá có thể thay đổi tuỳ theo size. Vui lòng nhắn tin để được hỗ trợ.", priceSame: "Đồng giá cho tất cả các size.", shipNoteFull: "Phí vận chuyển chưa bao gồm và có thể thay đổi tuỳ theo khu vực.", 
+  payPol: "CHÍNH SÁCH THANH TOÁN", payPolGl: "QUỐC TẾ: Thanh toán 100% qua PayPal G&S.", payPolVn: "VIỆT NAM: Cọc 50%, thanh toán 50% COD.", 
+  ordIg: "ĐẶT HÀNG QUA INSTAGRAM", ordWa: "ĐẶT HÀNG QUA WHATSAPP", szHelp: "Bạn cần tư vấn size?", askSzIg: "HỎI QUA INSTAGRAM", askSzWa: "HỎI QUA WHATSAPP", 
+  igCopied: "ĐÃ SAO CHÉP NỘI DUNG", igSub: "Hệ thống đang mở Instagram. Bạn chỉ cần 'Dán' (Paste) đoạn tin nhắn này cho chúng tôi.", igGo: "MỞ INSTAGRAM", igCancel: "HỦY", 
+  waCopied: "ĐÃ SAO CHÉP NỘI DUNG", waSub: "Hệ thống đang mở WhatsApp. Bạn chỉ cần 'Dán' (Paste) đoạn tin nhắn này cho chúng tôi.", waGo: "MỞ WHATSAPP", 
+  secAboutTitle: "CÂU CHUYỆN CỦA ARC'WARE", secAboutText: "<p>Khởi nguồn từ niềm đam mê mãnh liệt với những chuyến đi.</p>", secGuarTitle: "CAM KẾT CHÍNH HÃNG & BẢO HÀNH", secGuarText: "<p><strong>Cam kết chính hãng tuyệt đối.</strong> Mọi sản phẩm đều được kiểm định khắt khe.</p>", secPolTitle: "CHÍNH SÁCH THANH TOÁN & GIAO DỊCH", secPolText: "<p><strong>Đơn hàng Quốc tế:</strong> Được bảo vệ tuyệt đối thông qua luật định của PayPal Goods & Services.</p>", secContactTitle: "LIÊN HỆ HỖ TRỢ TƯ VẤN", secContactSub: "Bạn cần tìm size, tìm mẫu áo hiếm, hay chỉ đơn giản là muốn chia sẻ về gear? Nhắn ngay cho chúng tôi.", 
+  btnZalo: "NHẮN TIN ZALO", btnPhone: "SỐ ĐIỆN THOẠI", supportPrompt: "Chào Arc'ware, mình cần hỗ trợ tư vấn!", phoneCopiedToast: "ĐÃ COPY SỐ ĐIỆN THOẠI ✓", 
+  ftContact: "LIÊN HỆ", ftAddress: "Sa Đéc, Đồng Tháp, Việt Nam", ftEmail: "contact@arcware.vn", ftHours: "GIỜ LÀM VIỆC", ftDays: "Thứ Hai - Chủ Nhật", ftTime: "09:00 Sáng - 09:00 Tối",
+  lbHint: "Chạm để phóng to · Vuốt để xem thêm", ctIg: "INSTAGRAM", ctWa: "WHATSAPP", ctWaSub: "Hỗ trợ nhanh toàn cầu", ctZaloSub: "Hỗ trợ nhanh tại Việt Nam",
+  zlTitle: "CHỌN LIÊN HỆ", zlSub: "Vui lòng chọn bộ phận để nhắn tin trực tiếp qua Zalo.", zlSales: "Tư vấn Bán hàng & Size", zlTech: "Hỗ trợ Kỹ thuật & Bảo hành",
+  ftBrand: "ARC'WARE VN", ftCopy: "© 2026 ARC'WARE. Mọi bản quyền được bảo lưu.",
+  msgOrder: "Tôi muốn đặt:\n[NAME]\n[PRICE] | Size: [SIZE]", msgSize: "Tư vấn size giúp mình mẫu này:\n[NAME]", emptyCol: "BỘ SƯU TẬP HIỆN ĐANG TRỐNG", fastSell: "Bán chạy"
 };
 
 let currentLang = 'en';
 let customEN = getSafeObject('aw_custom_en', defaultEN);
 let customVI = getSafeObject('aw_custom_vi', defaultVI);
-let settings = getSafeObject('aw_settings', { password: 'admin', ig: 'arcwarevn', wa: '84901234567' });
 
-// --- STATE & APP ---
+let settings = getSafeObject('aw_settings', { ig: 'arcwarevn', wa: '84901234567', zalo1: '84900000000', zalo2: '84911111111', phone: '0901234567' });
+
 let dbMode = 'local'; 
 let products = [];
 let currentFilter = 'all';
 let sbClient = null; 
 let editingId = null;
 let uploadedImagesArray = []; 
+let uploadedHowItWearsArray = [];
 
 window.onload = async () => {
   const savedLang = localStorage.getItem('aw_lang') || 'en';
   currentLang = savedLang;
   if(localStorage.getItem('aw_theme') === 'light') { document.documentElement.setAttribute('data-theme', 'light'); }
   
+  updateContactSettingsDisplay();
   buildDictionaryEditor();
   setLang(savedLang, document.querySelector(savedLang === 'vi' ? '.lang-btn:nth-child(2)' : '.lang-btn:nth-child(1)'));
   await initApp();
 };
 
+function updateContactSettingsDisplay() {
+  document.getElementById('displayIgCard').textContent = '@' + settings.ig;
+  document.getElementById('displayPhoneCard').textContent = settings.phone;
+  document.getElementById('footerPhone').textContent = settings.phone;
+  const z1 = document.getElementById('modalZalo1'); if(z1) z1.textContent = '+' + (settings.zalo1 || '84900000000');
+  const z2 = document.getElementById('modalZalo2'); if(z2) z2.textContent = '+' + (settings.zalo2 || '84911111111');
+}
+
 async function initApp() {
   if (SUPABASE_URL !== "YOUR_SUPABASE_PROJECT_URL_HERE" && typeof window.supabase !== 'undefined') {
     try {
       sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      // Test kết nối
       const { error } = await sbClient.from('products').select('id').limit(1);
       if (error) throw error;
-      
       dbMode = 'supabase';
       await loadSettingsFromCloud();
     } catch (e) { dbMode = 'local'; console.error("Lỗi kết nối Supabase:", e); }
   } else { dbMode = 'local'; }
-  
   await refreshProducts();
+}
+
+function openPass() { 
+  document.getElementById('passInput').value=''; 
+  document.getElementById('passError').style.display='none'; 
+  openOverlay('passOverlay'); 
+  setTimeout(()=>document.getElementById('passInput').focus(), 100); 
+}
+
+async function checkPass() {
+  if (dbMode !== 'supabase') return alert("Supabase chưa kết nối!");
+  const pass = document.getElementById('passInput').value;
+  const btn = document.querySelector('#passOverlay .btn-primary');
+  btn.textContent = "VERIFYING..."; btn.disabled = true;
+
+  const { data, error } = await sbClient.auth.signInWithPassword({ 
+    email: 'arcwarevn@gmail.com', 
+    password: pass 
+  });
+
+  btn.textContent = "LOGIN"; btn.disabled = false;
+
+  if (error) { 
+    document.getElementById('passError').style.display='block'; 
+    document.getElementById('passError').textContent = "Sai mật khẩu!";
+  } else { 
+    closeOverlay('passOverlay'); 
+    openAdmin(); 
+  } 
+}
+
+async function closeAdmin() { 
+  if (dbMode === 'supabase') await sbClient.auth.signOut(); 
+  document.getElementById('adminPanel').classList.remove('open'); 
+  document.body.style.overflow=''; 
 }
 
 async function loadSettingsFromCloud() {
@@ -552,25 +756,18 @@ async function loadSettingsFromCloud() {
     const { data, error } = await sbClient.from('site_settings').select('*');
     if (error) throw error;
     if (!data || !data.length) return;
+    const map = {}; data.forEach(row => { map[row.key] = row.value; });
     
-    const map = {};
-    data.forEach(row => { map[row.key] = row.value; });
+    if (map['ig']) settings.ig = map['ig']; if (map['wa']) settings.wa = map['wa'];
+    if (map['zalo1']) settings.zalo1 = map['zalo1']; if (map['zalo2']) settings.zalo2 = map['zalo2']; 
+    if (map['phone']) settings.phone = map['phone'];
     
-    if (map['ig']) settings.ig = map['ig'];
-    if (map['wa']) settings.wa = map['wa'];
-    if (map['password']) settings.password = map['password'];
     localStorage.setItem('aw_settings', JSON.stringify(settings));
-    
-    if (map['content_en']) {
-      try { customEN = { ...defaultEN, ...JSON.parse(map['content_en']) }; localStorage.setItem('aw_custom_en', JSON.stringify(customEN)); } catch(e){}
-    }
-    if (map['content_vi']) {
-      try { customVI = { ...defaultVI, ...JSON.parse(map['content_vi']) }; localStorage.setItem('aw_custom_vi', JSON.stringify(customVI)); } catch(e){}
-    }
-    
-    buildDictionaryEditor();
-    setLang(currentLang, document.querySelector(currentLang==='vi' ? '.lang-btn:nth-child(2)' : '.lang-btn:nth-child(1)'));
-  } catch(e) { console.error("Could not fetch settings from DB", e); }
+    updateContactSettingsDisplay();
+    if (map['content_en']) { try { customEN = { ...defaultEN, ...JSON.parse(map['content_en']) }; localStorage.setItem('aw_custom_en', JSON.stringify(customEN)); } catch(e){} }
+    if (map['content_vi']) { try { customVI = { ...defaultVI, ...JSON.parse(map['content_vi']) }; localStorage.setItem('aw_custom_vi', JSON.stringify(customVI)); } catch(e){} }
+    buildDictionaryEditor(); setLang(currentLang, document.querySelector(currentLang==='vi' ? '.lang-btn:nth-child(2)' : '.lang-btn:nth-child(1)'));
+  } catch(e) {}
 }
 
 async function saveToCloud(key, value) {
@@ -579,73 +776,82 @@ async function saveToCloud(key, value) {
 }
 
 function t(key) {
-  if (!key) return "";
-  let res;
+  if (!key) return ""; let res;
   if (currentLang === 'vi') { res = customVI[key] !== undefined ? customVI[key] : defaultVI[key]; } 
   else { res = customEN[key] !== undefined ? customEN[key] : defaultEN[key]; }
   return res !== undefined ? res : key;
 }
 
 function setLang(langCode, btnElement) {
-  currentLang = langCode;
-  localStorage.setItem('aw_lang', langCode);
+  currentLang = langCode; localStorage.setItem('aw_lang', langCode);
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   if(btnElement) btnElement.classList.add('active');
   document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
   renderProducts();
 }
 
-function buildDictionaryEditor() {
+// ── CẬP NHẬT GROUP ĐỂ QUẢN LÝ CONTENT MỚI THÊM VÀO ──
+const dictGroups = [
+  { id: 'nav', name: 'Navigation', keys: ['navShop', 'navAbout', 'navGuar', 'navPol', 'navContact'] },
+  { id: 'hero', name: 'Hero', keys: ['heroEyebrow', 'heroTitle', 'heroDesc', 'shopBtn'] },
+  { id: 'product', name: 'Product Store', keys: ['curCol', 'emptyCol', 'fAll', 'fShell', 'fInsul', 'fFoot', 'fPack', 'fOth', 'sz', 'cnd', 'noPr', 'feeNt', 'fastSell'] },
+  { id: 'order', name: 'Dynamic Pre-fills', keys: ['msgOrder', 'msgSize', 'hwTitle', 'hwSub', 'vidTitle', 'vidSub', 'priceDiff', 'priceSame', 'shipNoteFull', 'payPol', 'payPolGl', 'payPolVn', 'ordIg', 'ordWa', 'szHelp', 'askSzIg', 'askSzWa'] },
+  { id: 'editorial', name: 'Editorial Sec', keys: ['secAboutTitle', 'secAboutText', 'secGuarTitle', 'secGuarText', 'secPolTitle', 'secPolText', 'secContactTitle', 'secContactSub', 'ctIg', 'ctWa', 'btnZalo', 'btnPhone', 'ctWaSub', 'ctZaloSub', 'supportPrompt', 'phoneCopiedToast'] },
+  { id: 'modal', name: 'Modals', keys: ['lbHint', 'zlTitle', 'zlSub', 'zlSales', 'zlTech', 'igCopied', 'igSub', 'igGo', 'igCancel', 'waCopied', 'waSub', 'waGo'] },
+  { id: 'footer', name: 'Footer', keys: ['ftContact', 'ftAddress', 'ftEmail', 'ftHours', 'ftDays', 'ftTime', 'ftBrand', 'ftCopy'] }
+];
+
+function updateLivePreview(key, lang, value) {
+  if (lang === 'en') customEN[key] = value;
+  if (lang === 'vi') customVI[key] = value;
+  if (lang === currentLang) {
+    document.querySelectorAll(`[data-i18n="${key}"]`).forEach(el => { el.innerHTML = value; });
+  }
+}
+
+function renderDictGroup(groupId) {
+  document.querySelectorAll('.dict-menu-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(`btn-group-${groupId}`).classList.add('active');
+  
+  const group = dictGroups.find(g => g.id === groupId);
   let html = '';
-  Object.keys(dictKeys).forEach(key => {
+  group.keys.forEach(key => {
     let enVal = customEN[key] !== undefined ? customEN[key] : defaultEN[key];
     let viVal = customVI[key] !== undefined ? customVI[key] : defaultVI[key];
-    html += `
-      <div style="margin-bottom: 24px; border: 1px solid var(--border); padding: 16px; border-radius: 4px; background: var(--navy-2);">
-        <div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.1em; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">${dictKeys[key]}</div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-          <div>
-            <label style="display:block; font-size:10px; font-weight: 600; color:var(--text-muted); margin-bottom:4px; letter-spacing: 0.1em;">ENGLISH</label>
-            <input type="text" class="form-input" style="background:var(--navy);" id="dict_en_${key}" value="${enVal.replace(/"/g, '&quot;')}">
-          </div>
-          <div>
-            <label style="display:block; font-size:10px; font-weight: 600; color:var(--text-muted); margin-bottom:4px; letter-spacing: 0.1em;">VIETNAMESE</label>
-            <input type="text" class="form-input" style="background:var(--navy);" id="dict_vi_${key}" value="${viVal.replace(/"/g, '&quot;')}">
-          </div>
-        </div>
-      </div>`;
+    html += `<div style="margin-bottom: 24px; border: 1px solid var(--border); padding: 16px; border-radius: 4px; background: var(--navy-2);"><div style="font-size: 11px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.1em; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">${dictKeys[key] || key}</div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;"><div><label style="display:block; font-size:10px; font-weight: 600; color:var(--text-muted); margin-bottom:4px; letter-spacing: 0.1em;">ENGLISH</label><textarea class="form-textarea" style="background:var(--navy); min-height:60px;" id="dict_en_${key}" oninput="updateLivePreview('${key}', 'en', this.value)">${enVal}</textarea></div><div><label style="display:block; font-size:10px; font-weight: 600; color:var(--text-muted); margin-bottom:4px; letter-spacing: 0.1em;">VIETNAMESE</label><textarea class="form-textarea" style="background:var(--navy); min-height:60px;" id="dict_vi_${key}" oninput="updateLivePreview('${key}', 'vi', this.value)">${viVal}</textarea></div></div></div>`;
   });
   document.getElementById('dictEditorContainer').innerHTML = html;
 }
 
+function buildDictionaryEditor() {
+  const sidebar = document.getElementById('dictSidebar');
+  if(!sidebar) return; 
+  sidebar.innerHTML = dictGroups.map(g => `<button class="dict-menu-btn" id="btn-group-${g.id}" onclick="renderDictGroup('${g.id}')">${g.name}</button>`).join('');
+  renderDictGroup(dictGroups[0].id); 
+}
+
 async function saveDictionary() {
   Object.keys(dictKeys).forEach(key => {
-    let enEl = document.getElementById(`dict_en_${key}`);
-    let viEl = document.getElementById(`dict_vi_${key}`);
-    if(enEl) customEN[key] = enEl.value;
-    if(viEl) customVI[key] = viEl.value;
+    let enEl = document.getElementById(`dict_en_${key}`); let viEl = document.getElementById(`dict_vi_${key}`);
+    if(enEl) customEN[key] = enEl.value; if(viEl) customVI[key] = viEl.value;
   });
-  localStorage.setItem('aw_custom_en', JSON.stringify(customEN));
-  localStorage.setItem('aw_custom_vi', JSON.stringify(customVI));
-  
-  await saveToCloud('content_en', JSON.stringify(customEN));
-  await saveToCloud('content_vi', JSON.stringify(customVI));
-  
-  showToast("CONTENT SYNCED TO DATABASE ✓");
-  setLang(currentLang, document.querySelector(`.lang-btn.active`));
+  localStorage.setItem('aw_custom_en', JSON.stringify(customEN)); localStorage.setItem('aw_custom_vi', JSON.stringify(customVI));
+  await saveToCloud('content_en', JSON.stringify(customEN)); await saveToCloud('content_vi', JSON.stringify(customVI));
+  showToast("CONTENT SYNCED TO DATABASE ✓"); setLang(currentLang, document.querySelector(`.lang-btn.active`));
 }
 
 async function saveSettings() { 
-  settings.ig = document.getElementById('sIg').value.trim(); 
-  settings.wa = document.getElementById('sWa').value.trim(); 
-  const p = document.getElementById('sPass').value.trim(); 
-  if(p) settings.password = p; 
+  settings.ig = document.getElementById('sIg').value.trim(); settings.wa = document.getElementById('sWa').value.trim(); 
+  settings.zalo1 = document.getElementById('sZalo1').value.trim(); settings.zalo2 = document.getElementById('sZalo2').value.trim(); 
+  settings.phone = document.getElementById('sPhone').value.trim(); 
   
   localStorage.setItem('aw_settings', JSON.stringify(settings));
-  await saveToCloud('ig', settings.ig);
-  await saveToCloud('wa', settings.wa);
-  await saveToCloud('password', settings.password);
-  showToast("SETTINGS SYNCED TO DATABASE ✓"); 
+  
+  await saveToCloud('ig', settings.ig); await saveToCloud('wa', settings.wa); 
+  await saveToCloud('zalo1', settings.zalo1); await saveToCloud('zalo2', settings.zalo2); 
+  await saveToCloud('phone', settings.phone);
+  
+  updateContactSettingsDisplay(); showToast("SETTINGS SYNCED TO DATABASE ✓"); 
 }
 
 function toggleTheme() {
@@ -663,7 +869,7 @@ async function refreshProducts() {
       products = data || [];
       document.getElementById('dbStatusAlert').innerHTML = "STATUS: ONLINE (SUPABASE CONNECTED)";
     } catch (e) { document.getElementById('dbStatusAlert').innerHTML = "STATUS: ERROR FETCHING PRODUCTS"; }
-  } else { document.getElementById('dbStatusAlert').innerHTML = "STATUS: BẠN CHƯA ĐIỀN API KEY VÀO CODE HTML"; }
+  }
   renderProducts(); renderAdminList();
 }
 
@@ -672,8 +878,7 @@ async function convertCurrency() {
   if(!vndInput) return alert('Input VND');
   try {
     document.getElementById('pPriceFinal').value = "Loading rate...";
-    const res = await fetch('https://open.er-api.com/v6/latest/USD');
-    const data = await res.json();
+    const res = await fetch('https://open.er-api.com/v6/latest/USD'); const data = await res.json();
     const usd = Math.round(parseInt(vndInput) / data.rates.VND);
     const formattedVND = new Intl.NumberFormat('vi-VN').format(vndInput);
     document.getElementById('pPriceFinal').value = `${formattedVND} VND / ~$${usd}`;
@@ -684,40 +889,88 @@ async function convertCurrency() {
   }
 }
 
-function compressAndCropSquare(file, callback) {
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
+// === SUPABASE STORAGE UPLOAD LOGIC ===
+async function uploadBlobToSupabase(blob) {
+  if (dbMode !== 'supabase') return null; 
+  const fileName = `img-${Date.now()}-${Math.floor(Math.random()*1000)}.jpg`;
+  try {
+    const { data, error } = await sbClient.storage.from('arcware-media').upload(fileName, blob, { contentType: 'image/jpeg' });
+    if (error) throw error;
+    const { data: urlData } = sbClient.storage.from('arcware-media').getPublicUrl(fileName);
+    return urlData.publicUrl;
+  } catch (err) {
+    console.error("Lỗi upload ảnh:", err);
+    alert("Lỗi upload ảnh! Đảm bảo tạo bucket arcware-media và cài Policy cho Storage.");
+    return null;
+  }
+}
+
+function compressAndCropSquareBlob(file, callback) {
+  const reader = new FileReader(); reader.readAsDataURL(file);
   reader.onload = event => {
-    const img = new Image();
-    img.src = event.target.result;
+    const img = new Image(); img.src = event.target.result;
     img.onload = () => {
       const canvas = document.createElement('canvas');
       const size = Math.min(img.width, img.height);
-      const sx = (img.width - size) / 2;
-      const sy = (img.height - size) / 2;
-      const targetSize = Math.min(size, 1000); 
+      const sx = (img.width - size) / 2; const sy = (img.height - size) / 2; const targetSize = Math.min(size, 1000); 
       canvas.width = targetSize; canvas.height = targetSize;
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, targetSize, targetSize);
+      const ctx = canvas.getContext('2d'); ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, targetSize, targetSize);
       ctx.drawImage(img, sx, sy, size, size, 0, 0, targetSize, targetSize);
-      callback(canvas.toDataURL('image/jpeg', 0.8));
+      canvas.toBlob(callback, 'image/jpeg', 0.85);
+    };
+  };
+}
+
+function compressAndCropPortraitBlob(file, callback) {
+  const reader = new FileReader(); reader.readAsDataURL(file);
+  reader.onload = event => {
+    const img = new Image(); img.src = event.target.result;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let sWidth = img.width, sHeight = img.height, sx = 0, sy = 0; const targetRatio = 4 / 5; const imgRatio = img.width / img.height;
+      if (imgRatio > targetRatio) { sWidth = img.height * targetRatio; sx = (img.width - sWidth) / 2; } else { sHeight = img.width / targetRatio; sy = (img.height - sHeight) / 2; }
+      canvas.width = 1200; canvas.height = 1500;
+      const ctx = canvas.getContext('2d'); ctx.fillStyle = "#000000"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(callback, 'image/jpeg', 0.85);
     };
   };
 }
 
 async function handleMultipleImages(input) {
   const files = Array.from(input.files).slice(0,5); 
-  uploadedImagesArray = [];
-  document.getElementById('imgPreviewGrid').innerHTML = '';
+  if(files.length === 0) return;
+  document.getElementById('saveProductBtn').textContent = "UPLOADING IMAGES..."; document.getElementById('saveProductBtn').disabled = true;
+  uploadedImagesArray = []; document.getElementById('imgPreviewGrid').innerHTML = '';
   
   for (let file of files) {
-    const croppedBase64 = await new Promise(resolve => compressAndCropSquare(file, resolve));
-    uploadedImagesArray.push(croppedBase64);
-    const img = document.createElement('img');
-    img.src = croppedBase64;
-    img.style.width = '60px'; img.style.height = '60px'; img.style.objectFit = 'cover'; img.style.border = '1px solid var(--border)';
-    document.getElementById('imgPreviewGrid').appendChild(img);
+    const blob = await new Promise(resolve => compressAndCropSquareBlob(file, resolve));
+    const publicUrl = await uploadBlobToSupabase(blob);
+    if(publicUrl) {
+      uploadedImagesArray.push(publicUrl);
+      const img = document.createElement('img'); img.src = publicUrl; img.style.width = '60px'; img.style.height = '60px'; img.style.objectFit = 'cover'; img.style.border = '1px solid var(--border)';
+      document.getElementById('imgPreviewGrid').appendChild(img);
+    }
   }
+  document.getElementById('saveProductBtn').textContent = "SAVE PRODUCT"; document.getElementById('saveProductBtn').disabled = false;
+}
+
+async function handleHowItWearsImages(input) {
+  const files = Array.from(input.files).slice(0,5); 
+  if(files.length === 0) return;
+  document.getElementById('saveProductBtn').textContent = "UPLOADING LOOKBOOK..."; document.getElementById('saveProductBtn').disabled = true;
+  uploadedHowItWearsArray = []; document.getElementById('howItWearsPreviewGrid').innerHTML = '';
+  
+  for (let file of files) {
+    const blob = await new Promise(resolve => compressAndCropPortraitBlob(file, resolve));
+    const publicUrl = await uploadBlobToSupabase(blob);
+    if(publicUrl) {
+      uploadedHowItWearsArray.push(publicUrl);
+      const img = document.createElement('img'); img.src = publicUrl; img.style.width = '48px'; img.style.height = '60px'; img.style.objectFit = 'cover'; img.style.border = '1px solid var(--border)';
+      document.getElementById('howItWearsPreviewGrid').appendChild(img);
+    }
+  }
+  document.getElementById('saveProductBtn').textContent = "SAVE PRODUCT"; document.getElementById('saveProductBtn').disabled = false;
 }
 
 // ── CRUD ──
@@ -730,9 +983,9 @@ async function saveProduct() {
     price: document.getElementById('pPriceFinal').value || document.getElementById('pPriceVND').value,
     price_type: document.getElementById('pPriceType').value,
     sizes: document.getElementById('pSizes').value.trim(), badge: document.getElementById('pBadge').value.trim(), 
-    description_en: document.getElementById('pDescEN').value.trim(),
-    description_vi: document.getElementById('pDescVI').value.trim(),
-    gallery: JSON.stringify(uploadedImagesArray), image: uploadedImagesArray[0] || '' 
+    description_en: document.getElementById('pDescEN').value.trim(), description_vi: document.getElementById('pDescVI').value.trim(),
+    gallery: JSON.stringify(uploadedImagesArray), image: uploadedImagesArray[0] || '',
+    how_it_wears: JSON.stringify(uploadedHowItWearsArray), video_link: document.getElementById('pVideoLink').value.trim() 
   };
 
   const btn = document.getElementById('saveProductBtn');
@@ -746,7 +999,7 @@ async function saveProduct() {
       if (errObj) throw new Error(errObj.message);
     } 
     closeOverlay('productOverlay'); showToast("SAVED ✓"); await refreshProducts();
-  } catch(e) { alert("ERROR: " + e.message); } 
+  } catch(e) { alert("ERROR (Check RLS & Auth): " + e.message); } 
   finally { btn.textContent = "SAVE PRODUCT"; btn.disabled = false; }
 }
 
@@ -758,32 +1011,42 @@ async function deleteProduct(id) {
   } catch(e) { alert("ERROR: " + e.message); }
 }
 
-// ── RENDER ──
+// ── RENDER TRẢ VỀ THEO TỪ ĐIỂN ──
 function renderProducts() {
   const grid = document.getElementById('productsGrid');
   const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
-  if (!filtered.length) { grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-size:12px; letter-spacing:0.1em; color:var(--text-muted);">EMPTY COLLECTION</div>`; return; }
+  if (!filtered.length) { grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-size:12px; letter-spacing:0.1em; color:var(--text-muted);" data-i18n="emptyCol">${t('emptyCol')}</div>`; return; }
   
   grid.innerHTML = filtered.map(p => `
     <div class="product-card" onclick="openInterest('${p.id}')">
-      <div class="card-img"><img src="${p.image||''}" onerror="this.style.display='none'">${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}</div>
-      <div class="card-body">
+<div class="card-img"><img src="${p.image||''}" loading="lazy" onerror="this.style.display='none'">${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}</div>      <div class="card-body">
         <div class="card-cat">${t(p.category)||p.category} · ${t(p.condition)||p.condition||'N/A'}</div>
         <div class="card-name">${p.name}</div>
-        <div class="card-foot">
-          <div class="card-price">${p.price||t('noPr')}</div>
-        </div>
-        <p style="font-size:10px; color:var(--text-muted); margin-top:8px;">${t('feeNt')}</p>
+        <div class="card-foot"><div class="card-price">${p.price||t('noPr')}</div></div>
+        <div class="card-fee">${t('feeNt')}</div>
       </div>
     </div>`).join('');
 }
 
 function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('imageLightbox').classList.add('show'); }
 function closeLightbox() { document.getElementById('imageLightbox').classList.remove('show'); }
-function swapMainImage(src) {
-  document.getElementById('mainGalleryImage').src = src;
-  document.querySelectorAll('.gallery-thumbs img').forEach(t => t.classList.remove('active'));
-  event.target.classList.add('active');
+function swapMainImage(src) { document.getElementById('mainGalleryImage').src = src; document.querySelectorAll('.gallery-thumbs img').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); }
+
+function openVideo(url) {
+  let embedUrl = '';
+  if(url.includes('tiktok.com')) { const match = url.match(/video\/(\d+)/); if(match) embedUrl = `https://www.tiktok.com/embed/v2/${match[1]}`; } 
+  else if(url.includes('youtube.com/watch') || url.includes('youtu.be/')) { const match = url.match(/(?:v=|youtu\.be\/)([^&?]+)/); if(match) embedUrl = `https://www.youtube.com/embed/${match[1]}`; } 
+  else if(url.includes('youtube.com/shorts/')) { const match = url.match(/shorts\/([^&?]+)/); if(match) embedUrl = `https://www.youtube.com/embed/${match[1]}`; }
+  if(embedUrl) { document.getElementById('videoIframe').src = embedUrl; openOverlay('videoOverlay'); } else { window.open(url, '_blank'); }
+}
+function closeVideo() { document.getElementById('videoIframe').src = ''; closeOverlay('videoOverlay'); }
+
+function openLookbook(id) {
+   const p = products.find(x => x.id === id); if (!p) return;
+   let hwArr = []; try { hwArr = JSON.parse(p.how_it_wears); } catch(e){}
+   const grid = document.getElementById('lookbookGrid');
+   grid.innerHTML = hwArr.map(src => `<img src="${src}" style="height:70vh; width:auto; aspect-ratio:4/5; object-fit:cover; border:1px solid var(--border-light); border-radius:4px; box-shadow:0 10px 40px rgba(0,0,0,0.6); cursor:zoom-in;" onclick="openLightbox(this.src)">`).join('');
+   openOverlay('lookbookOverlay');
 }
 
 function openInterest(id) {
@@ -793,22 +1056,38 @@ function openInterest(id) {
     const galArr = JSON.parse(p.gallery);
     if(galArr && galArr.length > 0) {
       firstImg = galArr[0];
-      if(galArr.length > 1) {
-        galHtml = `<div class="gallery-thumbs">` + galArr.map((img, i) => `<img src="${img}" onclick="swapMainImage('${img}')" class="${i===0?'active':''}">`).join('') + `</div>`;
-      }
+      if(galArr.length > 1) { galHtml = `<div class="gallery-thumbs">` + galArr.map((img, i) => `<img src="${img}" onclick="swapMainImage('${img}')" class="${i===0?'active':''}">`).join('') + `</div>`; }
     }
   } catch(e){}
 
-  const prefillOrder = currentLang === 'vi' 
-    ? `Tôi muốn đặt:\n${p.name}\n${p.price} | Size: ${p.sizes||'N/A'} | Cond: ${t(p.condition)||p.condition||'N/A'}`
-    : `I want to order:\n${p.name}\n${p.price} | Size: ${p.sizes||'N/A'} | Cond: ${p.condition||'N/A'}`;
-  const prefillSize = currentLang === 'vi' ? `Tư vấn size giúp mình mẫu này:\n${p.name}` : `I need sizing advice for:\n${p.name}`;
-  const priceNoteText = (p.price_type === 'same') ? t('priceSame') : t('priceDiff');
+  let mediaHtml = ''; let hwArr = [];
+  try { if(p.how_it_wears) hwArr = JSON.parse(p.how_it_wears); } catch(e){}
+  if(hwArr.length > 0 || p.video_link) {
+      mediaHtml += `<div class="media-btn-grid">`;
+      if(hwArr.length > 0) { mediaHtml += `<div class="how-it-wears-box" onclick="openLookbook('${p.id}')"><div><div class="hw-title">✦ ${t('hwTitle')}</div><div class="hw-sub">${t('hwSub')}</div></div><div class="hw-right">→</div></div>`; }
+      if(p.video_link) { mediaHtml += `<div class="how-it-wears-box" onclick="openVideo('${p.video_link}')"><div><div class="hw-title">▶ ${t('vidTitle')}</div><div class="hw-sub">${t('vidSub')}</div></div><div class="hw-right">→</div></div>`; }
+      mediaHtml += `</div>`;
+  }
+
+  let fomoHtml = '';
+  if(p.badge && (p.badge.toUpperCase().includes('RARE') || p.badge.toUpperCase().includes('HOT') || p.badge.toUpperCase().includes('NEW'))) {
+      fomoHtml = `<div class="fomo-tag">⚡ ${p.badge} - ${t('fastSell')}</div>`;
+  }
+
+  // ── DÙNG REPLACE BIẾN ĐỂ THAY THẾ CHUỖI TỪ ĐIỂN THAY VÌ HARDCODE TERNARY TẠI ĐÂY ──
+  const prefillOrder = t('msgOrder').replace('[NAME]', p.name).replace('[PRICE]', p.price||t('noPr')).replace('[SIZE]', p.sizes||'N/A');
+  const prefillSize = t('msgSize').replace('[NAME]', p.name);
+  
+  const priceNoteText = (p.price_type === 'same') ? t('priceSame') : (p.price_type === 'diff' ? t('priceDiff') : (p.price_type || t('priceDiff')));
   const displayDesc = currentLang === 'vi' ? (p.description_vi || p.description_en || p.description || '') : (p.description_en || p.description || '');
 
   document.getElementById('intModalBody').innerHTML = `
     <div class="product-split">
-      <div class="gallery-section"><div class="gallery-main"><img id="mainGalleryImage" src="${firstImg}" onclick="openLightbox(this.src)"></div>${galHtml}</div>
+      <div class="gallery-section">
+        <div class="gallery-main"><img id="mainGalleryImage" src="${firstImg}" onclick="openLightbox(this.src)"></div>
+        ${galHtml}
+        ${mediaHtml} 
+      </div>
       <div class="info-section">
         <div class="info-cat">${t(p.category)||p.category}</div>
         <div class="info-title">${p.name}</div>
@@ -816,13 +1095,14 @@ function openInterest(id) {
         <div class="info-price-note">${priceNoteText}</div>
         <div class="ship-note">${t('shipNoteFull')}</div>
         <div class="spec-grid">
-          <div class="spec-item"><span class="spec-label">${t('sz')}</span><span class="spec-value">${p.sizes||'N/A'}</span></div>
+          <div class="spec-item"><span class="spec-label">${t('sz')}</span><div><div class="spec-value">${p.sizes||'N/A'}</div>${fomoHtml}</div></div>
           <div class="spec-item"><span class="spec-label">${t('cnd')}</span><span class="spec-value">${t(p.condition)||p.condition||'N/A'}</span></div>
         </div>
         <div class="info-desc">${displayDesc.replace(/\n/g, '<br>')}</div>
+        
         <div class="policy-box"><div class="policy-title">${t('payPol')}</div><p>${t('payPolGl')}</p><p>${t('payPolVn')}</p></div>
         
-        <div class="cta-group">
+        <div class="cta-group desktop-cta-group">
           <button class="cta-btn" onclick="openCopyModal('IG', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordIg')}</button>
           <button class="cta-btn" onclick="openCopyModal('WA', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordWa')}</button>
         </div>
@@ -834,9 +1114,14 @@ function openInterest(id) {
             <span class="size-link" onclick="openCopyModal('WA', '${prefillSize.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('askSzWa')}</span>
           </div>
         </div>
-        
       </div>
-    </div>`;
+    </div>
+    
+    <div class="mobile-sticky-cta">
+        <button class="cta-btn" style="flex:1;" onclick="openCopyModal('IG', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordIg')}</button>
+        <button class="cta-btn" style="flex:1; background:var(--navy-3); border-color:var(--navy-3); color:var(--white);" onclick="openCopyModal('WA', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordWa')}</button>
+    </div>
+    `;
   openOverlay('intOverlay');
 }
 
@@ -845,19 +1130,14 @@ function openCopyModal(platform, msg) {
   currentSocialPlatform = platform;
   navigator.clipboard.writeText(msg).then(() => {
     document.getElementById('copyMsg').textContent = msg;
-    if (platform === 'IG') {
-      document.getElementById('copyTitle').textContent = t('igCopied');
-      document.getElementById('copySub').textContent = t('igSub');
-      document.getElementById('copyGoBtn').textContent = t('igGo');
-    } else {
-      document.getElementById('copyTitle').textContent = t('waCopied');
-      document.getElementById('copySub').textContent = t('waSub');
-      document.getElementById('copyGoBtn').textContent = t('waGo');
-    }
+    if (platform === 'IG') { document.getElementById('copyTitle').textContent = t('igCopied'); document.getElementById('copySub').textContent = t('igSub'); document.getElementById('copyGoBtn').textContent = t('igGo'); } 
+    else { document.getElementById('copyTitle').textContent = t('waCopied'); document.getElementById('copySub').textContent = t('waSub'); document.getElementById('copyGoBtn').textContent = t('waGo'); }
     openOverlay('copyOverlay');
   }).catch(err => { alert("Manual copy required."); });
 }
-
+function openSupportModal(platform) { openCopyModal(platform, t('supportPrompt')); }
+function openZaloModal() { openOverlay('zaloOverlay'); }
+function copyPhoneOnly() { navigator.clipboard.writeText(settings.phone).then(() => { showToast(t('phoneCopiedToast')); }); }
 function proceedToSocial() {
   const msg = document.getElementById('copyMsg').textContent;
   if (currentSocialPlatform === 'IG') { window.open(`https://instagram.com/${settings.ig}`, '_blank'); } 
@@ -866,15 +1146,17 @@ function proceedToSocial() {
 }
 
 function filterProducts(cat, el) { currentFilter = cat; document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active')); el.classList.add('active'); renderProducts(); }
-function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 function openOverlay(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
 function closeOverlay(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
 
-// --- ADMIN ---
-function openPass() { document.getElementById('passInput').value=''; document.getElementById('passError').style.display='none'; openOverlay('passOverlay'); setTimeout(()=>document.getElementById('passInput').focus(), 100); }
-function checkPass() { if(document.getElementById('passInput').value === settings.password) { closeOverlay('passOverlay'); openAdmin(); } else { document.getElementById('passError').style.display='block'; } }
-function closeAdmin() { document.getElementById('adminPanel').classList.remove('open'); document.body.style.overflow=''; }
 function switchTab(t) { document.querySelectorAll('.admin-tab').forEach(el=>el.classList.remove('active')); document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active')); document.querySelector('.admin-tab[onclick="switchTab(\''+t+'\')"]').classList.add('active'); document.getElementById('tab-'+t).classList.add('active'); }
+function openAdmin() { 
+  document.getElementById('sIg').value = settings.ig || ''; document.getElementById('sWa').value = settings.wa || '';
+  document.getElementById('sZalo1').value = settings.zalo1 || ''; document.getElementById('sZalo2').value = settings.zalo2 || ''; 
+  document.getElementById('sPhone').value = settings.phone || '';
+  document.getElementById('adminPanel').classList.add('open'); document.body.style.overflow = 'hidden';
+}
 
 function renderAdminList() {
   const list = document.getElementById('adminList');
@@ -887,33 +1169,35 @@ function renderAdminList() {
     </div>`).join('');
 }
 
-function openAdmin() { 
-  document.getElementById('sIg').value = settings.ig || '';
-  document.getElementById('sWa').value = settings.wa || '';
-  document.getElementById('adminPanel').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
 function openAddProduct() { 
   editingId = null; uploadedImagesArray = []; document.getElementById('imgPreviewGrid').innerHTML='';
+  uploadedHowItWearsArray = []; document.getElementById('howItWearsPreviewGrid').innerHTML=''; 
   document.getElementById('productModalTitle').textContent = "ADD PRODUCT"; 
-  ['pName','pPriceVND','pPriceFinal','pBadge','pDescEN','pDescVI','pSizes'].forEach(id => document.getElementById(id).value = ''); 
-  document.getElementById('pPriceType').value = 'diff';
-  openOverlay('productOverlay'); 
+  ['pName','pPriceVND','pPriceFinal','pBadge','pDescEN','pDescVI','pSizes','pVideoLink'].forEach(id => document.getElementById(id).value = ''); 
+  document.getElementById('pPriceType').value = 'diff'; openOverlay('productOverlay'); 
 }
 
 function openEditProduct(id) { 
   const p = products.find(x => x.id === id); if(!p) return; 
   editingId = id; document.getElementById('productModalTitle').textContent = "EDIT PRODUCT"; 
-  document.getElementById('pName').value = p.name; document.getElementById('pCat').value = p.category || 'Shell Jacket'; document.getElementById('pCond').value = p.condition || 'Brand new with tags (BNWT)'; document.getElementById('pPriceFinal').value = p.price || ''; document.getElementById('pPriceVND').value = ''; document.getElementById('pSizes').value = p.sizes || ''; document.getElementById('pBadge').value = p.badge || ''; 
-  document.getElementById('pDescEN').value = p.description_en || p.description || '';
-  document.getElementById('pDescVI').value = p.description_vi || p.description || '';
-  document.getElementById('pPriceType').value = p.price_type || 'diff';
+  document.getElementById('pName').value = p.name; document.getElementById('pCat').value = p.category || 'Shell Jacket'; document.getElementById('pCond').value = p.condition || 'Brand new with tags (BNWT)'; document.getElementById('pPriceFinal').value = p.price || ''; document.getElementById('pPriceVND').value = ''; document.getElementById('pSizes').value = p.sizes || ''; document.getElementById('pBadge').value = p.badge || ''; document.getElementById('pDescEN').value = p.description_en || p.description || ''; document.getElementById('pDescVI').value = p.description_vi || p.description || ''; 
+  
+  document.getElementById('pPriceType').value = p.price_type || 'diff'; 
+  document.getElementById('pVideoLink').value = p.video_link || ''; 
+  
   try { const g = JSON.parse(p.gallery || '[]'); uploadedImagesArray = Array.isArray(g) ? g : (p.image ? [p.image] : []); } catch(e) { uploadedImagesArray = p.image ? [p.image] : []; }
-  const grid = document.getElementById('imgPreviewGrid');
-  grid.innerHTML = uploadedImagesArray.map(src => `<img src="${src}" style="width:60px;height:60px;object-fit:cover;border:1px solid var(--border);opacity:0.7;">`).join('') + (uploadedImagesArray.length ? `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;width:100%;">↑ Existing photos — upload new images only to replace them.</div>` : '');
+  const grid = document.getElementById('imgPreviewGrid'); grid.innerHTML = uploadedImagesArray.map(src => `<img src="${src}" style="width:60px;height:60px;object-fit:cover;border:1px solid var(--border);opacity:0.7;">`).join('') + (uploadedImagesArray.length ? `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;width:100%;">↑ Thêm ảnh mới sẽ chèn thêm vào mảng.</div>` : '');
+
+  try { uploadedHowItWearsArray = JSON.parse(p.how_it_wears || '[]'); if(!Array.isArray(uploadedHowItWearsArray)) uploadedHowItWearsArray = []; } catch(e) { uploadedHowItWearsArray = []; }
+  const hwGrid = document.getElementById('howItWearsPreviewGrid'); hwGrid.innerHTML = uploadedHowItWearsArray.map(src => `<img src="${src}" style="width:48px;height:60px;object-fit:cover;border:1px solid var(--border);opacity:0.7;">`).join('') + (uploadedHowItWearsArray.length ? `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;width:100%;">↑ Existing lookbook — upload new ones to replace.</div>` : '');
   openOverlay('productOverlay'); 
 }
+
+function closeVideo() { 
+  document.getElementById('videoIframe').src = ''; 
+  closeOverlay('videoOverlay'); 
+}
+
 </script>
 </body>
 </html>
