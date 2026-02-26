@@ -238,7 +238,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .btn-edit:hover{color:var(--white);}
 
 /* ════ ADMIN DICTIONARY CLEANUP CSS ════ */
-.dict-container { display: grid; grid-template-columns: 220px 1fr; gap: 0; border: 1px solid var(--border); border-radius: 4px; background: var(--navy-2); overflow: hidden; }
+.dict-container { display: grid; grid-template-columns: 220px 1fr; gap: 0; border: 1px solid var(--border); border-radius: 4px; background: var(--navy-2); overflow: visible; }
 .dict-sidebar { border-right: 1px solid var(--border); background: var(--navy-3); display: flex; flex-direction: column; }
 .dict-menu-btn { width: 100%; text-align: left; padding: 15px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); background: none; border: none; cursor: pointer; border-left: 3px solid transparent; transition: 0.2s; text-transform: uppercase; }
 .dict-menu-btn:hover { color: var(--white); background: rgba(255,255,255,0.05); }
@@ -306,46 +306,124 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .mobile-sticky-cta .cta-btn { padding: 14px; font-size: 11px; }
   .desktop-cta-group { display: none; }
 
-  /* Mobile header: keep section shortcuts sticky at top */
-  header { height: auto; min-height: 60px; padding: 8px 12px; }
-  .logo-wrap, .header-right, .header-nav, .mobile-nav { display: none !important; }
-  .mobile-top-nav {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
+  /* ── MOBILE HEADER: 2-row layout using flex-wrap ──
+     Row 1 (naturally): logo-wrap (flex-grows left) + header-right (right)
+     Row 2 (forced full-width): mobile-top-nav nav links
+     No HTML changes — pure CSS ordering */
+  header {
+    height: auto !important;
+    padding: 0 !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+  }
+  /* Hide desktop-only nav */
+  .header-nav { display: none !important; }
+  .mobile-nav { display: none !important; }
+
+  /* Logo: always visible, left side of row 1 */
+  .logo-wrap {
+    display: flex !important;
+    order: 1;
+    padding: 10px 16px;
+    flex: 1;
+  }
+  .logo-text { font-size: 16px !important; }
+
+  /* Controls: always visible, right side of row 1 */
+  .header-right {
+    display: flex !important;
+    order: 2;
+    padding: 10px 16px;
+    gap: 14px !important;
     align-items: center;
   }
+  .lang-btn { min-height: 36px !important; min-width: 32px !important; font-size: 11px !important; }
+  .theme-btn { padding: 6px !important; }
+
+  /* Row 1 bottom border */
+  .header-right::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    top: 44px;
+    height: 1px;
+    background: var(--border);
+    pointer-events: none;
+  }
+
+  /* Nav shortcuts: row 2, full width */
+  .mobile-top-nav {
+    display: grid !important;
+    order: 3;
+    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--border);
+  }
+  .mobile-top-nav .nav-link {
+    padding: 9px 4px !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    border-right: 1px solid var(--border) !important;
+    min-height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+  }
+  .mobile-top-nav .nav-link:last-child { border-right: none !important; }
 
   /* Collection flow: keep 2 products per row on mobile */
   .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-  /* Product modal: force full content sections to remain visible */
-  #intModalBody, #intOverlay .product-split, #intOverlay .gallery-section, #intOverlay .info-section {
+  /* ── PRODUCT MODAL: all sections fully visible on mobile ──
+     Every piece of information present on desktop MUST show on mobile:
+     gallery, how-it-wears button, video button, name, description,
+     price, specs (size/condition), policy box, CTA buttons, size help */
+  #intOverlay .product-split { display: block !important; }
+  #intOverlay .gallery-section { display: flex !important; flex-direction: column !important; }
+  #intOverlay .info-section {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 20px 16px 100px 16px !important;
+  }
+  /* All named children of info-section: never hidden */
+  #intOverlay .info-cat,
+  #intOverlay .info-title,
+  #intOverlay .info-desc,
+  #intOverlay .info-price,
+  #intOverlay .spec-grid,
+  #intOverlay .policy-box,
+  #intOverlay .size-help-wrap,
+  #intOverlay .fomo-tag,
+  #intOverlay .media-btn-grid,
+  #intOverlay .how-it-wears-box {
     display: block !important;
-  /* Force vertical mobile flow: no horizontal strips */
-  .mobile-nav,
-  .filter-tabs,
-  .gallery-thumbs,
-  #lookbookGrid {
-    overflow-x: hidden !important;
+  }
+  #intOverlay .spec-grid { display: grid !important; }
+  #intOverlay .media-btn-grid { display: grid !important; }
+  #intOverlay .size-help-links { display: flex !important; }
+  /* Gallery thumbs: wrap, don't overflow */
+  .gallery-thumbs {
     flex-wrap: wrap !important;
+    overflow-x: hidden !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
   }
-  .mobile-nav .nav-link,
-  .filter-tab,
-  .gallery-thumbs img {
-    width: 100%;
-    max-width: 100%;
-  }
+  .gallery-thumbs img { width: 60px !important; height: 60px !important; }
+  /* Lookbook grid: single column, no horizontal scroll */
   #lookbookGrid {
     display: grid !important;
     grid-template-columns: 1fr !important;
     gap: 16px !important;
     padding: 0 !important;
+    overflow-x: hidden !important;
   }
   #lookbookGrid img {
     width: 100% !important;
     height: auto !important;
-    max-height: none !important;
+    max-height: 80vw !important;
     max-width: 100% !important;
     aspect-ratio: auto !important;
   }
@@ -357,7 +435,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .mobile-nav { display: none !important; }
   .mobile-top-nav { display: grid; }
 
-  .hero { padding: 90px 20px 50px; }
+  .hero { padding: 100px 20px 50px; }
   .hero-title { font-size: 38px; }
 
   #products { padding: 0 0 40px; }
@@ -393,7 +471,12 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .tab-panel { padding: 20px 16px; }
   .admin-hd { padding: 0 16px; }
   .admin-tabs { padding: 0 16px; }
-  .admin-panel { height: 100dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .admin-panel { height: 100dvh !important; overflow-y: auto !important; -webkit-overflow-scrolling: touch !important; }
+  /* Dict container on mobile: no overflow clip, let admin panel scroll */
+  .dict-container { overflow: visible !important; }
+  .dict-editor { max-height: none !important; overflow: visible !important; }
+  /* Tab panel must have enough padding for content to scroll past nav */
+  .tab-panel { padding-bottom: 80px !important; }
   .tab-panel { padding-bottom: 120px; }
 
   /* Admin dictionary: sidebar becomes horizontal scroll bar */
@@ -1779,12 +1862,12 @@ function openEditProduct(id) {
 
   try { uploadedHowItWearsArray = JSON.parse(p.how_it_wears || '[]'); if(!Array.isArray(uploadedHowItWearsArray)) uploadedHowItWearsArray = []; } catch(e) { uploadedHowItWearsArray = []; }
   const hwGrid = document.getElementById('howItWearsPreviewGrid'); hwGrid.innerHTML = uploadedHowItWearsArray.map(src => `<img src="${src}" style="width:48px;height:60px;object-fit:cover;border:1px solid var(--border);opacity:0.7;">`).join('') + (uploadedHowItWearsArray.length ? `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;width:100%;">↑ Existing lookbook — upload new ones to replace.</div>` : '');
-  openOverlay('productOverlay'); 
+  openOverlay('productOverlay');
 }
 
-function closeVideo() { 
-  document.getElementById('videoIframe').src = ''; 
-  closeOverlay('videoOverlay'); 
+function closeVideo() {
+  document.getElementById('videoIframe').src = '';
+  closeOverlay('videoOverlay');
 }
 
 </script>
