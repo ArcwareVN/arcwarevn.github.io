@@ -414,141 +414,81 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 ────────────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
 
-  /* Disable GPU-heavy backdrop blur — major cause of freeze on older iPhones */
+  /* Keep overlays lightweight on older iOS */
   .overlay {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }
 
-  /* ── HORIZONTAL OVERFLOW KILL SWITCH ──
-     ANY element wider than the viewport causes iOS to create a horizontal
-     scroll context. That context fights vertical pan and causes the freeze.
-     These rules ensure zero horizontal overflow inside overlays. */
-  .overlay, .modal, .order-modal,
-  .product-split, .gallery-section, .info-section,
-  .products-grid, .product-card,
-  .editorial-wrapper, .editorial-grid, .ed-content-box {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
+  /* Preserve horizontal scroll for nav/tab rails on mobile */
+  .mobile-nav,
+  .filter-tabs,
+  .admin-tabs,
+  .dict-sidebar {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none;
+    touch-action: pan-x;
   }
-  /* Grid children: min-width:0 prevents implicit minimum size overflow */
-  .product-split > *,
-  .products-grid > *,
-  .dict-container > *,
-  .editorial-grid > * { min-width: 0; }
+  .mobile-nav::-webkit-scrollbar,
+  .filter-tabs::-webkit-scrollbar,
+  .admin-tabs::-webkit-scrollbar,
+  .dict-sidebar::-webkit-scrollbar { display: none; }
 
-  /* Long text: prevent overflow into horizontal scroll territory */
-  .info-title, .info-desc, .card-name, .spec-value,
-  .copy-text, .ed-content-box p {
-    overflow-wrap: break-word;
-    word-break: break-word;
+  .mobile-nav .nav-link,
+  .filter-tab,
+  .admin-tab,
+  .dict-menu-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
-  /* Scale down oversized heading in product modal */
-  .info-title { font-size: clamp(20px, 5vw, 32px) !important; }
 
-  /* ── PRODUCT DETAIL MODAL (#intOverlay) ──
-     Overlay becomes the full-screen scroll container.
-     Modal is a plain block that expands to content height.
-     Sticky CTA is appended INSIDE intModalBody so it sticks
-     to the bottom of the OVERLAY viewport, not the document. */
+  /* Product detail modal: full-screen and vertically scrollable */
   #intOverlay {
-    display: block !important;
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: contain !important;
-    padding: 0 !important;
-    /* Full screen */
-    position: fixed !important;
-    inset: 0 !important;
   }
   #intOverlay .order-modal {
-    display: block !important;
     width: 100% !important;
     max-width: 100% !important;
-    max-height: none !important;   /* CRITICAL: never clip content */
-    overflow: visible !important;  /* CRITICAL: overlay scrolls, not modal */
-    transform: none !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
     border-radius: 0 !important;
-    padding-bottom: 80px;          /* space for sticky CTA */
+    transform: none !important;
+    padding-bottom: 84px;
   }
 
-  /* Mobile sticky CTA: sticks to bottom of the OVERLAY (not the page) */
-  .mobile-sticky-cta {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--navy);
-    padding: 12px 16px;
-    border-top: 1px solid var(--border);
-    z-index: 20;
-    display: flex;
-    gap: 10px;
-    /* Pull out of padding-bottom space */
-    margin-top: -80px;
-  }
-
-  /* ── ADMIN ADD/EDIT PRODUCT OVERLAY (#productOverlay) ──
-     Same block+overflow pattern. */
+  /* Admin overlays: keep vertical flow usable */
   #productOverlay {
-    display: block !important;
+    padding: 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    overscroll-behavior-y: contain !important;
-    padding: 0 !important;
-    position: fixed !important;
-    inset: 0 !important;
   }
   #productOverlay > .modal {
-    display: block !important;
     width: 100% !important;
     max-width: 100% !important;
     max-height: none !important;
     overflow: visible !important;
-    transform: none !important;
     border-radius: 0 !important;
-    padding: 24px 20px 40px;
-  }
-  #productOverlay .modal-close-abs {
-    top: 16px !important;
-    right: 16px !important;
-  }
-
-  /* ── LOOKBOOK OVERLAY ──
-     Horizontal-scroll photo strip */
-  #lookbookOverlay {
-    display: block !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    padding: 20px 0 !important;
-  }
-  #lookbookOverlay > .modal {
-    display: block !important;
-    max-height: none !important;
-    overflow: visible !important;
     transform: none !important;
-    padding: 40px 16px 20px !important;
+    padding: 24px 16px 40px !important;
   }
 
-  /* ── SMALL MODALS: pass, zalo, copy, dwr ──
-     These are short enough to center. Keep flex but clamp height. */
-  #passOverlay,
-  #copyOverlay,
-  #zaloOverlay,
-  #dwrContactOverlay {
-    padding: 16px !important;
-    align-items: center !important;
-    display: flex !important;
-  }
-  #passOverlay > .modal,
-  #copyOverlay > .modal,
-  #zaloOverlay > .modal,
-  #dwrContactOverlay > .modal {
-    max-height: 92vh !important;
+  /* Translation editor: allow both horizontal section swipe and vertical form scroll */
+  .dict-container { overflow: hidden; }
+  .dict-editor {
+    max-height: 62vh !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
-    width: 100% !important;
-    max-width: 420px !important;
+  }
+
+  .admin-panel {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 }
 
@@ -1614,12 +1554,14 @@ function showToast(msg) { const t=document.getElementById('toast'); t.textConten
 let _bodyScrollY = 0;
 function _lockBody() {
   _bodyScrollY = window.pageYOffset || window.scrollY || 0;
+  if (window.matchMedia('(max-width: 900px)').matches) return;
   document.body.style.position = 'fixed';
   document.body.style.top = '-' + _bodyScrollY + 'px';
   document.body.style.width = '100%';
   // NOTE: Do NOT set overflow:hidden — it prevents overlay scroll on iOS Safari
 }
 function _unlockBody() {
+  if (window.matchMedia('(max-width: 900px)').matches) return;
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.width = '';
