@@ -419,17 +419,42 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     backdrop-filter: none !important;
   }
 
-  /* ── HORIZONTAL OVERFLOW KILL SWITCH ──
-     ANY element wider than the viewport causes iOS to create a horizontal
-     scroll context. That context fights vertical pan and causes the freeze.
-     These rules ensure zero horizontal overflow inside overlays. */
-  .overlay, .modal, .order-modal,
+  /* ── HORIZONTAL STABILITY (NO CROPPED RIGHT EDGE) ──
+     Previous blanket overflow-x:hidden on every modal container could clip
+     inner content on some phones. Keep widths constrained, but allow modal
+     content to render fully and let only dedicated rails scroll horizontally. */
   .product-split, .gallery-section, .info-section,
   .products-grid, .product-card,
   .editorial-wrapper, .editorial-grid, .ed-content-box {
     max-width: 100% !important;
+  }
+
+  #intOverlay,
+  #productOverlay,
+  #lookbookOverlay {
     overflow-x: hidden !important;
   }
+
+  #intOverlay .order-modal,
+  #productOverlay > .modal,
+  #lookbookOverlay > .modal {
+    overflow-x: visible !important;
+  }
+
+  #intModalBody,
+  #intModalBody .product-split,
+  #intModalBody .gallery-section,
+  #intModalBody .info-section {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .gallery-thumbs,
+  #lookbookGrid {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
   /* Grid children: min-width:0 prevents implicit minimum size overflow */
   .product-split > *,
   .products-grid > *,
@@ -462,8 +487,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   }
   #intOverlay .order-modal {
     display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
     max-height: none !important;   /* CRITICAL: never clip content */
     overflow: visible !important;  /* CRITICAL: overlay scrolls, not modal */
     transform: none !important;
