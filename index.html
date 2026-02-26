@@ -144,7 +144,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .contact-sub { font-size: 12px; color: var(--text-muted); line-height: 1.4;}
 
 /* ════ MODALS BASE ════ */
-.overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s;overscroll-behavior:contain;}
 .overlay.open{opacity:1;pointer-events:all}
 .modal{background:var(--navy);width:100%;max-height:95vh;overflow-y:auto; -webkit-overflow-scrolling: touch; transform:translateY(20px);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); position:relative;}
 .overlay.open .modal{transform:translateY(0)}
@@ -215,7 +215,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .form-input:focus, .form-textarea:focus{border-bottom-color:var(--white);}
 .form-select option{background:var(--navy);}
 
-.admin-panel{position:fixed;inset:0;background:var(--navy);z-index:9999;overflow-y:auto; -webkit-overflow-scrolling: touch; transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);}
+.admin-panel{position:fixed;inset:0;background:var(--navy);z-index:9999;overflow-y:scroll;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;transform:translateX(100%);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);}
 .admin-panel.open{transform:translateX(0)}
 .admin-hd{padding:0 40px;height:80px;background:var(--navy);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
 .admin-hd-title{font-size:16px;font-weight:700; letter-spacing: 0.1em; text-transform:uppercase; color:var(--white);}
@@ -302,48 +302,82 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .form-input, .form-select, .form-textarea { font-size: 16px; }
 }
 
-/* ════ iOS SCROLL LOCK — prevents body from scrolling behind modals ════ */
-body.body-locked {
-  position: fixed;
-  overflow: hidden;
-  width: 100%;
-  left: 0;
-  right: 0;
-}
+/* ════ MOBILE MODAL & SCROLL — COMPLETE iOS SAFARI FIX ════
+   Root causes fixed:
+   1. overflow:hidden removed from _lockBody() in JS — was blocking overlay scroll
+   2. .order-modal gets overflow:visible — removes competing nested scroll container
+   3. overflow-y:scroll (not auto) — iOS Safari treats them differently
+   4. overscroll-behavior:contain — stops scroll bleeding to body
+   5. backdrop-filter removed on mobile — was causing GPU freeze/jank
+   6. dict-editor max-height removed on mobile — admin panel handles the scroll
+   ════════════════════════════════════════════════════════════════ */
 
-/* ════ MOBILE PRODUCT MODAL — overlay scrolls, modal is full height ════ */
 @media (max-width: 900px) {
+
+  /* Kill GPU-intensive blur on mobile — major source of freezes */
+  .overlay { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+
+  /* ── PRODUCT DETAIL MODAL ── */
+  /* The OVERLAY is the scroll container. The modal expands to fit all content. */
   #intOverlay {
     align-items: flex-start;
-    overflow-y: auto;
+    overflow-y: scroll;               /* scroll > auto: iOS recognizes it reliably */
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;     /* stops scroll bleeding through to body */
     padding: 0;
   }
   #intOverlay .order-modal {
-    max-height: none;
-    min-height: 100%;
+    max-height: none;                 /* let modal grow to full content height */
+    min-height: 100%;                 /* stretch to at least full viewport */
     width: 100%;
+    max-width: none;
+    overflow: visible;                /* CRITICAL: modal must NOT be a scroll container */
     transform: none !important;
     border-radius: 0;
   }
   #intOverlay.open .order-modal { transform: none !important; }
 
-  /* Small modals stay centered with inner scroll */
-  #passOverlay, #copyOverlay, #zaloOverlay, #dwrContactOverlay {
-    padding: 16px;
-    align-items: center;
+  /* Sticky order CTA bar — sticks to bottom of #intOverlay viewport */
+  .mobile-sticky-cta {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
   }
+
+  /* ── ADMIN ADD/EDIT PRODUCT OVERLAY ── */
   #productOverlay {
     padding: 0;
     align-items: flex-start;
-    overflow-y: auto;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
   #productOverlay .modal {
     max-height: none;
     min-height: 100%;
+    overflow: visible;                /* overlay scrolls, not the modal */
     border-radius: 0;
     transform: none !important;
+  }
+
+  /* ── SMALL MODALS — stay centered, scroll internally if needed ── */
+  #passOverlay, #copyOverlay, #zaloOverlay, #dwrContactOverlay {
+    padding: 16px;
+    align-items: center;
+  }
+  #passOverlay .modal,
+  #copyOverlay .modal,
+  #zaloOverlay .modal,
+  #dwrContactOverlay .modal {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    max-height: 90vh;
+  }
+
+  /* ── ADMIN PANEL INNER: dict editor expands, panel scrolls ── */
+  .dict-editor {
+    max-height: none;
+    overflow-y: visible;
   }
 }
 
@@ -1422,16 +1456,13 @@ function _lockBody() {
   _bodyScrollY = window.pageYOffset || window.scrollY || 0;
   document.body.style.position = 'fixed';
   document.body.style.top = '-' + _bodyScrollY + 'px';
-  document.body.style.left = '0';
-  document.body.style.right = '0';
-  document.body.style.overflow = 'hidden';
+  document.body.style.width = '100%';
+  // NOTE: Do NOT set overflow:hidden — it prevents overlay scroll on iOS Safari
 }
 function _unlockBody() {
   document.body.style.position = '';
   document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
-  document.body.style.overflow = '';
+  document.body.style.width = '';
   window.scrollTo(0, _bodyScrollY);
 }
 function openOverlay(id) {
