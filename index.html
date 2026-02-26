@@ -322,6 +322,32 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   /* Product modal: force full content sections to remain visible */
   #intModalBody, #intOverlay .product-split, #intOverlay .gallery-section, #intOverlay .info-section {
     display: block !important;
+  /* Force vertical mobile flow: no horizontal strips */
+  .mobile-nav,
+  .filter-tabs,
+  .gallery-thumbs,
+  #lookbookGrid {
+    overflow-x: hidden !important;
+    flex-wrap: wrap !important;
+  }
+  .mobile-nav .nav-link,
+  .filter-tab,
+  .gallery-thumbs img {
+    width: 100%;
+    max-width: 100%;
+  }
+  #lookbookGrid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 !important;
+  }
+  #lookbookGrid img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    max-width: 100% !important;
+    aspect-ratio: auto !important;
   }
 }
 
