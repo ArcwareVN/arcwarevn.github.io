@@ -101,6 +101,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .mobile-nav { display: none; margin-top: 30px; gap: 20px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .mobile-nav::-webkit-scrollbar { display: none; }
 .mobile-nav .nav-link { white-space: nowrap; font-size: 10px; }
+.mobile-top-nav { display:none; width:100%; }
+.mobile-top-nav .nav-link { font-size:10px; font-weight:700; letter-spacing:0.08em; padding:10px 6px; text-align:center; }
 
 /* ════ HERO ════ */
 .hero{min-height:85vh;display:flex;flex-direction:column;justify-content:center;padding:120px 64px 80px;background:var(--navy); border-bottom: 1px solid var(--border);}
@@ -241,7 +243,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .dict-menu-btn { width: 100%; text-align: left; padding: 15px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); background: none; border: none; cursor: pointer; border-left: 3px solid transparent; transition: 0.2s; text-transform: uppercase; }
 .dict-menu-btn:hover { color: var(--white); background: rgba(255,255,255,0.05); }
 .dict-menu-btn.active { color: var(--white); background: var(--navy); border-left-color: var(--white); }
-.dict-editor { padding: 30px; overflow-y: auto; max-height: 60vh; background: var(--navy); }
+.dict-editor { padding: 30px; overflow: visible; max-height: none; background: var(--navy); }
 .dict-item { margin-bottom: 16px; background: var(--navy-2); border-bottom: 1px solid var(--border); padding-bottom: 20px; }
 .dict-key-title { font-size: 12px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; display: block; }
 .dict-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
@@ -303,19 +305,38 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .mobile-sticky-cta { display: flex; gap: 10px; }
   .mobile-sticky-cta .cta-btn { padding: 14px; font-size: 11px; }
   .desktop-cta-group { display: none; }
+
+  /* Mobile header: keep section shortcuts sticky at top */
+  header { height: auto; min-height: 60px; padding: 8px 12px; }
+  .logo-wrap, .header-right, .header-nav, .mobile-nav { display: none !important; }
+  .mobile-top-nav {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    align-items: center;
+  }
+
+  /* Collection flow: keep 2 products per row on mobile */
+  .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* Product modal: force full content sections to remain visible */
+  #intModalBody, #intOverlay .product-split, #intOverlay .gallery-section, #intOverlay .info-section {
+    display: block !important;
+  }
 }
 
 @media (max-width: 768px) {
-  header { padding: 0 20px; }
+  header { padding: 8px 12px; }
   .header-nav { display: none; }
-  .mobile-nav { display: flex; }
+  .mobile-nav { display: none !important; }
+  .mobile-top-nav { display: grid; }
 
   .hero { padding: 90px 20px 50px; }
   .hero-title { font-size: 38px; }
 
   #products { padding: 0 0 40px; }
   .section-header { padding: 36px 20px 16px; flex-direction: column; align-items: flex-start; }
-  .products-grid { padding: 0 16px; gap: 16px; grid-template-columns: 1fr 1fr; }
+  .products-grid { padding: 0 16px; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   /* DWR section */
   #dwr { justify-content: center !important; padding: 20px 20px 50px !important; }
@@ -327,19 +348,16 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   /* Contact grid: single column */
   .contact-grid { grid-template-columns: 1fr; }
 
-  /* Filter tabs: horizontal scroll */
+  /* Filter tabs: compact wrapped layout for quicker scanning */
   .filter-tabs {
     width: 100%;
-    overflow-x: auto;
+    overflow-x: hidden;
     justify-content: flex-start;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 8px;
     margin-bottom: 0;
   }
-  .filter-tabs::-webkit-scrollbar { display: none; }
-  .filter-tab { white-space: nowrap; flex-shrink: 0; min-height: 44px; }
+  .filter-tab { white-space: nowrap; flex-shrink: 0; min-height: 40px; font-size: 10px; padding: 8px 10px; }
 
   /* Footer */
   footer { padding: 36px 20px 24px !important; }
@@ -349,6 +367,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .tab-panel { padding: 20px 16px; }
   .admin-hd { padding: 0 16px; }
   .admin-tabs { padding: 0 16px; }
+  .admin-panel { height: 100dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .tab-panel { padding-bottom: 120px; }
 
   /* Admin dictionary: sidebar becomes horizontal scroll bar */
   .dict-container { grid-template-columns: 1fr; }
@@ -395,8 +415,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 
 @media (max-width: 480px) {
-  /* Single column product grid on very small phones */
-  .products-grid { grid-template-columns: 1fr; padding: 0 12px; }
+  /* Keep 2-column collection layout on very small phones */
+  .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 0 12px; gap: 10px; }
   .hero-title { font-size: 32px; }
 }
 
@@ -620,6 +640,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <a href="#contact" class="nav-link" data-i18n="navContact">CONTACT</a>
   </div>
 
+
+  <div class="mobile-top-nav">
+    <a href="#products" class="nav-link" data-i18n="navShop">SHOPPING</a>
+    <a href="#dwr" class="nav-link" data-i18n="dwrNav">RE-APPLY DWR</a>
+    <a href="#contact" class="nav-link" data-i18n="navContact">CONTACT</a>
+    <a href="#about" class="nav-link" data-i18n="navAbout">ABOUT US</a>
+  </div>
   <div class="header-right">
     <button class="theme-btn" onclick="toggleTheme()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
     <div class="lang-toggle">
