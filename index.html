@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" style="scroll-behavior: smooth;">
+<html lang="en" data-theme="dark" style="scroll-behavior: smooth; overflow-x: hidden;">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -28,6 +28,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* ══ GLOBAL: prevent ANY horizontal overflow on mobile ══ */
+*, *::before, *::after { box-sizing: border-box; }
+html { overflow-x: hidden; }
+img { max-width: 100%; height: auto; }
+
 /* ════ THEMES & BASE ════ */
 :root {
   --navy: #ffffff; --navy-2: #f7f7f7; --navy-3: #eeeeee; 
@@ -113,7 +118,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .filter-tabs { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: -1px; justify-content: flex-end; }
 .filter-tab { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; padding: 0 0 20px 0; border: none; border-bottom: 2px solid transparent; background: none; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
 .filter-tab:hover, .filter-tab.active { color: var(--white); border-bottom-color: var(--white); }
-.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; padding: 0 48px; }
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; padding: 0 48px; }
 .product-card { display: flex; flex-direction: column; cursor: pointer; background: var(--navy); border: 1px solid var(--border); transition: 0.3s ease; height: 100%; position: relative;}
 .product-card:hover { border-color: var(--text-dim); transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
 .product-card:hover .card-img img { transform: scale(1.03); }
@@ -414,6 +419,32 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
   }
+
+  /* ── HORIZONTAL OVERFLOW KILL SWITCH ──
+     ANY element wider than the viewport causes iOS to create a horizontal
+     scroll context. That context fights vertical pan and causes the freeze.
+     These rules ensure zero horizontal overflow inside overlays. */
+  .overlay, .modal, .order-modal,
+  .product-split, .gallery-section, .info-section,
+  .products-grid, .product-card,
+  .editorial-wrapper, .editorial-grid, .ed-content-box {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  /* Grid children: min-width:0 prevents implicit minimum size overflow */
+  .product-split > *,
+  .products-grid > *,
+  .dict-container > *,
+  .editorial-grid > * { min-width: 0; }
+
+  /* Long text: prevent overflow into horizontal scroll territory */
+  .info-title, .info-desc, .card-name, .spec-value,
+  .copy-text, .ed-content-box p {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  /* Scale down oversized heading in product modal */
+  .info-title { font-size: clamp(20px, 5vw, 32px) !important; }
 
   /* ── PRODUCT DETAIL MODAL (#intOverlay) ──
      Overlay becomes the full-screen scroll container.
@@ -1452,7 +1483,7 @@ function openLookbook(id) {
    const p = products.find(x => x.id === id); if (!p) return;
    let hwArr = []; try { hwArr = JSON.parse(p.how_it_wears); } catch(e){}
    const grid = document.getElementById('lookbookGrid');
-   grid.innerHTML = hwArr.map(src => `<img src="${src}" style="height:70vh; width:auto; aspect-ratio:4/5; object-fit:cover; border:1px solid var(--border-light); border-radius:4px; box-shadow:0 10px 40px rgba(0,0,0,0.6); cursor:zoom-in;" onclick="openLightbox(this.src)">`).join('');
+   grid.innerHTML = hwArr.map(src => `<img src="${src}" style="height:65vmax; max-height:70vh; width:auto; max-width:85vw; aspect-ratio:4/5; object-fit:cover; border:1px solid var(--border-light); border-radius:4px; box-shadow:0 10px 40px rgba(0,0,0,0.6); cursor:zoom-in; flex-shrink:0;" onclick="openLightbox(this.src)">`).join('');
    openOverlay('lookbookOverlay');
 }
 
