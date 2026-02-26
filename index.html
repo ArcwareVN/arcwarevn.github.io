@@ -303,6 +303,35 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .mobile-sticky-cta { display: flex; gap: 10px; }
   .mobile-sticky-cta .cta-btn { padding: 14px; font-size: 11px; }
   .desktop-cta-group { display: none; }
+
+  /* Force vertical mobile flow: no horizontal strips */
+  .products-grid { grid-template-columns: 1fr; }
+  .mobile-nav,
+  .filter-tabs,
+  .gallery-thumbs,
+  #lookbookGrid {
+    overflow-x: hidden !important;
+    flex-wrap: wrap !important;
+  }
+  .mobile-nav .nav-link,
+  .filter-tab,
+  .gallery-thumbs img {
+    width: 100%;
+    max-width: 100%;
+  }
+  #lookbookGrid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 0 !important;
+  }
+  #lookbookGrid img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    max-width: 100% !important;
+    aspect-ratio: auto !important;
+  }
 }
 
 @media (max-width: 768px) {
@@ -315,7 +344,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
   #products { padding: 0 0 40px; }
   .section-header { padding: 36px 20px 16px; flex-direction: column; align-items: flex-start; }
-  .products-grid { padding: 0 16px; gap: 16px; grid-template-columns: 1fr 1fr; }
+  .products-grid { padding: 0 16px; gap: 16px; grid-template-columns: 1fr; }
 
   /* DWR section */
   #dwr { justify-content: center !important; padding: 20px 20px 50px !important; }
@@ -327,19 +356,19 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   /* Contact grid: single column */
   .contact-grid { grid-template-columns: 1fr; }
 
-  /* Filter tabs: horizontal scroll */
+  /* Filter tabs: vertical wrapping */
   .filter-tabs {
     width: 100%;
-    overflow-x: auto;
+    overflow-x: hidden;
     justify-content: flex-start;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    gap: 20px;
+    gap: 10px;
     margin-bottom: 0;
   }
   .filter-tabs::-webkit-scrollbar { display: none; }
-  .filter-tab { white-space: nowrap; flex-shrink: 0; min-height: 44px; }
+  .filter-tab { white-space: normal; flex-shrink: 1; min-height: 44px; }
 
   /* Footer */
   footer { padding: 36px 20px 24px !important; }
