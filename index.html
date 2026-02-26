@@ -289,7 +289,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
    2. BREAKPOINT: ≤ 1024px
 ────────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .sourcing-widget { right: 20px; bottom: 90px; }
+  .sourcing-widget {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(84px + env(safe-area-inset-bottom));
+    padding: 10px 14px;
+    max-width: min(52vw, 190px);
+    z-index: 80;
+  }
 }
 
 @media (max-width: 900px) {
@@ -356,23 +362,25 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     display: grid !important;
     order: 3;
     width: 100%;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0;
     border-top: 1px solid var(--border);
   }
   .mobile-top-nav .nav-link {
-    padding: 9px 4px !important;
-    font-size: 9px !important;
+    padding: 11px 8px !important;
+    font-size: 10px !important;
     font-weight: 700 !important;
     text-align: center !important;
     border-right: 1px solid var(--border) !important;
-    min-height: 38px !important;
+    border-bottom: 1px solid var(--border) !important;
+    min-height: 44px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    white-space: nowrap !important;
+    white-space: normal !important;
   }
-  .mobile-top-nav .nav-link:last-child { border-right: none !important; }
+  .mobile-top-nav .nav-link:nth-child(2n) { border-right: none !important; }
+  .mobile-top-nav .nav-link:nth-last-child(-n+2) { border-bottom: none !important; }
 
   /* Collection flow: keep 2 products per row on mobile */
   .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -624,9 +632,11 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior-y: contain !important;
+    touch-action: pan-y !important;
     padding: 0 !important;
     position: fixed !important;
     inset: 0 !important;
+    min-height: 100dvh !important;
   }
   #productOverlay > .modal {
     display: block !important;
@@ -636,7 +646,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     overflow: visible !important;
     transform: none !important;
     border-radius: 0 !important;
-    padding: 24px 20px 40px;
+    padding: 24px 20px calc(40px + env(safe-area-inset-bottom));
   }
   #productOverlay .modal-close-abs {
     top: 16px !important;
@@ -649,6 +659,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     display: block !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
     padding: 20px 0 !important;
   }
   #lookbookOverlay > .modal {
@@ -665,19 +676,21 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   #copyOverlay,
   #zaloOverlay,
   #dwrContactOverlay {
-    padding: 16px !important;
-    align-items: center !important;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom)) !important;
+    align-items: flex-end !important;
     display: flex !important;
+    min-height: 100dvh !important;
   }
   #passOverlay > .modal,
   #copyOverlay > .modal,
   #zaloOverlay > .modal,
   #dwrContactOverlay > .modal {
-    max-height: 92vh !important;
+    max-height: calc(100dvh - 32px - env(safe-area-inset-bottom)) !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
     width: 100% !important;
     max-width: 420px !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
   }
 }
 
