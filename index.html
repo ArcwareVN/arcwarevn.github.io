@@ -706,70 +706,76 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 #saveOrderBtn { animation: orderBlink 1.5s ease-in-out 3; }
 /* ====================================================
-   🔥 ARC'WARE VN - MOBILE HOTFIX V4 (ULTIMATE SCROLL)
+   🔥 ARC'WARE VN - MOBILE HOTFIX V5 (NUCLEAR RESET)
    ==================================================== */
 @media (max-width: 900px) {
 
-    /* ====================================================
-       1. FIX "SCROLL JANK" (Vuốt mượt 100% không kẹt)
-       Chiến thuật: Cho lớp Overlay bên ngoài cuộn, thả rông lớp Modal bên trong
-       ==================================================== */
+    /* 1. MỞ ĐƯỜNG CHO CẢM ỨNG (Chống liệt/kẹt toàn cục) */
+    body { touch-action: pan-y !important; }
+
+    /* 2. CHỈ CẤP QUYỀN CUỘN CHO LỚP NGOÀI CÙNG (OVERLAY) */
     .overlay, #intOverlay, #productOverlay, #lookbookOverlay, #passOverlay {
-        display: block !important; /* Tắt flex để gỡ xung đột chiều cao trên iOS */
-        overflow-y: auto !important;
+        position: fixed !important; /* Đóng đinh nó vào màn hình */
+        top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+        height: 100dvh !important;
+        display: block !important; /* Phá vỡ flexbox (kẻ thù của scroll mobile) */
+        overflow-y: auto !important; /* Duy nhất thằng này được cuộn */
         -webkit-overflow-scrolling: touch !important;
-        padding: 20px 10px 60px 10px !important;
+        padding: 20px 10px 100px 10px !important; 
+        z-index: 9999 !important;
     }
 
-    .modal, .order-modal, .admin-modal {
-        max-height: none !important; /* Thả rông chiều cao, không giới hạn nữa */
+    /* 3. TƯỚC QUYỀN CUỘN CỦA LỚP BÊN TRONG (MODAL) */
+    /* Ép nó dài ra vô tận theo nội dung, không được tự cuộn ngầm nữa */
+    .overlay .modal, .overlay .order-modal, .overlay .admin-modal, #lookbookOverlay .modal-content {
+        position: relative !important;
         height: auto !important;
-        overflow: visible !important; /* Tắt cuộn ngầm bên trong, nguyên nhân gây kẹt */
-        margin: 0 auto !important; 
+        max-height: none !important;
+        overflow: visible !important; /* QUAN TRỌNG NHẤT: Bỏ cuộn ngầm */
+        margin: 0 auto !important;
+        transform: none !important; /* Tắt hiệu ứng gây lag cảm ứng */
     }
 
-    /* ====================================================
-       2. THÁO KEO 2 NÚT ORDER (Cho trôi xuống đáy tự nhiên)
-       ==================================================== */
+    /* 4. TRIỆT TIÊU 2 NÚT ORDER DÍNH ĐÁY */
+    /* Dùng static để tước bỏ mọi quyền bay lơ lửng, ép nó nằm bệt xuống sàn */
     .order-modal .button-group,
     .order-modal [style*="sticky"],
-    .order-modal [style*="fixed"] {
-        position: relative !important;
+    .order-modal [style*="fixed"],
+    .order-modal .fixed-bottom {
+        position: static !important; 
+        display: flex !important;
+        flex-direction: column !important; /* Xếp 2 nút dọc cho dễ bấm */
+        margin-top: 30px !important;
         bottom: auto !important;
-        top: auto !important;
-        background: transparent !important; /* Bỏ màu nền nếu có che content */
-        margin-top: 30px !important; /* Cách xa phần nội dung phía trên một chút */
-        padding-bottom: 20px !important;
+        transform: none !important;
     }
 
-    /* ====================================================
-       3. CỨU MENU NGANG (TAB CONTENT & TEXT)
-       ==================================================== */
+    /* 5. CỨU THANH MENU NGANG (HIỆN FULL 100% TAB) */
     .dict-sidebar {
         display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: nowrap !important; /* Ép không được rớt dòng */
+        flex-wrap: nowrap !important;
         overflow-x: auto !important;
+        overflow-y: hidden !important;
         -webkit-overflow-scrolling: touch !important;
+        width: 100vw !important; /* Ép bung full chiều ngang màn hình */
+        margin-left: -15px !important; /* Tràn ra sát mép điện thoại */
+        padding-left: 15px !important;
+        padding-right: 15px !important;
         padding-bottom: 15px !important;
-        width: 100% !important;
     }
-    
     .dict-sidebar > * {
-        flex: 0 0 auto !important; /* Chìa khóa đây: Ép các nút không được co rúm hay biến mất */
-        white-space: nowrap !important;
+        flex: 0 0 auto !important; /* Không cho phép co rút */
+        display: block !important;
+        min-width: max-content !important;
     }
 
-    /* ====================================================
-       4. ADMIN DASHBOARD SCROLL
-       ==================================================== */
+    /* 6. ADMIN DASHBOARD */
     .admin-panel, .admin-content, #productsTab, #contentTab {
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        height: auto !important; 
-        min-height: 100vh !important;
+        height: auto !important;
     }
-}}}</style>
+}}}}</style>
 </head>
 <body>
 
