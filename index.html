@@ -370,28 +370,31 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     pointer-events: none;
   }
 
-  /* Nav shortcuts: row 2, full width */
+  /* Nav shortcuts: row 2, full width - Minimalist Scroll */
   .mobile-top-nav {
-    display: grid !important;
+    display: flex !important;
     order: 3;
     width: 100%;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0;
+    gap: 28px;
+    padding: 0 16px !important;
     border-top: 1px solid var(--border);
+    overflow-x: auto !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
   }
+  .mobile-top-nav::-webkit-scrollbar { display: none; }
+  
   .mobile-top-nav .nav-link {
-    padding: 9px 4px !important;
-    font-size: 9px !important;
-    font-weight: 700 !important;
-    text-align: center !important;
-    border-right: 1px solid var(--border) !important;
-    min-height: 38px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    padding: 16px 0 !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.15em !important;
+    border-right: none !important;
+    display: block !important;
     white-space: nowrap !important;
+    color: var(--text-dim);
   }
-  .mobile-top-nav .nav-link:last-child { border-right: none !important; }
+  .mobile-top-nav .nav-link:active { color: var(--white); }
 
   /* Collection flow: keep 2 products per row on mobile */
   .products-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
