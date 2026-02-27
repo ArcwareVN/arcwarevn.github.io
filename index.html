@@ -706,39 +706,70 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 #saveOrderBtn { animation: orderBlink 1.5s ease-in-out 3; }
 /* ====================================================
-   🔥 ARC'WARE VN - MOBILE HOTFIX V3 (SAFE MODE)
+   🔥 ARC'WARE VN - MOBILE HOTFIX V4 (ULTIMATE SCROLL)
    ==================================================== */
 @media (max-width: 900px) {
 
-    /* 1. MỞ KHÓA CUỘN CHO MODAL SẢN PHẨM & ADMIN */
-    /* Thay vì phá vỡ cấu trúc, chỉ giới hạn chiều cao 85% màn hình và ép nó tự cuộn bên trong */
-    .modal, .order-modal, .admin-modal {
-        max-height: 85vh !important; 
+    /* ====================================================
+       1. FIX "SCROLL JANK" (Vuốt mượt 100% không kẹt)
+       Chiến thuật: Cho lớp Overlay bên ngoài cuộn, thả rông lớp Modal bên trong
+       ==================================================== */
+    .overlay, #intOverlay, #productOverlay, #lookbookOverlay, #passOverlay {
+        display: block !important; /* Tắt flex để gỡ xung đột chiều cao trên iOS */
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        padding-bottom: 100px !important; /* Tạo khoảng trống đáy để không bị kẹt nút */
+        padding: 20px 10px 60px 10px !important;
     }
 
-    /* 2. CHỮA CHÁY THANH MENU NGANG (Tab Content & Text) */
+    .modal, .order-modal, .admin-modal {
+        max-height: none !important; /* Thả rông chiều cao, không giới hạn nữa */
+        height: auto !important;
+        overflow: visible !important; /* Tắt cuộn ngầm bên trong, nguyên nhân gây kẹt */
+        margin: 0 auto !important; 
+    }
+
+    /* ====================================================
+       2. THÁO KEO 2 NÚT ORDER (Cho trôi xuống đáy tự nhiên)
+       ==================================================== */
+    .order-modal .button-group,
+    .order-modal [style*="sticky"],
+    .order-modal [style*="fixed"] {
+        position: relative !important;
+        bottom: auto !important;
+        top: auto !important;
+        background: transparent !important; /* Bỏ màu nền nếu có che content */
+        margin-top: 30px !important; /* Cách xa phần nội dung phía trên một chút */
+        padding-bottom: 20px !important;
+    }
+
+    /* ====================================================
+       3. CỨU MENU NGANG (TAB CONTENT & TEXT)
+       ==================================================== */
     .dict-sidebar {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important; /* Ép không được rớt dòng */
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        white-space: nowrap !important;
-        display: block !important; 
+        padding-bottom: 15px !important;
+        width: 100% !important;
     }
     
     .dict-sidebar > * {
-        display: inline-block !important; /* Dàn ngang an toàn, không dùng flex */
-        vertical-align: top !important;
+        flex: 0 0 auto !important; /* Chìa khóa đây: Ép các nút không được co rúm hay biến mất */
+        white-space: nowrap !important;
     }
 
-    /* 3. MỞ KHÓA CUỘN CHO ADMIN DASHBOARD */
-    .admin-panel, .admin-content {
+    /* ====================================================
+       4. ADMIN DASHBOARD SCROLL
+       ==================================================== */
+    .admin-panel, .admin-content, #productsTab, #contentTab {
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        padding-bottom: 120px !important; 
+        height: auto !important; 
+        min-height: 100vh !important;
     }
-}}</style>
+}}}</style>
 </head>
 <body>
 
