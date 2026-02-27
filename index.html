@@ -724,7 +724,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 #saveOrderBtn { animation: orderBlink 1.5s ease-in-out 3; }
 /* ====================================================
-   🔥 ARC'WARE VN - CỤC HOTFIX TỔNG HỢP V9 (FINAL ALL-IN-ONE)
+   🔥 ARC'WARE VN - CỤC HOTFIX TỔNG HỢP V10 (BẢN CHUẨN Z-INDEX)
    ==================================================== */
 
 /* --- 1. ĐÓNG KHUNG GIÁ CHUẨN MINIMALISM (PC & MOBILE) --- */
@@ -745,9 +745,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     border-radius: 0 !important; 
 }
 
-/* --- 2. FIX Z-INDEX ADMIN (Add Product đè lên Dashboard) --- */
-#productOverlay { z-index: 99999 !important; }
-#passOverlay { z-index: 999999 !important; }
+/* --- 2. PHÂN LẠI THỨ BẬC Z-INDEX TUYỆT ĐỐI TOÀN TRANG --- */
+/* Thiết lập quy tắc thép: Thằng nào quan trọng hơn thì số to hơn */
+#adminOverlay { z-index: 9900 !important; } /* Tầng dưới cùng: Admin Dashboard */
+#intOverlay, .overlay { z-index: 9990 !important; } 
+#productOverlay, #addProductOverlay, #editOverlay { z-index: 99999 !important; } /* Tầng giữa: Form Add/Edit đè lên Admin */
+#lookbookOverlay { z-index: 999999 !important; } /* Tầng cao: Lookbook đè lên mọi Popup */
+#passOverlay { z-index: 9999999 !important; } /* Tầng cao nhất: Nhập mật khẩu */
 
 /* ====================================================
    📱 CHỈ DÀNH CHO MOBILE (TỪ 900PX TRỞ XUỐNG)
@@ -757,14 +761,14 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     /* --- 3. MỞ KHÓA SCROLL & SẮP XẾP LỚP LANG --- */
     body { touch-action: pan-y !important; }
     
-    #intOverlay, #productOverlay, .overlay {
+    #intOverlay, #productOverlay, .overlay, #adminOverlay {
         position: fixed !important; 
         top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
         height: 100dvh !important;
-        display: block !important; /* Trả về block để cuộn tự nhiên 100% */
+        display: block !important; 
         overflow-y: auto !important; 
         -webkit-overflow-scrolling: touch !important;
-        z-index: 9999 !important; 
+        /* Đã xóa z-index ở đây để nó tự động tuân theo lớp lang ở Bước 2 */
         padding: 0 0 50px 0 !important;
     }
 
@@ -775,7 +779,6 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         display: block !important;
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        z-index: 999999 !important; 
         background: rgba(0,0,0,0.95) !important;
     }
 
@@ -794,11 +797,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     .mobile-top-nav {
         position: sticky !important; 
         top: 0 !important;
-        z-index: 9999 !important;
+        z-index: 9000 !important;
     }
 
     /* --- 5. CHỮA BỆNH NÚT ORDER (KHÔNG BÁM ĐUÔI, KHÔNG PHÌNH TO) --- */
-    /* Chỉ nhắm vào THẺ BỌC của 2 nút, tước quyền bám dính, ép nằm bệt xuống */
     .order-modal > div:last-child,
     .order-modal [style*="sticky"], 
     .order-modal [style*="fixed"],
@@ -809,21 +811,19 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         top: auto !important;
         left: auto !important;
         right: auto !important;
-        margin-top: 30px !important; /* Đẩy xa nội dung bên trên ra */
-        padding: 0 15px 30px 15px !important; /* Khung bọc gọn gàng */
+        margin-top: 30px !important; 
+        padding: 0 15px 30px 15px !important; 
         background: transparent !important;
         transform: none !important;
         z-index: 10 !important;
     }
 
-    /* TRẢ LẠI KÍCH THƯỚC GỐC CHO NÚT (Chống phình to dị dạng) */
     .order-modal [style*="sticky"] button,
     .order-modal [style*="fixed"] button,
     .order-modal .button-group button,
     .order-modal .fixed-bottom button {
         height: auto !important;
-        margin-bottom: 12px !important; /* Tạo khoảng hở giữa 2 nút */
-        /* Tuyệt đối không nhồi padding bậy bạ vào đây nữa */
+        margin-bottom: 12px !important; 
     }
 
     /* --- 6. NÚT X (ĐÓNG POPUP) TO & RÕ RÀNG --- */
@@ -854,16 +854,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         margin-left: -15px !important; padding: 0 15px 15px 15px !important;
     }
     .dict-sidebar > * { flex: 0 0 auto !important; }
-}
-/* ====================================================
-       🔥 BỔ SUNG: PHÂN LẠI THỨ BẬC Z-INDEX TUYỆT ĐỐI (TRÁNH CHỒNG CHÉO)
-       ==================================================== */
-    #adminOverlay { z-index: 9900 !important; } /* Hạ bệ Admin Dashboard xuống */
-    #intOverlay, .overlay { z-index: 9990 !important; } 
-    #productOverlay, #addProductOverlay, #editOverlay { z-index: 99999 !important; } /* Ép Form Add/Edit Product đè lên Admin */
-    #lookbookOverlay { z-index: 999999 !important; } /* Lookbook đè lên Product */
-    #passOverlay { z-index: 9999999 !important; } /* Nhập Pass là đỉnh của chóp */
-    }}}}}</style>
+}    
+}}}}}</style>
 </head>
 <body>
 
