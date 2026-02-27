@@ -724,49 +724,50 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 #saveOrderBtn { animation: orderBlink 1.5s ease-in-out 3; }
 /* ====================================================
-   🔥 ARC'WARE VN - CỤC HOTFIX TỔNG HỢP (DÁN ĐÈ LÊN BẢN CŨ)
+   🔥 ARC'WARE VN - CỤC HOTFIX TỔNG HỢP V9 (FINAL ALL-IN-ONE)
    ==================================================== */
 
-/* --- 1. ĐÓNG KHUNG GIÁ CHUẨN MINIMALISM (ÁP DỤNG CẢ PC LẪN MOBILE) --- */
+/* --- 1. ĐÓNG KHUNG GIÁ CHUẨN MINIMALISM (PC & MOBILE) --- */
 #intOverlay #intPrice, 
 #intOverlay .price, 
 #productOverlay .price,
 .order-modal #intPrice,
 .price-tag {
     display: inline-block !important;
-    border: 1px solid #111 !important; /* Khung viền đen mỏng sắc nét */
-    background: transparent !important; /* Xóa nền, giữ sự trong suốt tối giản */
+    border: 1px solid #111 !important; 
+    background: transparent !important; 
     color: #111 !important; 
     padding: 6px 14px !important; 
     font-size: 16px !important; 
     font-weight: 600 !important; 
-    letter-spacing: 1px !important; /* Kéo giãn chữ cho sang */
+    letter-spacing: 1px !important; 
     margin: 15px 0 !important;
-    border-radius: 0 !important; /* Vuông vức 100%, chuẩn tech-wear */
+    border-radius: 0 !important; 
 }
+
+/* --- 2. FIX Z-INDEX ADMIN (Add Product đè lên Dashboard) --- */
+#productOverlay { z-index: 99999 !important; }
+#passOverlay { z-index: 999999 !important; }
 
 /* ====================================================
    📱 CHỈ DÀNH CHO MOBILE (TỪ 900PX TRỞ XUỐNG)
    ==================================================== */
 @media (max-width: 900px) {
 
-    /* --- 2. SẮP XẾP LẠI LỚP LANG (Z-INDEX) & MỞ KHÓA SCROLL --- */
+    /* --- 3. MỞ KHÓA SCROLL & SẮP XẾP LỚP LANG --- */
     body { touch-action: pan-y !important; }
     
     #intOverlay, #productOverlay, .overlay {
         position: fixed !important; 
         top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
         height: 100dvh !important;
-        display: flex !important; 
-        flex-direction: column !important; /* Ép nội dung xếp dọc để đẩy 2 nút xuống đáy */
-        justify-content: flex-start !important;
+        display: block !important; /* Trả về block để cuộn tự nhiên 100% */
         overflow-y: auto !important; 
         -webkit-overflow-scrolling: touch !important;
         z-index: 9999 !important; 
-        padding: 0 !important;
+        padding: 0 0 50px 0 !important;
     }
 
-    /* Lookbook đè lên mọi thứ */
     #lookbookOverlay {
         position: fixed !important; 
         top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
@@ -778,46 +779,54 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         background: rgba(0,0,0,0.95) !important;
     }
 
-    /* Mở scroll mượt cho ruột của Modal */
     .modal, .order-modal, .admin-modal, .modal-content {
         position: relative !important;
         height: auto !important;
         max-height: none !important;
         overflow: visible !important; 
         margin: 0 auto !important;
-        padding-top: 70px !important; /* Né cái nút X bự chà bá ra */
-        padding-bottom: 20px !important;
+        padding-top: 70px !important; 
+        padding-bottom: 30px !important;
         transform: none !important; 
     }
 
-    /* --- 3. MENU 4 NÚT ĐẦU TRANG (GIỮ GIAO DIỆN GỐC, CHỈ CHO DÍNH TRÊN ĐỈNH) --- */
+    /* --- 4. MENU 4 NÚT ĐẦU TRANG (DÍNH TRÊN ĐỈNH) --- */
     .mobile-top-nav {
         position: sticky !important; 
         top: 0 !important;
         z-index: 9999 !important;
-        /* Không thêm màu nền/khung gì hết để giữ nguyên thiết kế đẹp của ông */
     }
 
-    /* --- 4. BẮT CHẾT 2 NÚT ORDER NẰM ĐÁY POP-UP --- */
+    /* --- 5. CHỮA BỆNH NÚT ORDER (KHÔNG BÁM ĐUÔI, KHÔNG PHÌNH TO) --- */
+    /* Chỉ nhắm vào THẺ BỌC của 2 nút, tước quyền bám dính, ép nằm bệt xuống */
     .order-modal > div:last-child,
-    .order-modal [class*="bottom"],
-    .order-modal [class*="action"],
-    .order-modal [class*="btn"],
-    .order-modal [class*="footer"],
-    #intOverlay .sticky, #intOverlay .fixed,
-    #intOverlay .button-group, #intOverlay .action-buttons {
+    .order-modal [style*="sticky"], 
+    .order-modal [style*="fixed"],
+    .order-modal .fixed-bottom,
+    .order-modal .button-group {
         position: relative !important; 
-        display: block !important;
-        width: 100% !important;
-        margin-top: auto !important; /* Tự động đẩy tuột 2 nút xuống dưới cùng */
         bottom: auto !important;
+        top: auto !important;
         left: auto !important;
+        right: auto !important;
+        margin-top: 30px !important; /* Đẩy xa nội dung bên trên ra */
+        padding: 0 15px 30px 15px !important; /* Khung bọc gọn gàng */
+        background: transparent !important;
         transform: none !important;
-        padding: 20px 15px 50px 15px !important;
         z-index: 10 !important;
     }
 
-    /* --- 5. NÚT X (ĐÓNG POPUP) - KHỔNG LỒ & BÁM GÓC --- */
+    /* TRẢ LẠI KÍCH THƯỚC GỐC CHO NÚT (Chống phình to dị dạng) */
+    .order-modal [style*="sticky"] button,
+    .order-modal [style*="fixed"] button,
+    .order-modal .button-group button,
+    .order-modal .fixed-bottom button {
+        height: auto !important;
+        margin-bottom: 12px !important; /* Tạo khoảng hở giữa 2 nút */
+        /* Tuyệt đối không nhồi padding bậy bạ vào đây nữa */
+    }
+
+    /* --- 6. NÚT X (ĐÓNG POPUP) TO & RÕ RÀNG --- */
     [class*="close"], [id*="close"] {
         position: fixed !important; 
         top: 15px !important;
@@ -838,7 +847,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         cursor: pointer !important;
     }
 
-    /* --- 6. CỨU THANH ADMIN --- */
+    /* --- 7. CỨU THANH ADMIN --- */
     .dict-sidebar {
         display: flex !important; flex-wrap: nowrap !important;
         overflow-x: auto !important; width: 100vw !important; 
