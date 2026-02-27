@@ -28,6 +28,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+<style>
+    /* ====================================================
+       🔥 TÂN TRANG UI/UX: ĐÓNG KHUNG GIÁ TIỀN (GLOBAL)
+       ==================================================== */
+    #intPrice, .price, .product-price, .item-price {
+        display: inline-block !important;
+        background-color: #f4f4f5 !important; 
+        color: #111 !important; 
+        padding: 8px 16px !important; 
+        border-radius: 6px !important; 
+        font-size: 1.2em !important; 
+        font-weight: 800 !important; 
+        border: 1px solid #e4e4e7 !important; 
+        margin: 15px 0 !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important; 
+    }
+
+    /* ... (các đoạn code CSS gốc của ông sẽ nằm tiếp ở dưới này) ... */
 /* ══ GLOBAL: prevent ANY horizontal overflow on mobile ══ */
 *, *::before, *::after { box-sizing: border-box; }
 html { overflow-x: hidden; }
@@ -789,14 +807,64 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     }
 
     /* --- 4. CỨU THANH ADMIN --- */
+/* --- 4. CỨU THANH ADMIN --- */
     .dict-sidebar {
         display: flex !important; flex-wrap: nowrap !important;
         overflow-x: auto !important; width: 100vw !important; 
         margin-left: -15px !important; padding: 0 15px 15px 15px !important;
     }
     .dict-sidebar > * { flex: 0 0 auto !important; }
+
+    /* --- BƯỚC 3: MENU ĐẦU TRANG & 2 NÚT ORDER (MOBILE) --- */
+    .mobile-top-nav {
+        display: flex !important;
+        flex-wrap: nowrap !important; 
+        overflow-x: auto !important; 
+        -webkit-overflow-scrolling: touch !important;
+        padding: 12px 20px !important;
+        background: #fff !important; 
+        border-bottom: 1px solid #f0f0f0 !important; 
+        gap: 20px !important; 
+    }
+    .mobile-top-nav::-webkit-scrollbar { display: none !important; }
+    .mobile-top-nav a, .mobile-top-nav button, .mobile-top-nav div {
+        flex: 0 0 auto !important; 
+        border: none !important; 
+        background: transparent !important;
+        font-size: 12px !important;
+        font-weight: 700 !important;
+        color: #666 !important;
+        padding: 5px 0 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important; 
+    }
+
+    #intOverlay, #productOverlay {
+        display: flex !important;
+        flex-direction: column !important; 
+        justify-content: flex-start !important;
+    }
+    #intOverlay .button-group, #intOverlay .action-buttons, #intOverlay div[style*="fixed"] {
+        position: relative !important;
+        margin-top: 30px !important; 
+        padding: 20px 15px 50px 15px !important;
+        width: 100% !important;
+    }
+} /* Dấu đóng của Media Query Mobile */
+
+/* --- BƯỚC 2: KHUNG GIÁ (PC & MOBILE) --- */
+#intPrice, .price, .product-price {
+    display: inline-block !important;
+    background-color: #f4f4f5 !important; 
+    color: #111 !important; 
+    padding: 8px 16px !important; 
+    border-radius: 6px !important; 
+    font-size: 1.2em !important; 
+    font-weight: 800 !important; 
+    border: 1px solid #e4e4e7 !important; 
+    margin: 15px 0 !important;
 }
-}}}}}</style>
+    }}}}}</style>
 </head>
 <body>
 
@@ -1963,14 +2031,27 @@ function closeVideo() {
 </script>
 <script>
     document.addEventListener('click', function(e) {
-        // 1. Kiểm tra xem thứ bị bấm trúng có phải là Overlay không (dựa vào ID hoặc Class)
-        var isOverlay = (e.target.id && e.target.id.toLowerCase().includes('overlay')) || 
-                        (e.target.classList && e.target.classList.contains('overlay'));
-        
-        // 2. Nếu đúng là Overlay VÀ không phải là ruột Modal (chống bấm nhầm vào chữ/ảnh bên trong)
-        if (isOverlay) {
-            e.target.style.display = 'none'; // Tắt cái popup đó đi
-            document.body.style.overflow = 'auto'; // Cho phép cuộn trang chủ lại
+        // Kiểm tra xem có bấm trúng nút X hoặc nền đen Overlay không
+        var isCloseBtn = e.target.closest('.close') || e.target.closest('[class*="close-modal"]');
+        var isOverlay = e.target.classList.contains('overlay') || (e.target.id && e.target.id.toLowerCase().includes('overlay'));
+
+        if (isCloseBtn || isOverlay) {
+            e.preventDefault(); // BÍ QUYẾT Ở ĐÂY: Chặn ngay cái tật giật lên top của thẻ a href="#"
+            
+            // Ghi nhớ vị trí đang đứng của màn hình
+            var currentScroll = window.scrollY || document.documentElement.scrollTop;
+            
+            // Tìm cái Overlay đang mở để tắt nó đi
+            var overlayToClose = isOverlay ? e.target : e.target.closest('.overlay');
+            if (overlayToClose) {
+                overlayToClose.style.display = 'none';
+            }
+
+            // Mở khóa cuộn cho trang chủ
+            document.body.style.overflow = '';
+            
+            // Ép trang web đứng im tại vị trí cũ, cấm nhúc nhích
+            window.scrollTo(0, currentScroll);
         }
     });
 </script>
