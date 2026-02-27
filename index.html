@@ -706,109 +706,39 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 #saveOrderBtn { animation: orderBlink 1.5s ease-in-out 3; }
 /* ====================================================
-   🔥 ARC'WARE VN - MOBILE UX/UI HOTFIX (VERSION 2)
+   🔥 ARC'WARE VN - MOBILE HOTFIX V3 (SAFE MODE)
    ==================================================== */
 @media (max-width: 900px) {
 
-    /* ====================================================
-       1. FIX KẸT SCROLL & "VÙNG CHẾT" CỦA MODAL
-       ==================================================== */
-    /* Ép Overlay thành lớp cuộn duy nhất, chặn dội ngược trên iOS */
-    .overlay, #intOverlay, #productOverlay, #lookbookOverlay, #passOverlay {
-        align-items: flex-start !important; 
+    /* 1. MỞ KHÓA CUỘN CHO MODAL SẢN PHẨM & ADMIN */
+    /* Thay vì phá vỡ cấu trúc, chỉ giới hạn chiều cao 85% màn hình và ép nó tự cuộn bên trong */
+    .modal, .order-modal, .admin-modal {
+        max-height: 85vh !important; 
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        overscroll-behavior-y: contain !important; /* Chặn lỗi vuốt lên khó/dội ngược */
-        padding: 0 !important; 
+        padding-bottom: 100px !important; /* Tạo khoảng trống đáy để không bị kẹt nút */
     }
 
-    /* Tháo gông chiều cao cho Modal, tắt cuộn ngầm bên trong (Nguyên nhân gây vùng chết) */
-    .modal, .order-modal, .admin-modal, #lookbookOverlay .modal-content {
-        margin: 0 auto !important; 
-        max-height: none !important; 
-        height: auto !important;
-        overflow: visible !important; /* Xóa cuộn lồng nhau */
-        pointer-events: auto !important; /* Bật lại cảm ứng cho toàn bộ bề mặt */
-        padding-bottom: 60px !important; /* Chừa không gian đáy */
-    }
-
-    /* ====================================================
-       2. THÁO KEO NÚT ORDER VÀ CÁC NÚT STICKY
-       ==================================================== */
-    /* Ép các nút dính đáy phải trôi theo luồng nội dung bình thường */
-    .order-modal [style*="sticky"], 
-    .order-modal [style*="fixed"],
-    .order-modal .button-group,
-    .order-modal button {
-        position: relative !important;
-        bottom: auto !important;
-        top: auto !important;
-        z-index: 10 !important;
-    }
-
-    /* ====================================================
-       3. CỨU DỮ LIỆU TAB "CONTENT & TEXT" (Menu ngang)
-       ==================================================== */
-    /* Dùng block + inline-block thay vì flex để đảm bảo không bị mất tab nào */
+    /* 2. CHỮA CHÁY THANH MENU NGANG (Tab Content & Text) */
     .dict-sidebar {
-        display: block !important; 
-        white-space: nowrap !important;
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        padding-bottom: 15px !important; 
+        white-space: nowrap !important;
+        display: block !important; 
     }
+    
     .dict-sidebar > * {
-        display: inline-block !important; /* Dàn hàng ngang chuẩn chỉ */
+        display: inline-block !important; /* Dàn ngang an toàn, không dùng flex */
         vertical-align: top !important;
-        float: none !important;
-        margin-right: 10px !important; /* Khoảng cách giữa các tab */
     }
 
-    /* ====================================================
-       4. ADMIN PANEL (Làm mượt cuộn dọc)
-       ==================================================== */
-    .admin-panel, .admin-content, #productsTab, #contentTab {
+    /* 3. MỞ KHÓA CUỘN CHO ADMIN DASHBOARD */
+    .admin-panel, .admin-content {
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        overscroll-behavior-y: contain !important;
-        height: auto !important; /* Đổi thành auto để không bị bó cứng */
-        min-height: 100dvh !important;
-        padding-bottom: 150px !important; 
+        padding-bottom: 120px !important; 
     }
-
-    /* ====================================================
-       5. TOUCH TARGETS (Các Tối ưu UI Cũ - Giữ nguyên)
-       ==================================================== */
-    .sourcing-widget {
-        bottom: 20px !important;
-        right: 15px !important;
-        transform: scale(0.85) !important; 
-        transform-origin: bottom right !important;
-        z-index: 9999 !important;
-    }
-    .mobile-top-nav {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 8px !important;
-        padding: 10px !important;
-    }
-    .mobile-top-nav a, .mobile-top-nav button {
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 12px 5px !important; 
-        font-size: 11px !important;
-    }
-    #zaloOverlay, #dwrContactOverlay, #copyOverlay {
-        align-items: flex-end !important; 
-        padding: 0 !important;
-    }
-    #zaloOverlay .modal, #dwrContactOverlay .modal, #copyOverlay .modal {
-        margin: auto auto 0 auto !important;
-        padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; 
-        border-bottom-left-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
-    }
-}</style>
+}}</style>
 </head>
 <body>
 
