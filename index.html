@@ -706,45 +706,79 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 #saveOrderBtn { animation: orderBlink 1.5s ease-in-out 3; }
 /* ====================================================
-   🔥 ARC'WARE VN - MOBILE UX/UI HOTFIX (DO NOT REMOVE)
+   🔥 ARC'WARE VN - MOBILE UX/UI HOTFIX (VERSION 2)
    ==================================================== */
 @media (max-width: 900px) {
-    /* BUG 1: ADMIN DASHBOARD (Fix kẹt cuộn dọc & ngang) */
-    .admin-panel, .admin-content, #productsTab, #contentTab {
+
+    /* ====================================================
+       1. FIX KẸT SCROLL & "VÙNG CHẾT" CỦA MODAL
+       ==================================================== */
+    /* Ép Overlay thành lớp cuộn duy nhất, chặn dội ngược trên iOS */
+    .overlay, #intOverlay, #productOverlay, #lookbookOverlay, #passOverlay {
+        align-items: flex-start !important; 
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        height: 100dvh !important; /* Dùng dvh thay vì vh để fix lỗi bàn phím ảo */
-        padding-bottom: 150px !important; /* Chừa không gian vuốt cho nút SAVE */
+        overscroll-behavior-y: contain !important; /* Chặn lỗi vuốt lên khó/dội ngược */
+        padding: 0 !important; 
     }
+
+    /* Tháo gông chiều cao cho Modal, tắt cuộn ngầm bên trong (Nguyên nhân gây vùng chết) */
+    .modal, .order-modal, .admin-modal, #lookbookOverlay .modal-content {
+        margin: 0 auto !important; 
+        max-height: none !important; 
+        height: auto !important;
+        overflow: visible !important; /* Xóa cuộn lồng nhau */
+        pointer-events: auto !important; /* Bật lại cảm ứng cho toàn bộ bề mặt */
+        padding-bottom: 60px !important; /* Chừa không gian đáy */
+    }
+
+    /* ====================================================
+       2. THÁO KEO NÚT ORDER VÀ CÁC NÚT STICKY
+       ==================================================== */
+    /* Ép các nút dính đáy phải trôi theo luồng nội dung bình thường */
+    .order-modal [style*="sticky"], 
+    .order-modal [style*="fixed"],
+    .order-modal .button-group,
+    .order-modal button {
+        position: relative !important;
+        bottom: auto !important;
+        top: auto !important;
+        z-index: 10 !important;
+    }
+
+    /* ====================================================
+       3. CỨU DỮ LIỆU TAB "CONTENT & TEXT" (Menu ngang)
+       ==================================================== */
+    /* Dùng block + inline-block thay vì flex để đảm bảo không bị mất tab nào */
     .dict-sidebar {
-        display: flex !important;
-        flex-wrap: nowrap !important;
+        display: block !important; 
+        white-space: nowrap !important;
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch !important;
         padding-bottom: 15px !important; 
     }
     .dict-sidebar > * {
-        flex: 0 0 auto !important; /* Ép các section không bị co rúm/mất tích */
-        white-space: nowrap !important;
+        display: inline-block !important; /* Dàn hàng ngang chuẩn chỉ */
+        vertical-align: top !important;
+        float: none !important;
+        margin-right: 10px !important; /* Khoảng cách giữa các tab */
     }
 
-    /* BUG 2 & 3: MODALS OVERLAY (Fix mất thông tin, kẹt scroll, lỗi bàn phím) */
-    /* Mấu chốt: Chuyển align-items từ center sang flex-start để ruột modal không bị đẩy lên trời */
-    .overlay, #intOverlay, #productOverlay, #lookbookOverlay, #passOverlay {
-        align-items: flex-start !important; 
+    /* ====================================================
+       4. ADMIN PANEL (Làm mượt cuộn dọc)
+       ==================================================== */
+    .admin-panel, .admin-content, #productsTab, #contentTab {
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
-        padding: 20px 15px 100px 15px !important; /* Chừa khoảng trống dưới đáy */
-    }
-    .modal, .order-modal, .admin-modal, #lookbookOverlay .modal-content {
-        margin: 0 auto auto auto !important; /* Cho phép modal trôi xuống dưới tự do */
-        max-height: none !important; /* Xóa giới hạn chiều cao gây nghẽn */
-        height: auto !important;
-        overflow: visible !important;
+        overscroll-behavior-y: contain !important;
+        height: auto !important; /* Đổi thành auto để không bị bó cứng */
+        min-height: 100dvh !important;
+        padding-bottom: 150px !important; 
     }
 
-    /* BUG 4: TOUCH TARGETS & UI TWEAKS (Tối ưu điểm chạm ngón tay) */
-    /* 1. Kéo Sourcing Widget gọn lại, không đè content */
+    /* ====================================================
+       5. TOUCH TARGETS (Các Tối ưu UI Cũ - Giữ nguyên)
+       ==================================================== */
     .sourcing-widget {
         bottom: 20px !important;
         right: 15px !important;
@@ -752,7 +786,6 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         transform-origin: bottom right !important;
         z-index: 9999 !important;
     }
-    /* 2. Dàn lại thanh Top Nav thành Grid 2x2 để nút bự ra, dễ bấm */
     .mobile-top-nav {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
@@ -762,22 +795,20 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     .mobile-top-nav a, .mobile-top-nav button {
         width: 100% !important;
         margin: 0 !important;
-        padding: 12px 5px !important; /* Tăng độ dày vùng chạm */
+        padding: 12px 5px !important; 
         font-size: 11px !important;
     }
-    /* 3. Safe-area cho các Modal nhỏ dưới đáy (iPhone tai thỏ/Home Indicator) */
     #zaloOverlay, #dwrContactOverlay, #copyOverlay {
-        align-items: flex-end !important; /* Ép mấy popup này nằm sát đáy */
+        align-items: flex-end !important; 
         padding: 0 !important;
     }
     #zaloOverlay .modal, #dwrContactOverlay .modal, #copyOverlay .modal {
         margin: auto auto 0 auto !important;
-        padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; /* Né cái vạch đen của iPhone */
+        padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important; 
         border-bottom-left-radius: 0 !important;
         border-bottom-right-radius: 0 !important;
     }
-}
-</style>
+}</style>
 </head>
 <body>
 
