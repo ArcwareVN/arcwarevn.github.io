@@ -706,76 +706,98 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 #saveOrderBtn { animation: orderBlink 1.5s ease-in-out 3; }
 /* ====================================================
-   🔥 ARC'WARE VN - MOBILE HOTFIX V5 (NUCLEAR RESET)
+   🔥 ARC'WARE VN - MOBILE HOTFIX V5.1 (SCROLL + BUTTONS)
    ==================================================== */
 @media (max-width: 900px) {
 
-    /* 1. MỞ ĐƯỜNG CHO CẢM ỨNG (Chống liệt/kẹt toàn cục) */
+    /* --- CÁC FIX SCROLL GIỮ NGUYÊN NHƯ BẢN V5 --- */
     body { touch-action: pan-y !important; }
-
-    /* 2. CHỈ CẤP QUYỀN CUỘN CHO LỚP NGOÀI CÙNG (OVERLAY) */
     .overlay, #intOverlay, #productOverlay, #lookbookOverlay, #passOverlay {
-        position: fixed !important; /* Đóng đinh nó vào màn hình */
+        position: fixed !important; 
         top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
         height: 100dvh !important;
-        display: block !important; /* Phá vỡ flexbox (kẻ thù của scroll mobile) */
-        overflow-y: auto !important; /* Duy nhất thằng này được cuộn */
+        display: block !important; 
+        overflow-y: auto !important; 
         -webkit-overflow-scrolling: touch !important;
         padding: 20px 10px 100px 10px !important; 
         z-index: 9999 !important;
     }
-
-    /* 3. TƯỚC QUYỀN CUỘN CỦA LỚP BÊN TRONG (MODAL) */
-    /* Ép nó dài ra vô tận theo nội dung, không được tự cuộn ngầm nữa */
     .overlay .modal, .overlay .order-modal, .overlay .admin-modal, #lookbookOverlay .modal-content {
         position: relative !important;
         height: auto !important;
         max-height: none !important;
-        overflow: visible !important; /* QUAN TRỌNG NHẤT: Bỏ cuộn ngầm */
+        overflow: visible !important; 
         margin: 0 auto !important;
-        transform: none !important; /* Tắt hiệu ứng gây lag cảm ứng */
+        transform: none !important; 
     }
-
-    /* 4. TRIỆT TIÊU 2 NÚT ORDER DÍNH ĐÁY */
-    /* Dùng static để tước bỏ mọi quyền bay lơ lửng, ép nó nằm bệt xuống sàn */
-    .order-modal .button-group,
-    .order-modal [style*="sticky"],
-    .order-modal [style*="fixed"],
-    .order-modal .fixed-bottom {
-        position: static !important; 
-        display: flex !important;
-        flex-direction: column !important; /* Xếp 2 nút dọc cho dễ bấm */
-        margin-top: 30px !important;
-        bottom: auto !important;
-        transform: none !important;
-    }
-
-    /* 5. CỨU THANH MENU NGANG (HIỆN FULL 100% TAB) */
     .dict-sidebar {
         display: flex !important;
         flex-wrap: nowrap !important;
         overflow-x: auto !important;
         overflow-y: hidden !important;
         -webkit-overflow-scrolling: touch !important;
-        width: 100vw !important; /* Ép bung full chiều ngang màn hình */
-        margin-left: -15px !important; /* Tràn ra sát mép điện thoại */
+        width: 100vw !important; 
+        margin-left: -15px !important; 
         padding-left: 15px !important;
         padding-right: 15px !important;
         padding-bottom: 15px !important;
     }
     .dict-sidebar > * {
-        flex: 0 0 auto !important; /* Không cho phép co rút */
+        flex: 0 0 auto !important; 
         display: block !important;
         min-width: max-content !important;
     }
-
-    /* 6. ADMIN DASHBOARD */
     .admin-panel, .admin-content, #productsTab, #contentTab {
         overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         height: auto !important;
     }
-}}}}</style>
+
+    /* --- PHẦN MỚI THÊM: ĐỘ NÚT BẤM (BUTTON TWEAKS) --- */
+
+    /* 1. Trói 2 nút Order: Ép nằm bệt xuống sàn, không lơ lửng */
+    .order-modal .button-group,
+    .order-modal [style*="sticky"],
+    .order-modal [style*="fixed"],
+    .order-modal .fixed-bottom,
+    .order-modal .action-buttons,
+    #intOverlay .button-group {
+        position: static !important; /* Tước quyền bay lơ lửng */
+        display: flex !important;
+        flex-direction: column !important; 
+        width: 100% !important;
+        margin-top: 30px !important; 
+        margin-bottom: 20px !important;
+        bottom: auto !important;
+        transform: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* 2. Nút X (Đóng popup): To, nền đen mờ, đóng đinh góc phải */
+    .overlay .close, 
+    .overlay .close-btn, 
+    .overlay .close-modal,
+    #intOverlay .close {
+        position: fixed !important; /* Đóng đinh khi cuộn */
+        top: 15px !important;
+        right: 15px !important;
+        width: 44px !important; 
+        height: 44px !important;
+        background: rgba(0, 0, 0, 0.6) !important; 
+        color: #ffffff !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 24px !important;
+        line-height: 1 !important;
+        z-index: 999999 !important; /* Đè lên vạn vật */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+}}}}}</style>
 </head>
 <body>
 
@@ -1939,6 +1961,20 @@ function closeVideo() {
   closeOverlay('videoOverlay');
 }
 
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var overlays = document.querySelectorAll('.overlay');
+        overlays.forEach(function(overlay) {
+            overlay.addEventListener('click', function(e) {
+                // Nếu click đúng vào nền đen, không phải click vào content bên trong
+                if (e.target === overlay) {
+                    overlay.style.display = 'none';
+                    document.body.style.overflow = ''; 
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>
