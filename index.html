@@ -135,9 +135,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 #products { padding: 0 0 80px 0; }
 .section-header { padding: 80px 48px 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
 .section-title { font-size: 20px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.1em; padding-bottom: 20px; }
-.filter-tabs { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: -1px; justify-content: flex-end; }
-.filter-tab { font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; padding: 0 0 20px 0; border: none; border-bottom: 2px solid transparent; background: none; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
-.filter-tab:hover, .filter-tab.active { color: var(--white); border-bottom-color: var(--white); }
+.filter-tabs { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.filter-tab { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 24px; border: 1px solid var(--border); border-radius: 40px; background: var(--navy-2); color: var(--text-muted); cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.filter-tab:hover { border-color: var(--text-dim); color: var(--white); transform: translateY(-2px); }
+.filter-tab.active { background: var(--white); color: var(--navy); border-color: var(--white); transform: translateY(0); box-shadow: 0 4px 15px rgba(255,255,255,0.15); }
 .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 30px; padding: 0 48px; }
 .product-card { display: flex; flex-direction: column; cursor: pointer; background: var(--navy); border: 1px solid var(--border); transition: 0.3s ease; height: 100%; position: relative;}
 .product-card:hover { border-color: var(--text-dim); transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
@@ -471,15 +472,9 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .contact-grid { grid-template-columns: 1fr; }
 
   /* Filter tabs: compact wrapped layout for quicker scanning */
-  .filter-tabs {
-    width: 100%;
-    overflow-x: hidden;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 0;
-  }
-  .filter-tab { white-space: nowrap; flex-shrink: 0; min-height: 40px; font-size: 10px; padding: 8px 10px; }
+  .filter-tabs { width: 100%; overflow-x: auto; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; padding-bottom: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .filter-tabs::-webkit-scrollbar { display: none; }
+  .filter-tab { white-space: nowrap; flex-shrink: 0; padding: 10px 20px; font-size: 9px; }
 
   /* Footer */
   footer { padding: 36px 20px 24px !important; }
@@ -844,6 +839,40 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     }
     .dict-sidebar > * { flex: 0 0 auto !important; }
 }    
+/* ════ DWR & REVIEWS SPLIT SECTION ════ */
+.dwr-split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; margin-bottom: 40px; }
+
+/* Khung Box tiêu chuẩn */
+.split-box { background: var(--navy-2); padding: 40px; border: 1px solid var(--border); border-radius: 2px; display: flex; flex-direction: column; }
+
+/* Ép riêng cột Review bên phải thành Sticky trượt lơ lửng */
+.split-box:nth-child(2) { position: sticky; top: 100px; }
+
+/* Size chữ được thống nhất chuẩn mực */
+.split-box-title { font-size: 14px; font-weight: 800; letter-spacing: 0.15em; color: var(--white); text-transform: uppercase; margin-bottom: 16px; }
+.split-box-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 30px; }
+
+/* Chi tiết các bước DWR */
+.dwr-steps { display: flex; flex-direction: column; gap: 24px; margin: 24px 0 36px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 32px 0; }
+.dwr-step { display: grid; grid-template-columns: 60px 1fr; align-items: start; gap: 16px; }
+.dwr-step-num { font-size: 10px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.15em; border-bottom: 1px solid var(--border); padding-bottom: 4px; display: inline-block; margin-top: 2px; }
+.dwr-step-title { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); margin-bottom: 4px; }
+.dwr-step-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+/* Giá tiền thu nhỏ bằng size Product Card (15px) */
+.dwr-price-big { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 16px; letter-spacing: 0.02em; }
+
+/* Nút bấm thu nhỏ, tinh tế, căn trái */
+.split-box-btn { font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--navy); background: var(--white); border: 1px solid var(--white); padding: 14px 32px; text-decoration: none; transition: 0.3s; display: inline-block; cursor: pointer; text-align: center; width: max-content; }
+.split-box-btn:hover { background: transparent; color: var(--white); }
+
+/* Ép 1 cột trên Mobile */
+@media (max-width: 900px) {
+  .dwr-split-grid { grid-template-columns: 1fr; gap: 24px; }
+  .split-box { padding: 32px 24px; }
+  .split-box:nth-child(2) { position: static; } /* Gỡ sticky trên mobile để ko lỗi cuộn */
+  .split-box-btn { width: 100%; }
+}
 }}}}}</style>
 </head>
 <body>
@@ -940,11 +969,59 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   </div>
 </section>
 
-<section id="dwr" style="padding: 40px 48px 80px; display: flex; justify-content: flex-start;">
-  <div style="max-width: 400px; width: 100%; background: var(--navy-2); border: 1px solid var(--border); padding: 32px; text-align: left; border-radius: 2px;">
-    <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.15em; color: var(--white); text-transform: uppercase; margin-bottom: 12px;" data-i18n="dwrSecTitle">GORE-TEX MAINTENANCE</div>
-    <div style="font-size: 13px; color: var(--text-dim); line-height: 1.6; margin-bottom: 24px;" data-i18n="dwrSecText">Professional DWR Re-waterproofing Service restores the factory water-repellency of your technical gear.</div>
-    <button class="btn-primary" style="padding: 12px 32px; font-size: 10px;" onclick="openOverlay('dwrContactOverlay')" data-i18n="dwrBtn">BOOK SERVICE</button>
+<section id="dwr" class="editorial-wrapper" style="border-top: 1px solid var(--border);">
+  <div class="dwr-split-grid">
+    
+    <div class="split-box">
+      <div>
+        <div class="split-box-title" data-i18n="dwrSecTitle">GORE-TEX RE-WATERPROOFING</div>
+        <div class="split-box-desc" data-i18n="dwrSecText">Professional DWR Re-waterproofing Service restores the factory water-repellency of your technical gear.</div>
+
+        <div class="dwr-steps">
+          <div class="dwr-step">
+            <div class="dwr-step-num" data-i18n="dwrS1Num">STEP 01</div>
+            <div>
+              <div class="dwr-step-title" data-i18n="dwrS1Title">Send us your gear</div>
+              <div class="dwr-step-sub" data-i18n="dwrS1Sub">Ship or drop off in Sa Dec, Đồng Tháp</div>
+            </div>
+          </div>
+          <div class="dwr-step">
+            <div class="dwr-step-num" data-i18n="dwrS2Num">STEP 02</div>
+            <div>
+              <div class="dwr-step-title" data-i18n="dwrS2Title">Professional treatment</div>
+              <div class="dwr-step-sub" data-i18n="dwrS2Sub">DWR wash-in, heat activation</div>
+            </div>
+          </div>
+          <div class="dwr-step">
+            <div class="dwr-step-num" data-i18n="dwrS3Num">STEP 03</div>
+            <div>
+              <div class="dwr-step-title" data-i18n="dwrS3Title">Factory performance</div>
+              <div class="dwr-step-sub" data-i18n="dwrS3Sub">Water beads like new again</div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 30px; line-height: 1.5;" data-i18n="dwrNote">Works on Arc'teryx GORE-TEX, GORE-TEX PACLITE, and all waterproof softshells. Have questions? Message us before booking — we'll tell you honestly if your piece needs it.</div>
+      </div>
+
+      <div>
+        <div class="dwr-price-big" data-i18n="dwrPrice">13.000.000 VND / ~$499</div>
+        <button class="split-box-btn" onclick="openOverlay('dwrContactOverlay')" data-i18n="dwrBtn">BOOK SERVICE</button>
+      </div>
+    </div>
+
+    <div class="split-box">
+      <div>
+        <div class="split-box-title" data-i18n="revSideTitle">WHAT CUSTOMERS SAY</div>
+        <div class="split-box-desc" data-i18n="revSideSub">
+          Real gear on real people. We don't use fake reviews. Check out our Instagram community to see feedback, fit checks, and sourcing requests from our buyers.
+        </div>
+      </div>
+      <div>
+        <a href="https://instagram.com/arcwarevn" target="_blank" class="split-box-btn" data-i18n="revSideBtn">LET'S FIND OUT ↗</a>
+      </div>
+    </div>
+    
   </div>
 </section>
 
@@ -1259,7 +1336,7 @@ const dictKeys = {
   srcTitle: "Sourcing - Widget Title",
   supportPrompt: "Prompt - General Support", msgOrder: "Prompt - Product Order", msgSize: "Prompt - Product Size Advice",
   srcPrompt: "Prompt - Sourcing Service", dwrPrompt: "Prompt - DWR Service"
-};
+, dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT ↗"};
 
 const defaultEN = { 
   navShop: "SHOP", navAbout: "ABOUT", navGuar: "GUARANTEE", navPol: "POLICIES", navContact: "CONTACT", 
@@ -1285,7 +1362,7 @@ const defaultEN = {
   srcTitle: "SOURCING SERVICE",
   supportPrompt: "Hi Arc'ware, I need some support and advice!", msgOrder: "I want to order:\n[NAME]\n[PRICE] | Size: [SIZE]", msgSize: "I need sizing advice for:\n[NAME]",
   srcPrompt: "Hi, I am looking for a specific Arc'teryx item. Can you help me source it?", dwrPrompt: "Hi, I want to inquire about the Professional DWR Re-waterproofing service."
-};
+, dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT ↗"};
 
 const defaultVI = { 
   navShop: "SẢN PHẨM", navAbout: "CÂU CHUYỆN", navGuar: "CAM KẾT", navPol: "CHÍNH SÁCH", navContact: "LIÊN HỆ", 
@@ -1311,7 +1388,7 @@ const defaultVI = {
   srcTitle: "TÌM HÀNG THEO YÊU CẦU",
   supportPrompt: "Chào Arc'ware, mình cần hỗ trợ tư vấn!", msgOrder: "Tôi muốn đặt:\n[NAME]\n[PRICE] | Size: [SIZE]", msgSize: "Tư vấn size giúp mình mẫu này:\n[NAME]",
   srcPrompt: "Chào shop, mình đang tìm một mẫu Arc'teryx cụ thể, shop có nhận tìm hàng không?", dwrPrompt: "Chào shop, mình cần tư vấn về dịch vụ phục hồi chống thấm DWR cho áo Gore-Tex."
-};
+, dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT ↗"};
 
 let currentLang = 'en';
 let customEN = getSafeObject('aw_custom_en', defaultEN);
@@ -1487,7 +1564,7 @@ const dictGroups = [
   { id: 'nav', name: 'Navigation', keys: ['navShop', 'dwrNav', 'navAbout', 'navGuar', 'navPol', 'navContact'] },
   { id: 'hero', name: 'Hero', keys: ['heroEyebrow', 'heroTitle', 'heroDesc', 'shopBtn'] },
   { id: 'product', name: 'Product Store', keys: ['curCol', 'emptyCol', 'fAll', 'fShell', 'fInsul', 'fFoot', 'fPack', 'fOth', 'sz', 'cnd', 'noPr', 'feeNt', 'fastSell'] },
-  { id: 'dwr', name: 'DWR Service', keys: ['dwrSecTitle', 'dwrSecText', 'dwrBtn', 'dwrModalTitle', 'dwrModalSub', 'dwrIg', 'dwrWa'] },
+  { id: 'dwr', name: 'DWR & Reviews', keys: ['dwrSecTitle', 'dwrSecText', 'dwrBtn', 'dwrModalTitle', 'dwrModalSub', 'dwrIg', 'dwrWa', 'dwrPrice', 'dwrS1Num', 'dwrS1Title', 'dwrS1Sub', 'dwrS2Num', 'dwrS2Title', 'dwrS2Sub', 'dwrS3Num', 'dwrS3Title', 'dwrS3Sub', 'dwrNote', 'revSideTitle', 'revSideSub', 'revSideBtn'] },
   { id: 'order', name: 'Dynamic Pre-fills', keys: ['srcTitle', 'srcPrompt', 'dwrPrompt', 'supportPrompt', 'msgOrder', 'msgSize', 'hwTitle', 'hwSub', 'vidTitle', 'vidSub', 'priceDiff', 'priceSame', 'shipNoteFull', 'payPol', 'payPolGl', 'payPolVn', 'ordIg', 'ordWa', 'szHelp', 'askSzIg', 'askSzWa'] },
   { id: 'editorial', name: 'Editorial Sec', keys: ['secAboutTitle', 'secAboutText', 'secGuarTitle', 'secGuarText', 'secPolTitle', 'secPolText', 'secContactTitle', 'secContactSub', 'ctIg', 'ctWa', 'btnZalo', 'btnPhone', 'ctWaSub', 'ctZaloSub', 'phoneCopiedToast'] },
   { id: 'modal', name: 'Modals', keys: ['lbHint', 'zlTitle', 'zlSub', 'zlSales', 'zlTech', 'igCopied', 'igSub', 'igGo', 'igCancel', 'waCopied', 'waSub', 'waGo'] },
@@ -2008,31 +2085,6 @@ function closeVideo() {
   closeOverlay('videoOverlay');
 }
 
-</script>
-    <script>
-// Tự động kiểm tra nếu URL chứa mã reset password (type=recovery)
-document.addEventListener('DOMContentLoaded', async () => {
-    // Kiểm tra hash trên URL để tìm token recovery
-    const hash = window.location.hash;
-    if (hash && hash.includes('type=recovery')) {
-        const newPassword = prompt("Mời ông nhập mật khẩu Admin mới cho ARC'WARE:");
-        
-        if (newPassword && newPassword.length >= 6) {
-            // Cập nhật mật khẩu mới thông qua sbClient đã khai báo
-            const { data, error } = await sbClient.auth.updateUser({ password: newPassword });
-            
-            if (error) {
-                alert("Lỗi cập nhật mật khẩu: " + error.message);
-            } else {
-                alert("Đổi mật khẩu thành công! Ông có thể đăng nhập bằng mật khẩu mới.");
-                // Xóa token trên URL để bảo mật và tránh reload lại prompt
-                window.location.hash = ""; 
-            }
-        } else if (newPassword) {
-            alert("Mật khẩu quá ngắn, vui lòng thử lại quy trình.");
-        }
-    }
-});
 </script>
 </body>
 </html>
