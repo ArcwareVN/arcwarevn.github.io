@@ -724,31 +724,32 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 #saveOrderBtn { animation: orderBlink 1.5s ease-in-out 3; }
 /* ====================================================
-   🔥 ARC'WARE VN - CỤC HOTFIX TỔNG HỢP V11 (FIX ORDER BUTTONS)
+   🔥 ARC'WARE VN - CỤC HOTFIX TỔNG HỢP V12 (THE FINAL)
    ==================================================== */
 
-/* --- 1. ĐÓNG KHUNG GIÁ CHUẨN MINIMALISM (PC & MOBILE) --- */
+/* --- 1. ĐÓNG KHUNG GIÁ MINIMALISM (PC & MOBILE) --- */
 #intOverlay #intPrice, 
 #intOverlay .price, 
 #productOverlay .price,
 .order-modal #intPrice,
 .price-tag {
     display: inline-block !important;
-    border: 1px solid #111 !important; 
+    border: 1px solid var(--text) !important; /* Viền mỏng theo màu chữ */
     background: transparent !important; 
-    color: #111 !important; 
-    padding: 6px 14px !important; 
-    font-size: 16px !important; 
-    font-weight: 600 !important; 
+    color: var(--white) !important; 
+    padding: 10px 20px !important; 
+    font-size: 18px !important; 
+    font-weight: 700 !important; 
     letter-spacing: 1px !important; 
-    margin: 15px 0 !important;
-    border-radius: 0 !important; 
+    margin: 20px 0 !important;
+    border-radius: 0 !important; /* Vuông vức tuyệt đối */
+    text-align: left !important;
 }
 
-/* --- 2. PHÂN LẠI THỨ BẬC Z-INDEX TOÀN TRANG --- */
+/* --- 2. PHÂN LẠI THỨ BẬC Z-INDEX --- */
 #adminOverlay { z-index: 9900 !important; } 
 #intOverlay, .overlay { z-index: 9990 !important; } 
-#productOverlay, #addProductOverlay, #editOverlay { z-index: 99999 !important; } 
+#productOverlay, #addProductOverlay, #editOverlay { z-index: 99995 !important; } 
 #lookbookOverlay { z-index: 999999 !important; } 
 #passOverlay { z-index: 9999999 !important; } 
 
@@ -757,7 +758,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
    ==================================================== */
 @media (max-width: 900px) {
 
-    /* --- 3. MỞ KHÓA SCROLL & OVERLAY --- */
+    /* --- 3. MỞ KHÓA SCROLL & RESET OVERLAY --- */
     body { touch-action: pan-y !important; }
     
     #intOverlay, #productOverlay, .overlay, #adminOverlay {
@@ -767,7 +768,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         display: block !important; 
         overflow-y: auto !important; 
         -webkit-overflow-scrolling: touch !important;
-        padding: 0 0 40px 0 !important;
+        padding: 0 !important;
     }
 
     .modal, .order-modal, .admin-modal, .modal-content {
@@ -776,74 +777,72 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         max-height: none !important;
         overflow: visible !important; 
         margin: 0 auto !important;
-        padding-top: 70px !important; 
-        padding-bottom: 20px !important;
+        padding-top: 80px !important; 
+        padding-bottom: 40px !important;
         transform: none !important; 
     }
 
-    /* --- 4. MENU 4 NÚT ĐẦU TRANG (STICKY TOP) --- */
+    /* --- 4. MENU 4 NÚT ĐẦU TRANG (GIỮ NGUYÊN STYLE GỐC + DÍNH ĐỈNH) --- */
     .mobile-top-nav {
         position: sticky !important; 
         top: 0 !important;
-        z-index: 9000 !important;
+        z-index: 9998 !important;
+        background: var(--navy) !important; /* Cho nền để không bị xuyên thấu khi cuộn */
+        border-bottom: 1px solid var(--border) !important;
     }
 
-    /* --- 5. TIÊU DIỆT TRIỆT ĐỂ LỖI NÚT ORDER LƠ LỬNG (QUAN TRỌNG) --- */
-    /* Nhắm thẳng vào các div có thuộc tính bám dính bên trong Product Pop-up */
-    #intOverlay div[style*="sticky"], 
-    #intOverlay div[style*="fixed"], 
-    #intOverlay .button-group,
-    #intOverlay .fixed-bottom,
-    .order-modal .button-group {
-        position: relative !important; /* Buộc phải nằm theo luồng nội dung */
-        bottom: auto !important;
-        top: auto !important;
-        left: auto !important;
-        right: auto !important;
+    /* --- 5. TRIỆT TIÊU NÚT ORDER LƠ LỬNG (FIX TRỰC DIỆN) --- */
+    /* Tao nhắm thẳng vào class .mobile-sticky-cta mà ông đang có trong HTML */
+    .mobile-sticky-cta, 
+    .cta-group,
+    #intOverlay .cta-group,
+    #intOverlay div[style*="sticky"],
+    #intOverlay div[style*="fixed"] {
+        position: static !important; /* Tước quyền lơ lửng */
+        display: flex !important;
+        flex-direction: column !important;
         width: 100% !important;
-        margin: 30px 0 20px 0 !important; /* Khoảng cách trên dưới hợp lý */
-        padding: 0 15px !important; /* Chỉ padding ngang để không bị dính sát mép */
+        margin-top: 30px !important; /* Đẩy nó xuống dưới nội dung */
+        margin-bottom: 20px !important;
+        padding: 0 !important;
         background: transparent !important;
+        border: none !important;
         box-shadow: none !important;
-        transform: none !important;
     }
 
-    /* Đảm bảo nút bên trong không bị phình to dị dạng */
-    #intOverlay .button-group button,
-    #intOverlay div[style*="fixed"] button {
-        padding: 12px 20px !important; /* Kích thước nút tiêu chuẩn */
-        height: auto !important;
+    /* Giữ 2 nút nằm dọc cho gọn trên mobile */
+    .mobile-sticky-cta .cta-btn,
+    .cta-group .cta-btn {
         width: 100% !important;
         margin-bottom: 10px !important;
+        height: 50px !important; /* Độ cao nút tiêu chuẩn dễ bấm */
     }
 
     /* --- 6. NÚT X (ĐÓNG POPUP) TO & BÁM GÓC --- */
-    [class*="close"], [id*="close"] {
+    [class*="close"], [id*="close"], .modal-close-abs {
         position: fixed !important; 
         top: 15px !important;
         right: 15px !important;
-        width: 48px !important; 
-        height: 48px !important;
-        background-color: rgba(0, 0, 0, 0.75) !important; 
+        width: 50px !important; 
+        height: 50px !important;
+        background-color: rgba(0, 0, 0, 0.8) !important; 
         color: #ffffff !important;
         border-radius: 50% !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 28px !important; 
-        font-weight: bold !important;
+        font-size: 30px !important; 
+        font-weight: 300 !important;
         z-index: 2147483647 !important; 
-        border: 2px solid rgba(255,255,255,0.5) !important;
+        border: 1px solid rgba(255,255,255,0.3) !important;
     }
 
-    /* --- 7. FIX ADMIN DASHBOARD SIDEBAR --- */
+    /* --- 7. ADMIN DASHBOARD SIDEBAR --- */
     .dict-sidebar {
         display: flex !important; flex-wrap: nowrap !important;
         overflow-x: auto !important; width: 100vw !important; 
         margin-left: -15px !important; padding: 0 15px 15px 15px !important;
     }
-    .dict-sidebar > * { flex: 0 0 auto !important; }
-}    
 }}}}}</style>
 </head>
 <body>
