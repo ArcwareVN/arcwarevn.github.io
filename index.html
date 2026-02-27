@@ -706,11 +706,11 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 }
 #saveOrderBtn { animation: orderBlink 1.5s ease-in-out 3; }
 /* ====================================================
-   🔥 ARC'WARE VN - MOBILE HOTFIX V5.1 (SCROLL + BUTTONS)
+   🔥 ARC'WARE VN - MOBILE HOTFIX V6 (NUKE VERSION)
    ==================================================== */
 @media (max-width: 900px) {
 
-    /* --- CÁC FIX SCROLL GIỮ NGUYÊN NHƯ BẢN V5 --- */
+    /* --- 1. MỞ KHÓA SCROLL (Giữ nguyên phần ngon của V5) --- */
     body { touch-action: pan-y !important; }
     .overlay, #intOverlay, #productOverlay, #lookbookOverlay, #passOverlay {
         position: fixed !important; 
@@ -719,7 +719,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         display: block !important; 
         overflow-y: auto !important; 
         -webkit-overflow-scrolling: touch !important;
-        padding: 20px 10px 100px 10px !important; 
+        padding: 0 0 100px 0 !important; 
         z-index: 9999 !important;
     }
     .overlay .modal, .overlay .order-modal, .overlay .admin-modal, #lookbookOverlay .modal-content {
@@ -729,74 +729,59 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         overflow: visible !important; 
         margin: 0 auto !important;
         transform: none !important; 
-    }
-    .dict-sidebar {
-        display: flex !important;
-        flex-wrap: nowrap !important;
-        overflow-x: auto !important;
-        overflow-y: hidden !important;
-        -webkit-overflow-scrolling: touch !important;
-        width: 100vw !important; 
-        margin-left: -15px !important; 
-        padding-left: 15px !important;
-        padding-right: 15px !important;
-        padding-bottom: 15px !important;
-    }
-    .dict-sidebar > * {
-        flex: 0 0 auto !important; 
-        display: block !important;
-        min-width: max-content !important;
-    }
-    .admin-panel, .admin-content, #productsTab, #contentTab {
-        overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        height: auto !important;
+        padding-top: 50px !important; /* Né cái nút X ra */
     }
 
-    /* --- PHẦN MỚI THÊM: ĐỘ NÚT BẤM (BUTTON TWEAKS) --- */
-
-    /* 1. Trói 2 nút Order: Ép nằm bệt xuống sàn, không lơ lửng */
-    .order-modal .button-group,
-    .order-modal [style*="sticky"],
-    .order-modal [style*="fixed"],
-    .order-modal .fixed-bottom,
-    .order-modal .action-buttons,
-    #intOverlay .button-group {
-        position: static !important; /* Tước quyền bay lơ lửng */
-        display: flex !important;
-        flex-direction: column !important; 
-        width: 100% !important;
-        margin-top: 30px !important; 
-        margin-bottom: 20px !important;
-        bottom: auto !important;
-        transform: none !important;
-        background: transparent !important;
-        box-shadow: none !important;
-    }
-
-    /* 2. Nút X (Đóng popup): To, nền đen mờ, đóng đinh góc phải */
-    .overlay .close, 
-    .overlay .close-btn, 
-    .overlay .close-modal,
-    #intOverlay .close {
-        position: fixed !important; /* Đóng đinh khi cuộn */
+    /* --- 2. ÉP NÚT TẮT (X) TRỞ NÊN KHỔNG LỒ & BÁM GÓC --- */
+    /* Dùng hẳn ID #intOverlay để tăng sức mạnh chèn ép */
+    #intOverlay .close, 
+    #productOverlay .close,
+    .overlay .close,
+    .overlay > .close {
+        position: fixed !important; 
         top: 15px !important;
         right: 15px !important;
-        width: 44px !important; 
-        height: 44px !important;
-        background: rgba(0, 0, 0, 0.6) !important; 
-        color: #ffffff !important;
+        width: 45px !important; 
+        height: 45px !important;
+        background-color: rgba(0, 0, 0, 0.8) !important; 
+        color: #fff !important;
         border-radius: 50% !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 24px !important;
+        font-size: 30px !important; /* Chữ X to ra */
+        font-weight: bold !important;
+        z-index: 2147483647 !important; /* Z-index max của trình duyệt */
         line-height: 1 !important;
-        z-index: 999999 !important; /* Đè lên vạn vật */
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
-        padding: 0 !important;
-        margin: 0 !important;
+        border: 2px solid white !important; /* Thêm viền trắng cho dễ thấy */
     }
+
+    /* --- 3. TIÊU DIỆT 2 NÚT ĐẶT HÀNG BAY LƠ LỬNG --- */
+    /* Quét mọi thẻ có chứa chữ sticky hoặc fixed bên trong Modal */
+    #intOverlay div[style*="sticky"],
+    #intOverlay div[style*="fixed"],
+    #intOverlay .sticky,
+    #intOverlay [class*="fixed"],
+    #intOverlay [class*="bottom"] {
+        position: relative !important; /* Đánh tụt nó xuống thành phần tử thường */
+        top: auto !important;
+        bottom: auto !important;
+        z-index: 10 !important;
+        padding-bottom: 20px !important;
+        margin-top: 15px !important;
+    }
+
+    /* Fix menu admin ngang */
+    .dict-sidebar {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        width: 100vw !important; 
+        margin-left: -15px !important; 
+        padding: 0 15px 15px 15px !important;
+    }
+    .dict-sidebar > * { flex: 0 0 auto !important; }
+}
 }}}}}</style>
 </head>
 <body>
@@ -1963,17 +1948,13 @@ function closeVideo() {
 
 </script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var overlays = document.querySelectorAll('.overlay');
-        overlays.forEach(function(overlay) {
-            overlay.addEventListener('click', function(e) {
-                // Nếu click đúng vào nền đen, không phải click vào content bên trong
-                if (e.target === overlay) {
-                    overlay.style.display = 'none';
-                    document.body.style.overflow = ''; 
-                }
-            });
-        });
+    // Bắt sự kiện click trên toàn bộ trang web (Không sợ bị sót element)
+    document.addEventListener('click', function(e) {
+        // Kiểm tra xem phần tử bị bấm vào có class là 'overlay' hoặc ID có chứa chữ 'Overlay' không
+        if (e.target.classList.contains('overlay') || (e.target.id && e.target.id.includes('Overlay'))) {
+            e.target.style.display = 'none'; // Tắt nó đi
+            document.body.style.overflow = 'auto'; // Cho phép trang chủ cuộn lại
+        }
     });
 </script>
 </body>
