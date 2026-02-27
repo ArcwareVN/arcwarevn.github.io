@@ -855,6 +855,14 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     }
     .dict-sidebar > * { flex: 0 0 auto !important; }
 }
+/* ====================================================
+       🔥 BỔ SUNG: PHÂN LẠI THỨ BẬC Z-INDEX TUYỆT ĐỐI (TRÁNH CHỒNG CHÉO)
+       ==================================================== */
+    #adminOverlay { z-index: 9900 !important; } /* Hạ bệ Admin Dashboard xuống */
+    #intOverlay, .overlay { z-index: 9990 !important; } 
+    #productOverlay, #addProductOverlay, #editOverlay { z-index: 99999 !important; } /* Ép Form Add/Edit Product đè lên Admin */
+    #lookbookOverlay { z-index: 999999 !important; } /* Lookbook đè lên Product */
+    #passOverlay { z-index: 9999999 !important; } /* Nhập Pass là đỉnh của chóp */
     }}}}}</style>
 </head>
 <body>
@@ -2019,28 +2027,6 @@ function closeVideo() {
   closeOverlay('videoOverlay');
 }
 
-</script>
-<script>
-    document.addEventListener('click', function(e) {
-        // Bắt trúng khoảnh khắc ông bấm vào nút X (close)
-        if (e.target.closest('.close') || e.target.closest('[class*="close-modal"]') || e.target.closest('[id*="close"]')) {
-            
-            // 1. Tạo một "lá chắn" CSS tạm thời: TẮT TOÀN BỘ HIỆU ỨNG CHUYỂN ĐỘNG TRÊN TOÀN TRANG
-            var muteAnimation = document.createElement('style');
-            muteAnimation.id = 'nuke-animation';
-            muteAnimation.innerHTML = '* { transition: none !important; animation: none !important; scroll-behavior: auto !important; }';
-            document.head.appendChild(muteAnimation);
-
-            // 2. Chờ đúng 100 mili-giây (ủ mưu cho trang web nhảy về vị trí cũ trong im lặng)
-            setTimeout(function() {
-                // Sau khi hạ cánh an toàn, gỡ bỏ lá chắn đi để web bình thường lại
-                var styleToRemove = document.getElementById('nuke-animation');
-                if (styleToRemove) {
-                    styleToRemove.remove();
-                }
-            }, 100); 
-        }
-    });
 </script>
 </body>
 </html>
