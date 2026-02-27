@@ -887,6 +887,36 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .split-box:nth-child(2) { position: static; } /* Gỡ sticky trên mobile để ko lỗi cuộn */
   .split-box-btn { width: 100%; }
 }
+/* ════ MOBILE COLLAPSE (ACCORDION) SECTIONS ════ */
+.collapse-icon { display: none; font-size: 26px; font-weight: 300; transition: transform 0.3s ease; line-height: 1; color: var(--text-muted); }
+
+@media (max-width: 768px) {
+  .collapse-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    cursor: pointer; 
+    padding: 10px 0; 
+    margin-bottom: 0 !important; 
+    -webkit-tap-highlight-color: transparent;
+  }
+  .collapse-icon { display: block; }
+  .collapse-content { display: none; margin-top: 16px; }
+  
+  /* Trạng thái mở */
+  .mobile-collapse.active .collapse-content { 
+    display: block; 
+    animation: fadeDown 0.3s ease-out forwards; 
+  }
+  .mobile-collapse.active .collapse-icon { 
+    transform: rotate(45deg); 
+    color: var(--white);
+  }
+}
+@keyframes fadeDown { 
+  from { opacity: 0; transform: translateY(-10px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
 }}}}}</style>
 </head>
 <body>
@@ -1039,28 +1069,37 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   </div>
 </section>
 
-<section id="about" class="editorial-wrapper">
+<section id="about" class="editorial-wrapper mobile-collapse">
   <div class="editorial-grid">
-    <div class="ed-title" data-i18n="secAboutTitle">THE ARC'WARE STORY</div>
-    <div class="ed-content-box" data-i18n="secAboutText">
+    <div class="ed-title collapse-header" onclick="toggleCollapse(this)">
+      <span data-i18n="secAboutTitle">THE ARC'WARE STORY</span>
+      <span class="collapse-icon">+</span>
+    </div>
+    <div class="ed-content-box collapse-content" data-i18n="secAboutText">
       <p>Born from a profound passion for the elements.</p>
     </div>
   </div>
 </section>
 
-<section id="guarantee" class="editorial-wrapper">
+<section id="guarantee" class="editorial-wrapper mobile-collapse">
   <div class="editorial-grid">
-    <div class="ed-title" data-i18n="secGuarTitle">AUTHENTIC GUARANTEE & CARE</div>
-    <div class="ed-content-box" data-i18n="secGuarText">
+    <div class="ed-title collapse-header" onclick="toggleCollapse(this)">
+      <span data-i18n="secGuarTitle">AUTHENTIC GUARANTEE & CARE</span>
+      <span class="collapse-icon">+</span>
+    </div>
+    <div class="ed-content-box collapse-content" data-i18n="secGuarText">
       <p><strong>100% Authentic Guarantee.</strong></p>
     </div>
   </div>
 </section>
 
-<section id="policies" class="editorial-wrapper">
+<section id="policies" class="editorial-wrapper mobile-collapse">
   <div class="editorial-grid">
-    <div class="ed-title" data-i18n="secPolTitle">PAYMENT POLICIES</div>
-    <div class="ed-content-box" data-i18n="secPolText">
+    <div class="ed-title collapse-header" onclick="toggleCollapse(this)">
+      <span data-i18n="secPolTitle">PAYMENT POLICIES</span>
+      <span class="collapse-icon">+</span>
+    </div>
+    <div class="ed-content-box collapse-content" data-i18n="secPolText">
       <p><strong>International Orders:</strong> Fully protected.</p>
     </div>
   </div>
@@ -2098,7 +2137,19 @@ function closeVideo() {
   document.getElementById('videoIframe').src = '';
   closeOverlay('videoOverlay');
 }
-
+// --- Chức năng Collapse cho Mobile ---
+function toggleCollapse(el) {
+  // Chỉ cho phép gập/mở khi ở giao diện Mobile
+  if (window.innerWidth > 768) return; 
+  
+  const section = el.closest('.mobile-collapse');
+  // Nếu muốn: Khi mở thẻ này thì tự động đóng thẻ kia, thì bỏ comment 2 dòng dưới
+  // document.querySelectorAll('.mobile-collapse').forEach(s => {
+  //   if(s !== section) s.classList.remove('active');
+  // });
+  
+  section.classList.toggle('active');
+}
 </script>
 </body>
 </html>
