@@ -2009,5 +2009,30 @@ function closeVideo() {
 }
 
 </script>
+    <script>
+// Tự động kiểm tra nếu URL chứa mã reset password (type=recovery)
+document.addEventListener('DOMContentLoaded', async () => {
+    // Kiểm tra hash trên URL để tìm token recovery
+    const hash = window.location.hash;
+    if (hash && hash.includes('type=recovery')) {
+        const newPassword = prompt("Mời ông nhập mật khẩu Admin mới cho ARC'WARE:");
+        
+        if (newPassword && newPassword.length >= 6) {
+            // Cập nhật mật khẩu mới thông qua sbClient đã khai báo
+            const { data, error } = await sbClient.auth.updateUser({ password: newPassword });
+            
+            if (error) {
+                alert("Lỗi cập nhật mật khẩu: " + error.message);
+            } else {
+                alert("Đổi mật khẩu thành công! Ông có thể đăng nhập bằng mật khẩu mới.");
+                // Xóa token trên URL để bảo mật và tránh reload lại prompt
+                window.location.hash = ""; 
+            }
+        } else if (newPassword) {
+            alert("Mật khẩu quá ngắn, vui lòng thử lại quy trình.");
+        }
+    }
+});
+</script>
 </body>
 </html>
