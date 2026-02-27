@@ -472,9 +472,23 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .contact-grid { grid-template-columns: 1fr; }
 
   /* Filter tabs: compact wrapped layout for quicker scanning */
-  .filter-tabs { width: 100%; overflow-x: auto; justify-content: flex-start; flex-wrap: nowrap; gap: 8px; padding-bottom: 8px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-  .filter-tabs::-webkit-scrollbar { display: none; }
-  .filter-tab { white-space: nowrap; flex-shrink: 0; padding: 10px 20px; font-size: 9px; }
+  /* Xếp chồng các thẻ để hiện đầy đủ trên màn hình dọc */
+  .filter-tabs { 
+    width: 100%; 
+    display: flex; 
+    flex-wrap: wrap; /* Cho phép nhảy dòng */
+    justify-content: center; /* Canh giữa cho đẹp */
+    gap: 10px; /* Khoảng cách giữa các nút */
+    padding: 0;
+    overflow-x: visible; 
+  }
+  .filter-tab { 
+    white-space: nowrap; 
+    flex-shrink: 0; 
+    padding: 10px 16px; 
+    font-size: 11px; /* Chỉnh chữ to hơn tí cho dễ bấm */
+    min-height: 40px; /* Tạo vùng bấm rộng hơn (chuẩn mobile UX) */
+  }
 
   /* Footer */
   footer { padding: 36px 20px 24px !important; }
