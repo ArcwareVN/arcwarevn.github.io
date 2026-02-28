@@ -979,12 +979,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   </div>
 </div>
 
-<div class="overlay" id="videoOverlay" style="z-index: 10500;">
-  <div class="modal video-modal">
-    <button class="modal-close-abs" style="top:10px; right:10px; color:#fff; font-size: 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" onclick="closeVideo()">✕</button>
-    <iframe id="videoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-  </div>
-</div>
+
 
 <div class="sourcing-widget" onclick="openSupportModal('IG', 'srcPrompt')">
   <div class="sourcing-widget-text" data-i18n="srcTitle">SOURCING SERVICE</div>
@@ -1215,7 +1210,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <div id="intModalBody"></div>
   </div>
 </div>
-
+  
+<div class="overlay" id="videoOverlay" style="z-index: 10500;">
+  <div class="modal video-modal">
+    <button class="modal-close-abs" style="top:10px; right:10px; color:#fff; font-size: 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" onclick="closeVideo()">✕</button>
+    <iframe id="videoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  </div>
+</div>
 <div class="overlay" id="zaloOverlay">
   <div class="modal copy-modal" style="max-width:400px; padding:40px;">
     <button class="modal-close-abs" onclick="closeOverlay('zaloOverlay')">✕</button>
