@@ -850,23 +850,33 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         margin-bottom: 10px !important;
     }
 
-    /* --- 6. NÚT X (ĐÓNG POPUP) TO & BÁM GÓC --- */
-    [class*="close"], [id*="close"] {
+    /* --- 6. NÚT X (ĐÓNG POPUP) TINH TẾ & TỐI GIẢN --- */
+    .modal-close-abs, .lightbox-close {
         position: fixed !important; 
-        top: 15px !important;
-        right: 15px !important;
-        width: 48px !important; 
-        height: 48px !important;
-        background-color: rgba(0, 0, 0, 0.75) !important; 
+        top: 16px !important;
+        right: 16px !important;
+        width: 40px !important; /* Thu nhỏ lại gọn gàng hơn */
+        height: 40px !important;
+        background: rgba(20, 20, 20, 0.4) !important; /* Nền tối mờ tinh tế */
+        backdrop-filter: blur(8px) !important; /* Hiệu ứng kính mờ chuẩn tech-wear */
+        -webkit-backdrop-filter: blur(8px) !important;
         color: #ffffff !important;
         border-radius: 50% !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 28px !important; 
-        font-weight: bold !important;
+        font-size: 20px !important; /* Chữ X nhỏ lại */
+        font-weight: 300 !important; /* Nét thanh mảnh */
         z-index: 2147483647 !important; 
-        border: 2px solid rgba(255,255,255,0.5) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Viền siêu mỏng 1px */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        transition: transform 0.2s ease, background 0.2s ease !important;
+        cursor: pointer !important;
+    }
+
+    .modal-close-abs:active, .lightbox-close:active {
+        transform: scale(0.9) !important; /* Hiệu ứng lún nhẹ khi bấm */
+        background: rgba(20, 20, 20, 0.6) !important;
     }
 
     /* --- 7. FIX ADMIN DASHBOARD SIDEBAR --- */
