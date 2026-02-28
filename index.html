@@ -838,23 +838,24 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         margin-bottom: 10px !important;
     }
 
-    /* --- 6. NÚT X (ĐÓNG POPUP) TO & BÁM GÓC --- */
+  /* --- 6. NÚT X (ĐÓNG POPUP) TINH TẾ MỚI --- */
     [class*="close"], [id*="close"] {
-        position: fixed !important; 
-        top: 15px !important;
-        right: 15px !important;
-        width: 48px !important; 
-        height: 48px !important;
-        background-color: rgba(0, 0, 0, 0.75) !important; 
+        position: absolute !important; /* Đổi thành absolute để nó ghim vào góc pop-up, không trôi lơ lửng đè ảnh khi cuộn */
+        top: 16px !important;
+        right: 16px !important;
+        width: 32px !important; /* Thu nhỏ gọn lại */
+        height: 32px !important;
+        background-color: rgba(0, 0, 0, 0.3) !important; /* Nền đen mờ nhẹ nhàng */
         color: #ffffff !important;
         border-radius: 50% !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 28px !important; 
-        font-weight: bold !important;
+        font-size: 16px !important; /* Chữ X nhỏ đi */
+        font-weight: 300 !important; /* Nét chữ X mỏng đi */
         z-index: 2147483647 !important; 
-        border: 2px solid rgba(255,255,255,0.5) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important; /* Viền siêu mỏng */
+        backdrop-filter: blur(4px) !important; /* Hiệu ứng kính mờ (nếu trình duyệt hỗ trợ) */
     }
 
     /* --- 7. FIX ADMIN DASHBOARD SIDEBAR --- */
@@ -940,7 +941,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
 <div class="overlay" id="lookbookOverlay" style="z-index: 10500;">
   <div class="modal" style="max-width: 1200px; padding: 40px; background: transparent; box-shadow: none;">
-    <button class="modal-close-abs" style="top:0px; right:20px; color:#fff; font-size: 40px;" onclick="closeOverlay('lookbookOverlay')">✕</button>
+    <button class="modal-close-abs" style="top:16px; right:16px; color:#fff;" onclick="closeOverlay('lookbookOverlay')">✕</button>
     <div id="lookbookGrid" style="display:flex; flex-wrap:nowrap; gap:24px; overflow-x:auto; padding-bottom:20px; -webkit-overflow-scrolling: touch;"></div>
     <div style="text-align:center; color:rgba(255,255,255,0.7); font-size:12px; margin-top:20px; letter-spacing:0.1em; text-transform:uppercase;" data-i18n="lbHint">Click image to zoom in · Swipe to see more</div>
   </div>
@@ -948,7 +949,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
 <div class="overlay" id="videoOverlay" style="z-index: 10500;">
   <div class="modal video-modal">
-    <button class="modal-close-abs" style="top:10px; right:10px; color:#fff; font-size: 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);" onclick="closeVideo()">✕</button>
+    <button class="modal-close-abs" style="top:16px; right:16px; color:#fff;" onclick="closeVideo()">✕</button>
     <iframe id="videoIframe" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
 </div>
