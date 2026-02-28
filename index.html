@@ -760,28 +760,27 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
 /* --- 2. PHÂN LẠI THỨ BẬC Z-INDEX TOÀN TRANG --- */
 #adminOverlay { z-index: 9900 !important; } 
-#intOverlay { z-index: 9990 !important; } /* CHỈ ĐỂ MÌNH THẰNG #intOverlay Ở ĐÂY THÔI */
+#intOverlay, .overlay { z-index: 9990 !important; } 
 #productOverlay, #addProductOverlay, #editOverlay { z-index: 99999 !important; } 
-#lookbookOverlay, #videoOverlay { z-index: 999999 !important; } 
-#passOverlay { z-index: 9999999 !important; }
+#lookbookOverlay { z-index: 999999 !important; } 
+#passOverlay { z-index: 9999999 !important; } 
 
 /* ====================================================
    📱 CHỈ DÀNH CHO MOBILE (TỪ 900PX TRỞ XUỐNG)
    ==================================================== */
 @media (max-width: 900px) {
 
-   /* --- 3. MỞ KHÓA SCROLL & OVERLAY --- */
-    /* ĐÃ XÓA BODY TOUCH-ACTION ĐỂ KHÔNG BỊ KẸT CẢM ỨNG TRÊN IOS */
+    /* --- 3. MỞ KHÓA SCROLL & OVERLAY --- */
+    body { touch-action: pan-y !important; }
+    
     #intOverlay, #productOverlay, .overlay, #adminOverlay {
         position: fixed !important; 
         top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-        height: 100% !important; /* Dùng 100% thay vì 100dvh để không bị khựng khi Safari thu/mở thanh địa chỉ */
+        height: 100dvh !important;
         display: block !important; 
         overflow-y: auto !important; 
-        overflow-x: hidden !important; /* Khóa ngang chặt chẽ */
-        -webkit-overflow-scrolling: touch !important; /* Kích hoạt cuộn mượt bằng gia tốc của Apple */
+        -webkit-overflow-scrolling: touch !important;
         padding: 0 0 40px 0 !important;
-        overscroll-behavior-y: none !important; /* Chặn hiệu ứng nảy dội ngược (rubber-band) gây kẹt scroll */
     }
 
     .modal, .order-modal, .admin-modal, .modal-content {
