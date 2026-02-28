@@ -1,9 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+  xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!--
+    ARC'WARE STORE — sitemap.xml
+    Domain: https://arcware.store
+    Languages: EN / VI
+    Last updated: 2026-03-01
+    Submit to: https://search.google.com/search-console
+  -->
+
+  <!-- ══ HOMEPAGE ══ -->
   <url>
     <loc>https://arcware.store/</loc>
     <lastmod>2026-03-01</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <!-- EN version (default) -->
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/"/>
+    <!-- VI version (same page, language controlled by JS) -->
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/"/>
+    <!-- Fallback for all other languages -->
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/"/>
+    <!-- OG image as sitemap image signal -->
+    <image:image>
+      <image:loc>https://arcware.store/logo.jpg</image:loc>
+      <image:title>ARC'WARE — Premium Arc'teryx Gear in Vietnam</image:title>
+      <image:caption>Vietnam's curated source for authentic Arc'teryx technical outerwear and outdoor gear</image:caption>
+    </image:image>
   </url>
+
+  <!-- ══ COLLECTION / SHOP ══ -->
+  <url>
+    <loc>https://arcware.store/#products</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#products"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#products"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#products"/>
+  </url>
+
+  <!-- ══ DWR SERVICE ══ -->
+  <url>
+    <loc>https://arcware.store/#dwr</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#dwr"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#dwr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#dwr"/>
+  </url>
+
+  <!-- ══ ABOUT / BRAND STORY ══ -->
+  <url>
+    <loc>https://arcware.store/#about</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#about"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#about"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#about"/>
+  </url>
+
+  <!-- ══ CUSTOMER REVIEWS ══ -->
+  <url>
+    <loc>https://arcware.store/#reviews</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#reviews"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#reviews"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#reviews"/>
+  </url>
+
+  <!-- ══ AUTHENTIC GUARANTEE ══ -->
+  <url>
+    <loc>https://arcware.store/#guarantee</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.70</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#guarantee"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#guarantee"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#guarantee"/>
+  </url>
+
+  <!-- ══ PAYMENT & SHIPPING POLICIES ══ -->
+  <url>
+    <loc>https://arcware.store/#policies</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#policies"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#policies"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#policies"/>
+  </url>
+
+  <!-- ══ CONTACT ══ -->
+  <url>
+    <loc>https://arcware.store/#contact</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.65</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#contact"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#contact"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#contact"/>
+  </url>
+
 </urlset>
