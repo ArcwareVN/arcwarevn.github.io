@@ -180,8 +180,28 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .contact-sub { font-size: 12px; color: var(--text-muted); line-height: 1.4;}
 
 /* ════ MODALS BASE ════ */
-.overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity 0.3s;overscroll-behavior:contain;}
-.overlay.open{opacity:1;pointer-events:all}
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    visibility: hidden; /* BẢN VÁ: Khóa hoàn toàn vùng cuộn khi đóng */
+    pointer-events: none;
+    transition: opacity 0.3s, visibility 0.3s; 
+    overscroll-behavior: contain;
+}
+
+.overlay.open {
+    opacity: 1;
+    visibility: visible; /* Kích hoạt lại vùng cuộn khi mở */
+    pointer-events: all;
+}
 .modal{background:var(--navy);width:100%;max-height:95vh;overflow-y:auto; -webkit-overflow-scrolling: touch; transform:translateY(20px);transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); position:relative;}
 .overlay.open .modal{transform:translateY(0)}
 .modal-close-abs{position:absolute;top:24px;right:32px;background:none;border:none;font-size:24px;font-weight:300;cursor:pointer;color:var(--text-muted);z-index:10; transition:0.2s;}
