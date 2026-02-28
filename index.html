@@ -42,10 +42,9 @@
 <meta name="twitter:image" content="https://arcware.store/logo.jpg">
   
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
 <style>
     /* ====================================================
        🔥 TÂN TRANG UI/UX: ĐÓNG KHUNG GIÁ TIỀN (GLOBAL)
@@ -838,23 +837,24 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         margin-bottom: 10px !important;
     }
 
-    /* --- 6. NÚT X (ĐÓNG POPUP) TO & BÁM GÓC --- */
+    /* --- 6. NÚT X (ĐÓNG POPUP) TINH TẾ & FIX LỖI SCROLL --- */
     [class*="close"], [id*="close"] {
         position: fixed !important; 
         top: 15px !important;
         right: 15px !important;
-        width: 48px !important; 
-        height: 48px !important;
-        background-color: rgba(0, 0, 0, 0.75) !important; 
+        width: 32px !important; /* Nhỏ gọn */
+        height: 32px !important;
+        background-color: rgba(0, 0, 0, 0.4) !important; /* Nền đen mờ nhẹ. Tuyệt đối không dùng blur gây đơ máy */
         color: #ffffff !important;
         border-radius: 50% !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 28px !important; 
-        font-weight: bold !important;
+        font-size: 14px !important; /* Chữ X nhỏ thanh mảnh */
+        font-weight: normal !important;
         z-index: 2147483647 !important; 
-        border: 2px solid rgba(255,255,255,0.5) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important; /* Viền mỏng */
+        transform: translateZ(0) !important; /* Ép iOS render chuẩn, không đơ cuộn */
     }
 
     /* --- 7. FIX ADMIN DASHBOARD SIDEBAR --- */
@@ -929,7 +929,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   from { opacity: 0; transform: translateY(-10px); } 
   to { opacity: 1; transform: translateY(0); } 
 }
-}}}}}</style>
+</style>
 </head>
 <body>
 
