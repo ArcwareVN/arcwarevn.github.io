@@ -1,3 +1,59 @@
+# ═══════════════════════════════════════════════════════════
+# ARC'WARE STORE — robots.txt
+# Domain: https://arcware.store
+# Last updated: 2026-03-01
+# ═══════════════════════════════════════════════════════════
+
+# Allow all legitimate crawlers full access
 User-agent: *
 Allow: /
+
+# Block admin panel from being indexed
+# (it's JS-driven so unlikely to be crawled, but explicit is better)
+Disallow: /#admin
+
+# Block CDN/edge scripts injected by Cloudflare from being followed
+Disallow: /cdn-cgi/
+
+# Sitemap location — CRITICAL: must match your live domain
 Sitemap: https://arcware.store/sitemap.xml
+
+# ── SPECIFIC CRAWLER RULES ──────────────────────────────────
+
+# Google — full access, prioritise crawl budget on content
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Google Images — allow product image indexing
+User-agent: Googlebot-Image
+Allow: /
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# AI training bots — disallow (protects your content)
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+# ── END ─────────────────────────────────────────────────────
