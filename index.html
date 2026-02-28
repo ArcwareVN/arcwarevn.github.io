@@ -850,28 +850,31 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         margin-bottom: 10px !important;
     }
 
-    /* --- 6. NÚT X (ĐÓNG POPUP) TINH TẾ & TỐI GIẢN --- */
+    /* --- 6. NÚT X (ĐÓNG POPUP) CHUẨN MINIMALISM / TECH-WEAR --- */
     .modal-close-abs, .lightbox-close {
         position: fixed !important; 
-        top: 16px !important;
-        right: 16px !important;
-        width: 40px !important; /* Thu nhỏ lại gọn gàng hơn */
-        height: 40px !important;
-        background: rgba(20, 20, 20, 0.4) !important; /* Nền tối mờ tinh tế */
-        backdrop-filter: blur(8px) !important; /* Hiệu ứng kính mờ chuẩn tech-wear */
-        -webkit-backdrop-filter: blur(8px) !important;
-        color: #ffffff !important;
-        border-radius: 50% !important;
+        top: 20px !important;
+        right: 20px !important;
+        width: 44px !important; 
+        height: 44px !important;
+        background: transparent !important; /* Xóa sạch nền tảng hình */
+        color: #888888 !important; /* Màu xám mờ (text-muted) */
+        border-radius: 0 !important; /* Vuông đét 100% */
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 20px !important; /* Chữ X nhỏ lại */
-        font-weight: 300 !important; /* Nét thanh mảnh */
+        font-size: 28px !important; /* Dấu X to, thoáng */
+        font-weight: 300 !important; /* Nét siêu thanh mảnh */
         z-index: 2147483647 !important; 
-        border: 1px solid rgba(255, 255, 255, 0.15) !important; /* Viền siêu mỏng 1px */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-        transition: transform 0.2s ease, background 0.2s ease !important;
+        border: none !important; /* Xóa sạch viền */
+        transition: color 0.2s ease, transform 0.2s ease !important;
         cursor: pointer !important;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.6) !important; /* Đổ bóng chữ xíu để nổi trên mọi nền ảnh */
+    }
+
+    .modal-close-abs:active, .lightbox-close:active {
+        color: #ffffff !important; /* Chạm vào thì sáng trắng lên */
+        transform: scale(0.9) !important; /* Hơi giật lùi nhẹ */
     }
 
     .modal-close-abs:active, .lightbox-close:active {
