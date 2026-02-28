@@ -770,17 +770,18 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
    ==================================================== */
 @media (max-width: 900px) {
 
-    /* --- 3. MỞ KHÓA SCROLL & OVERLAY --- */
-    body { touch-action: pan-y !important; }
-    
+   /* --- 3. MỞ KHÓA SCROLL & OVERLAY --- */
+    /* ĐÃ XÓA BODY TOUCH-ACTION ĐỂ KHÔNG BỊ KẸT CẢM ỨNG TRÊN IOS */
     #intOverlay, #productOverlay, .overlay, #adminOverlay {
         position: fixed !important; 
         top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-        height: 100dvh !important;
+        height: 100% !important; /* Dùng 100% thay vì 100dvh để không bị khựng khi Safari thu/mở thanh địa chỉ */
         display: block !important; 
         overflow-y: auto !important; 
-        -webkit-overflow-scrolling: touch !important;
+        overflow-x: hidden !important; /* Khóa ngang chặt chẽ */
+        -webkit-overflow-scrolling: touch !important; /* Kích hoạt cuộn mượt bằng gia tốc của Apple */
         padding: 0 0 40px 0 !important;
+        overscroll-behavior-y: none !important; /* Chặn hiệu ứng nảy dội ngược (rubber-band) gây kẹt scroll */
     }
 
     .modal, .order-modal, .admin-modal, .modal-content {
