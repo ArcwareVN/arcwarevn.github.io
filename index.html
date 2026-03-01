@@ -38,7 +38,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-<style>
     /* ====================================================
        🔥 TÂN TRANG UI/UX: ĐÓNG KHUNG GIÁ TIỀN (GLOBAL)
        ==================================================== */
@@ -1905,15 +1904,7 @@ function injectProductSchema() {
     document.head.appendChild(script);
   }
 }
-```
-
----
-
-## Step 5 — Find where to add the trigger call
-
-Now in the same search box, search for:
-```
-renderProducts(); renderAdminList();
+  
   function renderProducts() {
   const grid = document.getElementById('productsGrid');
   const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
