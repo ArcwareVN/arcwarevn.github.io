@@ -1799,9 +1799,66 @@ async function refreshProducts() {
     } catch (e) { document.getElementById('dbStatusAlert').innerHTML = "STATUS: ERROR FETCHING PRODUCTS"; }
   }
   orderModified = false; // Reset order modified flag after fresh fetch
-  renderProducts(); renderAdminList();
+  renderProducts(); 
+  renderAdminList();
+  
+  // Automatically generate Google SEO Schema for the loaded products
+  injectProductSchema();
 }
+// AUTO GENERATE PRODUCT SCHEMA FOR GOOGLE SEO
+function injectProductSchema() {
+  // 1. Clear old schema to prevent duplicates when updating/adding
+  document.querySelectorAll('script.dynamic-product-schema').forEach(el => el.remove());
 
+  // 2. Fallback check: If database is empty, stop here
+  if (!products || products.length === 0) return;
+
+  // 3. Map products securely
+  const schemaList = products.map(p => {
+    let cleanPrice = "0";
+    if (p.price) {
+      // Strips dots/commas and grabs the first block of numbers for VND
+      const match = p.price.replace(/[.,]/g, '').match(/\d+/);
+      if (match) cleanPrice = match[0];
+    }
+    
+    let itemCondition = "https://schema.org/UsedCondition";
+    if (p.condition && p.condition.toLowerCase().startsWith('brand new')) {
+      itemCondition = "https://schema.org/NewCondition";
+    }
+    
+    const imageUrl = p.image ? p.image : "https://arcware.store/logo.jpg";
+    const safeName = p.name ? p.name.trim() : "Arc'teryx Item";
+    const safeDesc = p.description_vi || p.description_en || safeName;
+    
+    return {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": safeName,
+      "image": imageUrl,
+      "description": safeDesc,
+      "brand": { "@type": "Brand", "name": "Arc'teryx" },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://arcware.store",
+        "priceCurrency": "VND",
+        "price": cleanPrice,
+        "availability": "https://schema.org/InStock",
+        "itemCondition": itemCondition,
+        "seller": { "@type": "Organization", "name": "ARC'WARE VN" }
+      }
+    };
+  });
+  
+  // 4. Inject into DOM
+  if (schemaList.length > 0) {
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.className = 'dynamic-product-schema';
+    script.text = JSON.stringify(schemaList);
+    document.head.appendChild(script);
+  }
+}
 async function convertCurrency() {
   const vndInput = document.getElementById('pPriceVND').value;
   if(!vndInput) return alert('Input VND');
