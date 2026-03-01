@@ -1715,7 +1715,7 @@ async function refreshProducts() {
     } catch (e) { document.getElementById('dbStatusAlert').innerHTML = "STATUS: ERROR FETCHING PRODUCTS"; }
   }
   orderModified = false; // Reset order modified flag after fresh fetch
-  renderProducts(); renderAdminList();
+  renderProducts(); renderAdminList(); injectProductSchema();
 }
 
 async function convertCurrency() {
@@ -1858,20 +1858,52 @@ async function deleteProduct(id) {
 }
 
 // ── RENDER TRẢ VỀ THEO TỪ ĐIỂN ──
-function renderProducts() {
-  const grid = document.getElementById('productsGrid');
-  const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
-  if (!filtered.length) { grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-size:12px; letter-spacing:0.1em; color:var(--text-muted);" data-i18n="emptyCol">${t('emptyCol')}</div>`; return; }
-  
-  grid.innerHTML = filtered.map(p => `
-    <div class="product-card" onclick="openInterest('${p.id}')">
-<div class="card-img"><img src="${p.image||''}" loading="lazy" onerror="this.style.display='none'">${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}</div>      <div class="card-body">
-        <div class="card-cat">${t(p.category)||p.category} · ${t(p.condition)||p.condition||'N/A'}</div>
-        <div class="card-name">${p.name}</div>
-        <div class="card-foot"><div class="card-price">${p.price||t('noPr')}</div></div>
-        <div class="card-fee">${t('feeNt')}</div>
-      </div>
-    </div>`).join('');
+// AUTO GENERATE PRODUCT SCHEMA FOR GOOGLE SEO
+function injectProductSchema() {
+  document.querySelectorAll('script.dynamic-product-schema').forEach(el => el.remove());
+
+  const schemaList = products.map(p => {
+    let cleanPrice = "0";
+    if (p.price) {
+      const match = p.price.replace(/\./g, '').match(/\d+/);
+      if (match) cleanPrice = match[0];
+    }
+
+    let itemCondition = "https://schema.org/UsedCondition";
+    if (p.condition && p.condition.toLowerCase().startsWith('brand new')) {
+      itemCondition = "https://schema.org/NewCondition";
+    }
+
+    const imageUrl = (p.images && p.images.length > 0)
+      ? p.images[0]
+      : "https://arcware.store/logo.jpg";
+
+    return {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": p.name,
+      "image": imageUrl,
+      "description": p.description_vi || p.description_en || p.name,
+      "brand": { "@type": "Brand", "name": "Arc'teryx" },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://arcware.store",
+        "priceCurrency": "VND",
+        "price": cleanPrice,
+        "availability": "https://schema.org/InStock",
+        "itemCondition": itemCondition,
+        "seller": { "@type": "Organization", "name": "ARC'WARE VN" }
+      }
+    };
+  });
+
+  if (schemaList.length > 0) {
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.className = 'dynamic-product-schema';
+    script.text = JSON.stringify(schemaList);
+    document.head.appendChild(script);
+  }
 }
 
 function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('imageLightbox').classList.add('show'); }
