@@ -38,6 +38,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+<style>
     /* ====================================================
        🔥 TÂN TRANG UI/UX: ĐÓNG KHUNG GIÁ TIỀN (GLOBAL)
        ==================================================== */
@@ -1714,7 +1715,7 @@ async function refreshProducts() {
     } catch (e) { document.getElementById('dbStatusAlert').innerHTML = "STATUS: ERROR FETCHING PRODUCTS"; }
   }
   orderModified = false; // Reset order modified flag after fresh fetch
-  renderProducts(); renderAdminList();injectProductSchema();
+  renderProducts(); renderAdminList();
 }
 
 async function convertCurrency() {
@@ -1857,55 +1858,7 @@ async function deleteProduct(id) {
 }
 
 // ── RENDER TRẢ VỀ THEO TỪ ĐIỂN ──
-// AUTO GENERATE PRODUCT SCHEMA FOR GOOGLE SEO
-function injectProductSchema() {
-  document.querySelectorAll('script.dynamic-product-schema').forEach(el => el.remove());
-
-  const schemaList = products.map(p => {
-    let cleanPrice = "0";
-    if (p.price) {
-      const match = p.price.replace(/\./g, '').match(/\d+/);
-      if (match) cleanPrice = match[0];
-    }
-
-    let itemCondition = "https://schema.org/UsedCondition";
-    if (p.condition && p.condition.toLowerCase().startsWith('brand new')) {
-      itemCondition = "https://schema.org/NewCondition";
-    }
-
-    const imageUrl = (p.images && p.images.length > 0)
-      ? p.images[0]
-      : "https://arcware.store/logo.jpg";
-
-    return {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": p.name,
-      "image": imageUrl,
-      "description": p.description_vi || p.description_en || p.name,
-      "brand": { "@type": "Brand", "name": "Arc'teryx" },
-      "offers": {
-        "@type": "Offer",
-        "url": "https://arcware.store",
-        "priceCurrency": "VND",
-        "price": cleanPrice,
-        "availability": "https://schema.org/InStock",
-        "itemCondition": itemCondition,
-        "seller": { "@type": "Organization", "name": "ARC'WARE VN" }
-      }
-    };
-  });
-
-  if (schemaList.length > 0) {
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.className = 'dynamic-product-schema';
-    script.text = JSON.stringify(schemaList);
-    document.head.appendChild(script);
-  }
-}
-  
-  function renderProducts() {
+function renderProducts() {
   const grid = document.getElementById('productsGrid');
   const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
   if (!filtered.length) { grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-size:12px; letter-spacing:0.1em; color:var(--text-muted);" data-i18n="emptyCol">${t('emptyCol')}</div>`; return; }
@@ -2066,42 +2019,33 @@ function showToast(msg) { const t=document.getElementById('toast'); t.textConten
 
 // ── iOS SAFARI SCROLL LOCK ──
 // Standard overflow:hidden does NOT lock scroll on iOS. We use position:fixed + restore scrollY.
-// ── iOS SAFARI SCROLL LOCK (FIXED BỞI GEMINI) ──
 let _bodyScrollY = 0;
-
 function _lockBody() {
-  // BẢO VỆ 1: Nếu màn hình đã khóa rồi thì không ghi đè tọa độ nữa
-  if (document.body.style.position === 'fixed') return; 
-  
   _bodyScrollY = window.pageYOffset || window.scrollY || 0;
   document.body.style.position = 'fixed';
   document.body.style.top = '-' + _bodyScrollY + 'px';
   document.body.style.width = '100%';
+  // NOTE: Do NOT set overflow:hidden — it prevents overlay scroll on iOS Safari
 }
-
 function _unlockBody() {
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.width = '';
   window.scrollTo(0, _bodyScrollY);
 }
-
 function openOverlay(id) {
   document.getElementById(id).classList.add('open');
   _lockBody();
 }
-
 function closeOverlay(id) {
   document.getElementById(id).classList.remove('open');
-  
-  // BẢO VỆ 2: Delay 50ms để kiểm tra xem có Pop-up nào khác đang mở lên không
-  // Tránh việc giật màn hình khi chuyển từ Pop-up này sang Pop-up khác
-  setTimeout(() => {
-    const anyOpen = document.querySelector('.overlay.open') || document.getElementById('adminPanel').classList.contains('open');
-    if (!anyOpen) {
-      _unlockBody();
-    }
-  }, 50);
+  // Only unlock if no other overlay/admin is open
+  const anyOpen = document.querySelector('.overlay.open') || document.getElementById('adminPanel').classList.contains('open');
+  if (!anyOpen) _unlockBody();
+}
+function _openAdminPanel() {
+  document.getElementById('adminPanel').classList.add('open');
+  _lockBody();
 }
 
 function switchTab(t) { document.querySelectorAll('.admin-tab').forEach(el=>el.classList.remove('active')); document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active')); document.querySelector('.admin-tab[onclick="switchTab(\''+t+'\')"]').classList.add('active'); document.getElementById('tab-'+t).classList.add('active'); }
