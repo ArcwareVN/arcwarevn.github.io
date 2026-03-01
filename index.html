@@ -1138,7 +1138,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
       <div>
         <div class="dwr-price-big" data-i18n="dwrPrice">13.000.000 VND / ~$499</div>
-        <button class="split-box-btn" onclick="openOverlay('dwrContactOverlay')" data-i18n="dwrBtn">BOOK SERVICE</button>
+        <button class="split-box-btn" onclick="if(typeof gtag === 'function'){gtag('event', 'contact_click', {'event_category': 'engagement', 'event_label': 'dwr_booking'});} openOverlay('dwrContactOverlay')" data-i18n="dwrBtn">BOOK SERVICE</button>
       </div>
     </div>
 
@@ -2081,6 +2081,17 @@ function openSupportModal(platform, customPromptKey) {
 
 function openCopyModal(platform, msg) {
   currentSocialPlatform = platform;
+
+  // --- THÊM TRACKING GA4 CHO IG VÀ WHATSAPP ---
+  if (typeof gtag === 'function') {
+    let label = platform === 'IG' ? 'instagram' : 'whatsapp';
+    gtag('event', 'contact_click', {
+      'event_category': 'engagement',
+      'event_label': label
+    });
+  }
+  // --------------------------------------------
+
   navigator.clipboard.writeText(msg).then(() => {
     document.getElementById('copyMsg').textContent = msg;
     if (platform === 'IG') { document.getElementById('copyTitle').textContent = t('igCopied'); document.getElementById('copySub').textContent = t('igSub'); document.getElementById('copyGoBtn').textContent = t('igGo'); } 
@@ -2089,13 +2100,16 @@ function openCopyModal(platform, msg) {
   }).catch(err => { alert("Manual copy required."); });
 }
 
-function openZaloModal() { openOverlay('zaloOverlay'); }
-function copyPhoneOnly() { navigator.clipboard.writeText(settings.phone).then(() => { showToast(t('phoneCopiedToast')); }); }
-function proceedToSocial() {
-  const msg = document.getElementById('copyMsg').textContent;
-  if (currentSocialPlatform === 'IG') { window.open(`https://instagram.com/${settings.ig}`, '_blank'); } 
-  else { window.open(`https://wa.me/${settings.wa}?text=${encodeURIComponent(msg)}`, '_blank'); }
-  closeOverlay('copyOverlay');
+function openZaloModal() { 
+  // --- THÊM TRACKING GA4 CHO ZALO ---
+  if (typeof gtag === 'function') {
+    gtag('event', 'contact_click', {
+      'event_category': 'engagement',
+      'event_label': 'zalo'
+    });
+  }
+  // ----------------------------------
+  openOverlay('zaloOverlay'); 
 }
 
 function filterProducts(cat, el) { currentFilter = cat; document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active')); el.classList.add('active'); renderProducts(); }
