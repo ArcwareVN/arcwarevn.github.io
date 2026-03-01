@@ -2066,33 +2066,42 @@ function showToast(msg) { const t=document.getElementById('toast'); t.textConten
 
 // ── iOS SAFARI SCROLL LOCK ──
 // Standard overflow:hidden does NOT lock scroll on iOS. We use position:fixed + restore scrollY.
+// ── iOS SAFARI SCROLL LOCK (FIXED BỞI GEMINI) ──
 let _bodyScrollY = 0;
+
 function _lockBody() {
+  // BẢO VỆ 1: Nếu màn hình đã khóa rồi thì không ghi đè tọa độ nữa
+  if (document.body.style.position === 'fixed') return; 
+  
   _bodyScrollY = window.pageYOffset || window.scrollY || 0;
   document.body.style.position = 'fixed';
   document.body.style.top = '-' + _bodyScrollY + 'px';
   document.body.style.width = '100%';
-  // NOTE: Do NOT set overflow:hidden — it prevents overlay scroll on iOS Safari
 }
+
 function _unlockBody() {
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.width = '';
   window.scrollTo(0, _bodyScrollY);
 }
+
 function openOverlay(id) {
   document.getElementById(id).classList.add('open');
   _lockBody();
 }
+
 function closeOverlay(id) {
   document.getElementById(id).classList.remove('open');
-  // Only unlock if no other overlay/admin is open
-  const anyOpen = document.querySelector('.overlay.open') || document.getElementById('adminPanel').classList.contains('open');
-  if (!anyOpen) _unlockBody();
-}
-function _openAdminPanel() {
-  document.getElementById('adminPanel').classList.add('open');
-  _lockBody();
+  
+  // BẢO VỆ 2: Delay 50ms để kiểm tra xem có Pop-up nào khác đang mở lên không
+  // Tránh việc giật màn hình khi chuyển từ Pop-up này sang Pop-up khác
+  setTimeout(() => {
+    const anyOpen = document.querySelector('.overlay.open') || document.getElementById('adminPanel').classList.contains('open');
+    if (!anyOpen) {
+      _unlockBody();
+    }
+  }, 50);
 }
 
 function switchTab(t) { document.querySelectorAll('.admin-tab').forEach(el=>el.classList.remove('active')); document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active')); document.querySelector('.admin-tab[onclick="switchTab(\''+t+'\')"]').classList.add('active'); document.getElementById('tab-'+t).classList.add('active'); }
