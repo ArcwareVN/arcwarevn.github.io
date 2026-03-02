@@ -961,7 +961,34 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   from { opacity: 0; transform: translateY(-10px); } 
   to { opacity: 1; transform: translateY(0); } 
 }
-}}}}}</style>
+/* ════ SHOPPING CART SIDE-DRAWER ════ */
+/* Ép 2 nút giỏ hàng luôn hiển thị */
+#headerCartBtn, #mobileCartBtn { display: block !important; }
+
+/* Thay đổi Overlay Giỏ hàng thành dạng Trượt mép phải */
+#cartOverlay { justify-content: flex-end !important; padding: 0 !important; }
+#cartOverlay .modal { margin: 0 !important; height: 100dvh !important; max-height: 100dvh !important; width: 100% !important; max-width: 450px !important; border-radius: 0 !important; transform: translateX(100%) !important; transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important; display: flex !important; flex-direction: column !important; padding: 0 !important; }
+#cartOverlay.open .modal { transform: translateX(0) !important; }
+
+/* Chia Giỏ hàng thành 2 phần: Nội dung cuộn được & Form chốt đơn dính đáy */
+.cart-drawer-body { flex: 1; overflow-y: auto; padding: 40px; -webkit-overflow-scrolling: touch; }
+.cart-drawer-footer { padding: 30px 40px; border-top: 1px solid var(--border); background: var(--navy-2); flex-shrink: 0; }
+
+.cart-accordion { border: 1px solid var(--border); margin-bottom: 24px; background: var(--navy-2); border-radius: 2px; }
+.cart-accordion-head { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 16px 20px; -webkit-tap-highlight-color: transparent; }
+.cart-accordion-title { font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--white); }
+.cart-accordion-icon { font-size: 20px; font-weight: 300; transition: transform 0.3s ease; line-height: 1; color: var(--text-muted); }
+.cart-accordion-content { display: none; padding: 0 20px 20px; font-size: 12px; color: var(--text-dim); line-height: 1.6; }
+.cart-accordion.active .cart-accordion-content { display: block; animation: fadeDown 0.3s ease-out forwards; }
+.cart-accordion.active .cart-accordion-icon { transform: rotate(45deg); color: var(--white); }
+
+.cart-item-row { padding: 20px 0; border-bottom: 1px solid var(--border-light); }
+.cart-item-row:last-child { border-bottom: none; }
+.cart-item-controls { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.cart-qty-btn { background: var(--navy-2); border: 1px solid var(--border); color: var(--white); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
+.cart-qty-btn:hover { border-color: var(--white); }
+.cart-item-del { color: var(--red); cursor: pointer; font-size: 10px; font-weight: 700; background: none; border: none; letter-spacing: 0.1em; padding: 6px 10px; margin-left: auto;}
+</style>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -1048,12 +1075,14 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
 
   <div class="mobile-top-nav">
+<a class="nav-link" id="mobileCartBtn" style="display:none; color:var(--white);" onclick="openCartModal()">SHOPPING CART (0)</a>
     <a href="#products" class="nav-link" data-i18n="navShop">SHOPPING</a>
     <a href="#dwr" class="nav-link" data-i18n="dwrNav">RE-APPLY DWR</a>
     <a href="#contact" class="nav-link" data-i18n="navContact">CONTACT</a>
     <a href="#about" class="nav-link" data-i18n="navAbout">ABOUT US</a>
   </div>
   <div class="header-right">
+<button class="lang-btn" id="headerCartBtn" style="font-weight:700; color:var(--white); display:none; padding-right:16px;" onclick="openCartModal()">SHOPPING CART (0)</button>
     <button class="theme-btn" onclick="toggleTheme()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
@@ -1136,7 +1165,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
       <div>
         <div class="dwr-price-big" data-i18n="dwrPrice">13.000.000 VND / ~$499</div>
-        <button class="split-box-btn" onclick="openOverlay('dwrContactOverlay')" data-i18n="dwrBtn">BOOK SERVICE</button>
+        <button class="split-box-btn" onclick="addDwrToCart()" data-i18n="dwrBtn">ADD TO CART</button>
       </div>
     </div>
 
@@ -1256,7 +1285,43 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <div id="intModalBody"></div>
   </div>
 </div>
+<div class="overlay" id="cartOverlay">
+  <div class="modal order-modal">
+     <button class="modal-close-abs" style="top:20px; right:30px; z-index: 50;" onclick="closeOverlay('cartOverlay')">✕</button>
+     
+     <div class="cart-drawer-body">
+         <h2 class="info-title" style="font-size:24px!important; margin-bottom:30px;" data-i18n="cartTitle">SHOPPING CART</h2>
+         <div id="cartItemsList" style="margin-bottom:30px;"></div>
+         
+         <div class="cart-accordion">
+            <div class="cart-accordion-head" onclick="toggleCartAccordion(this)">
+                <span class="cart-accordion-title" data-i18n="cartSizeChart">ARC'TERYX UNIVERSAL SIZE CHART</span>
+                <span class="cart-accordion-icon">+</span>
+            </div>
+            <div class="cart-accordion-content">
+                <p><em data-i18n="szChartDesc">*Please note: Arc'teryx fits vary (e.g., Trim Fit vs. Regular Fit). This is a general guide. We will personally contact you to double-check your fit preference before confirming your order.</em></p>
+                <div style="margin-top:12px;" data-i18n="szChartMenJ"><strong>Men's Jackets (Chest):</strong><br>XS: 92cm | S: 97cm | M: 102cm | L: 110cm | XL: 118cm | XXL: 128cm</div>
+                <div style="margin-top:10px;" data-i18n="szChartMenP"><strong>Men's Pants (Waist):</strong><br>28: 71cm | 30: 76cm | 32: 81cm | 34: 86cm | 36: 91cm | 38: 96cm</div>
+                <div style="margin-top:10px;" data-i18n="szChartShoe"><strong>Footwear (EU to US Men's):</strong><br>EU 40: US 7 | EU 41 1/3: US 8 | EU 42 2/3: US 9 | EU 44: US 10 | EU 45 1/3: US 11</div>
+            </div>
+         </div>
+         <div style="font-size:12px; color:var(--text-dim); line-height:1.5;" data-i18n="cartNote">Note: No payment is required right now. Our team will contact you directly via Zalo or Instagram to confirm stock availability, double-check your sizing, and arrange payment.</div>
+     </div>
 
+     <div class="cart-drawer-footer">
+         <div class="form-group"><input type="text" class="form-input" id="cName" placeholder="Your Name / Họ và Tên *"></div>
+         <div class="form-group"><input type="text" class="form-input" id="cPhone" placeholder="Zalo Phone Number / Số điện thoại *"></div>
+         <div class="form-group"><input type="text" class="form-input" id="cIg" placeholder="Instagram Handle / Tên Instagram (Optional)"></div>
+
+         <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; margin:20px 0 12px;" data-i18n="cartSendVia">SEND REQUEST VIA:</div>
+         <div style="display:flex; flex-direction:column; gap:12px;">
+             <button class="cta-btn" onclick="submitCart('EMAIL', this, '9d87c321-99b0-4cb5-afcd-592d49e03a6b')" data-i18n="cartSendEmail">SEND VIA EMAIL (FASTEST)</button>
+             <button class="cta-btn" style="background:transparent; color:var(--white); border-color:var(--border);" onclick="submitCart('IG', this)" data-i18n="cartSendIg">SEND VIA INSTAGRAM</button>
+             <button class="cta-btn" style="background:transparent; color:var(--white); border-color:var(--border);" onclick="submitCart('WA', this)" data-i18n="cartSendWa">SEND VIA WHATSAPP</button>
+         </div>
+     </div>
+  </div>
+</div>
 <div class="overlay" id="zaloOverlay">
   <div class="modal copy-modal" style="max-width:400px; padding:40px;">
     <button class="modal-close-abs" onclick="closeOverlay('zaloOverlay')">✕</button>
@@ -1474,8 +1539,11 @@ const dictKeys = {
   dwrModalTitle: "DWR - Modal Title", dwrModalSub: "DWR - Modal Subtext", dwrIg: "DWR - Book IG Button", dwrWa: "DWR - Book WA Button",
   srcTitle: "Sourcing - Widget Title",
   supportPrompt: "Prompt - General Support", msgOrder: "Prompt - Product Order", msgSize: "Prompt - Product Size Advice",
-  srcPrompt: "Prompt - Sourcing Service", dwrPrompt: "Prompt - DWR Service"
-, dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT"};
+  srcPrompt: "Prompt - Sourcing Service", dwrPrompt: "Prompt - DWR Service",
+  dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT",
+  cartTitle: "Cart - Main Title", cartSizeChart: "Cart - Size Chart Title", cartNote: "Cart - Disclaimer Note", cartSendVia: "Cart - Send Via Label", cartSendEmail: "Cart - Button Email", cartSendIg: "Cart - Button IG", cartSendWa: "Cart - Button WA", cartEmpty: "Cart - Empty Text",
+  szChartDesc: "Size Chart - Warning Note", szChartMenJ: "Size Chart - Men's Jacket", szChartMenP: "Size Chart - Men's Pants", szChartShoe: "Size Chart - Footwear", cartDwrName: "Cart - DWR Service Name"
+};
 
 const defaultEN = { 
   navShop: "SHOP", navAbout: "ABOUT", navGuar: "GUARANTEE", navPol: "POLICIES", navContact: "CONTACT", 
@@ -1496,12 +1564,19 @@ const defaultEN = {
   ftBrand: "ARC'WARE VN", ftCopy: "© 2026 ARC'WARE. All rights reserved.",
   emptyCol: "EMPTY COLLECTION", fastSell: "Fast Selling",
   dwrNav: "DWR SERVICE",
-  dwrSecTitle: "GORE-TEX MAINTENANCE", dwrSecText: "Professional DWR Re-waterproofing Service restores the factory water-repellency of your technical gear.", dwrBtn: "BOOK SERVICE",
+  dwrSecTitle: "GORE-TEX MAINTENANCE", dwrSecText: "Professional DWR Re-waterproofing Service restores the factory water-repellency of your technical gear.", dwrBtn: "ADD TO CART",
   dwrModalTitle: "BOOK DWR SERVICE", dwrModalSub: "Choose a platform to request our maintenance service.", dwrIg: "BOOK VIA INSTAGRAM", dwrWa: "BOOK VIA WHATSAPP",
   srcTitle: "SOURCING SERVICE",
   supportPrompt: "Hi Arc'ware, I need some support and advice!", msgOrder: "I want to order:\n[NAME]\n[PRICE] | Size: [SIZE]", msgSize: "I need sizing advice for:\n[NAME]",
-  srcPrompt: "Hi, I am looking for a specific Arc'teryx item. Can you help me source it?", dwrPrompt: "Hi, I want to inquire about the Professional DWR Re-waterproofing service."
-, dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT"};
+  srcPrompt: "Hi, I am looking for a specific Arc'teryx item. Can you help me source it?", dwrPrompt: "Hi, I want to inquire about the Professional DWR Re-waterproofing service.",
+  dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT",
+  cartTitle: "SHOPPING CART", cartSizeChart: "ARC'TERYX UNIVERSAL SIZE CHART", cartNote: "Note: No payment is required right now. Our team will contact you directly via Zalo or Instagram to confirm stock availability, double-check your sizing, and arrange payment.", cartSendVia: "SEND REQUEST VIA:", cartSendEmail: "SEND VIA EMAIL (FASTEST)", cartSendIg: "SEND VIA INSTAGRAM", cartSendWa: "SEND VIA WHATSAPP", cartEmpty: "YOUR SHOPPING CART IS EMPTY",
+  szChartDesc: "*Please note: Arc'teryx fits vary (e.g., Trim Fit vs. Regular Fit). This is a general guide. We will personally contact you to double-check your fit preference before confirming your order.",
+  szChartMenJ: "<strong>Men's Jackets (Chest):</strong><br>XS: 92cm | S: 97cm | M: 102cm | L: 110cm | XL: 118cm | XXL: 128cm",
+  szChartMenP: "<strong>Men's Pants (Waist):</strong><br>28: 71cm | 30: 76cm | 32: 81cm | 34: 86cm | 36: 91cm | 38: 96cm",
+  szChartShoe: "<strong>Footwear (EU to US Men's):</strong><br>EU 40: US 7 | EU 41 1/3: US 8 | EU 42 2/3: US 9 | EU 44: US 10 | EU 45 1/3: US 11",
+  cartDwrName: "DWR Re-waterproofing Service"
+};
 
 const defaultVI = { 
   navShop: "SẢN PHẨM", navAbout: "CÂU CHUYỆN", navGuar: "CAM KẾT", navPol: "CHÍNH SÁCH", navContact: "LIÊN HỆ", 
@@ -1522,12 +1597,31 @@ const defaultVI = {
   ftBrand: "ARC'WARE VN", ftCopy: "© 2026 ARC'WARE. Mọi bản quyền được bảo lưu.",
   emptyCol: "BỘ SƯU TẬP HIỆN ĐANG TRỐNG", fastSell: "Bán chạy",
   dwrNav: "DỊCH VỤ DWR",
-  dwrSecTitle: "PHỤC HỒI GORE-TEX", dwrSecText: "Dịch vụ phục hồi DWR chuyên nghiệp giúp khôi phục khả năng trượt nước như mới cho thiết bị kỹ thuật của bạn.", dwrBtn: "ĐẶT LỊCH NGAY",
+  dwrSecTitle: "PHỤC HỒI GORE-TEX", dwrSecText: "Dịch vụ phục hồi DWR chuyên nghiệp giúp khôi phục khả năng trượt nước như mới cho thiết bị kỹ thuật của bạn.", dwrBtn: "THÊM VÀO GIỎ",
   dwrModalTitle: "ĐẶT DỊCH VỤ DWR", dwrModalSub: "Vui lòng chọn nền tảng để yêu cầu dịch vụ bảo dưỡng.", dwrIg: "ĐẶT DỊCH VỤ QUA IG", dwrWa: "ĐẶT DỊCH VỤ QUA WA",
   srcTitle: "TÌM HÀNG THEO YÊU CẦU",
   supportPrompt: "Chào Arc'ware, mình cần hỗ trợ tư vấn!", msgOrder: "Tôi muốn đặt:\n[NAME]\n[PRICE] | Size: [SIZE]", msgSize: "Tư vấn size giúp mình mẫu này:\n[NAME]",
-  srcPrompt: "Chào shop, mình đang tìm một mẫu Arc'teryx cụ thể, shop có nhận tìm hàng không?", dwrPrompt: "Chào shop, mình cần tư vấn về dịch vụ phục hồi chống thấm DWR cho áo Gore-Tex."
-, dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT"};
+  srcPrompt: "Chào shop, mình đang tìm một mẫu Arc'teryx cụ thể, shop có nhận tìm hàng không?", dwrPrompt: "Chào shop, mình cần tư vấn về dịch vụ phục hồi chống thấm DWR cho áo Gore-Tex.",
+  dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT",
+  cartTitle: "GIỎ HÀNG YÊU CẦU", cartSizeChart: "BẢNG SIZE ARC'TERYX", cartNote: "Lưu ý: Bạn chưa cần thanh toán lúc này. Đội ngũ ARC'WARE sẽ liên hệ trực tiếp để xác nhận tình trạng kho, tư vấn chuẩn size và hướng dẫn thanh toán.", cartSendVia: "GỬI YÊU CẦU QUA:", cartSendEmail: "GỬI QUA EMAIL (NHANH NHẤT)", cartSendIg: "GỬI QUA INSTAGRAM", cartSendWa: "GỬI QUA WHATSAPP", cartEmpty: "GIỎ HÀNG CỦA BẠN ĐANG TRỐNG",
+  szChartDesc: "Lưu ý: Form áo Arc'teryx sẽ khác nhau tùy dòng (Trim Fit vs Regular). Đây là bảng size chung. Đội ngũ chúng tôi sẽ chủ động nhắn tin để tư vấn size chuẩn xác nhất cho bạn.",
+  szChartMenJ: "<strong>Áo Khoác Nam (Vòng ngực):</strong><br>XS: 92cm | S: 97cm | M: 102cm | L: 110cm | XL: 118cm | XXL: 128cm",
+  szChartMenP: "<strong>Quần Nam (Vòng eo):</strong><br>28: 71cm | 30: 76cm | 32: 81cm | 34: 86cm | 36: 91cm | 38: 96cm",
+  szChartShoe: "<strong>Giày Dép (EU sang US):</strong><br>EU 40: US 7 | EU 41 1/3: US 8 | EU 42 2/3: US 9 | EU 44: US 10 | EU 45 1/3: US 11",
+  cartDwrName: "Dịch vụ phục hồi DWR"
+};
+
+const dictGroups = [
+  { id: 'nav', name: 'Navigation', keys: ['navShop', 'dwrNav', 'navAbout', 'navGuar', 'navPol', 'navContact'] },
+  { id: 'hero', name: 'Hero', keys: ['heroEyebrow', 'heroTitle', 'heroDesc', 'shopBtn'] },
+  { id: 'product', name: 'Product Store', keys: ['curCol', 'emptyCol', 'fAll', 'fShell', 'fInsul', 'fFoot', 'fPack', 'fOth', 'sz', 'cnd', 'noPr', 'feeNt', 'fastSell'] },
+  { id: 'dwr', name: 'DWR & Reviews', keys: ['dwrSecTitle', 'dwrSecText', 'dwrBtn', 'dwrModalTitle', 'dwrModalSub', 'dwrIg', 'dwrWa', 'dwrPrice', 'dwrS1Num', 'dwrS1Title', 'dwrS1Sub', 'dwrS2Num', 'dwrS2Title', 'dwrS2Sub', 'dwrS3Num', 'dwrS3Title', 'dwrS3Sub', 'dwrNote', 'revSideTitle', 'revSideSub', 'revSideBtn'] },
+  { id: 'order', name: 'Dynamic Pre-fills', keys: ['srcTitle', 'srcPrompt', 'dwrPrompt', 'supportPrompt', 'msgOrder', 'msgSize', 'hwTitle', 'hwSub', 'vidTitle', 'vidSub', 'priceDiff', 'priceSame', 'shipNoteFull', 'payPol', 'payPolGl', 'payPolVn', 'ordIg', 'ordWa', 'szHelp', 'askSzIg', 'askSzWa'] },
+  { id: 'editorial', name: 'Editorial Sec', keys: ['secAboutTitle', 'secAboutText', 'secGuarTitle', 'secGuarText', 'secPolTitle', 'secPolText', 'secContactTitle', 'secContactSub', 'ctIg', 'ctWa', 'btnZalo', 'btnPhone', 'ctWaSub', 'ctZaloSub', 'phoneCopiedToast'] },
+  { id: 'modal', name: 'Modals', keys: ['lbHint', 'zlTitle', 'zlSub', 'zlSales', 'zlTech', 'igCopied', 'igSub', 'igGo', 'igCancel', 'waCopied', 'waSub', 'waGo'] },
+  { id: 'footer', name: 'Footer', keys: ['ftContact', 'ftAddress', 'ftEmail', 'ftHours', 'ftDays', 'ftTime', 'ftBrand', 'ftCopy'] },
+  { id: 'cart', name: 'Shopping Cart', keys: ['cartTitle', 'cartSizeChart', 'cartNote', 'cartSendVia', 'cartSendEmail', 'cartSendIg', 'cartSendWa', 'cartEmpty', 'szChartDesc', 'szChartMenJ', 'szChartMenP', 'szChartShoe', 'cartDwrName'] }
+];
 
 let currentLang = 'vi';
 let customEN = getSafeObject('aw_custom_en', defaultEN);
@@ -1699,16 +1793,6 @@ function setLang(langCode, btnElement) {
 }
 
 // ── CẬP NHẬT GROUP ĐỂ QUẢN LÝ CONTENT MỚI THÊM VÀO ──
-const dictGroups = [
-  { id: 'nav', name: 'Navigation', keys: ['navShop', 'dwrNav', 'navAbout', 'navGuar', 'navPol', 'navContact'] },
-  { id: 'hero', name: 'Hero', keys: ['heroEyebrow', 'heroTitle', 'heroDesc', 'shopBtn'] },
-  { id: 'product', name: 'Product Store', keys: ['curCol', 'emptyCol', 'fAll', 'fShell', 'fInsul', 'fFoot', 'fPack', 'fOth', 'sz', 'cnd', 'noPr', 'feeNt', 'fastSell'] },
-  { id: 'dwr', name: 'DWR & Reviews', keys: ['dwrSecTitle', 'dwrSecText', 'dwrBtn', 'dwrModalTitle', 'dwrModalSub', 'dwrIg', 'dwrWa', 'dwrPrice', 'dwrS1Num', 'dwrS1Title', 'dwrS1Sub', 'dwrS2Num', 'dwrS2Title', 'dwrS2Sub', 'dwrS3Num', 'dwrS3Title', 'dwrS3Sub', 'dwrNote', 'revSideTitle', 'revSideSub', 'revSideBtn'] },
-  { id: 'order', name: 'Dynamic Pre-fills', keys: ['srcTitle', 'srcPrompt', 'dwrPrompt', 'supportPrompt', 'msgOrder', 'msgSize', 'hwTitle', 'hwSub', 'vidTitle', 'vidSub', 'priceDiff', 'priceSame', 'shipNoteFull', 'payPol', 'payPolGl', 'payPolVn', 'ordIg', 'ordWa', 'szHelp', 'askSzIg', 'askSzWa'] },
-  { id: 'editorial', name: 'Editorial Sec', keys: ['secAboutTitle', 'secAboutText', 'secGuarTitle', 'secGuarText', 'secPolTitle', 'secPolText', 'secContactTitle', 'secContactSub', 'ctIg', 'ctWa', 'btnZalo', 'btnPhone', 'ctWaSub', 'ctZaloSub', 'phoneCopiedToast'] },
-  { id: 'modal', name: 'Modals', keys: ['lbHint', 'zlTitle', 'zlSub', 'zlSales', 'zlTech', 'igCopied', 'igSub', 'igGo', 'igCancel', 'waCopied', 'waSub', 'waGo'] },
-  { id: 'footer', name: 'Footer', keys: ['ftContact', 'ftAddress', 'ftEmail', 'ftHours', 'ftDays', 'ftTime', 'ftBrand', 'ftCopy'] }
-];
 
 function updateLivePreview(key, lang, value) {
   if (lang === 'en') customEN[key] = value;
@@ -2034,98 +2118,218 @@ function openLookbook(id) {
    openOverlay('lookbookOverlay');
 }
 
-function openInterest(id) {
+// ==========================================
+// CONCIERGE CART FRONT-END LOGIC
+// ==========================================
+
+let cart = [];
+
+window.openInterest = function(id) {
   const p = products.find(x => x.id === id); if (!p) return;
   let galHtml = ''; let firstImg = p.image || '';
-  try {
-    const galArr = JSON.parse(p.gallery);
-    if(galArr && galArr.length > 0) {
-      firstImg = galArr[0];
-      if(galArr.length > 1) { galHtml = `<div class="gallery-thumbs">` + galArr.map((img, i) => `<img src="${img}" onclick="swapMainImage('${img}')" class="${i===0?'active':''}">`).join('') + `</div>`; }
-    }
-  } catch(e){}
+  try { const galArr = JSON.parse(p.gallery); if(galArr && galArr.length > 0) { firstImg = galArr[0]; if(galArr.length > 1) { galHtml = `<div class="gallery-thumbs">` + galArr.map((img, i) => `<img src="${img}" onclick="swapMainImage('${img}')" class="${i===0?'active':''}">`).join('') + `</div>`; } } } catch(e){}
+  
+  let sizeOptions = '';
+  if (p.sizes) {
+      p.sizes.split(',').forEach(s => { sizeOptions += `<option value="${s.trim()}">${s.trim()}</option>`; });
+  } else { sizeOptions = `<option value="One Size">One Size</option>`; }
+  sizeOptions += `<option value="Need sizing advice">Need sizing advice</option>`;
 
   let mediaHtml = ''; let hwArr = [];
   try { if(p.how_it_wears) hwArr = JSON.parse(p.how_it_wears); } catch(e){}
   if(hwArr.length > 0 || p.video_link) {
       mediaHtml += `<div class="media-btn-grid">`;
-      if(hwArr.length > 0) { mediaHtml += `<div class="how-it-wears-box" onclick="openLookbook('${p.id}')"><div><div class="hw-title"> ${t('hwTitle')}</div><div class="hw-sub">${t('hwSub')}</div></div><div class="hw-right">→</div></div>`; }
-      if(p.video_link) { mediaHtml += `<div class="how-it-wears-box" onclick="openVideo('${p.video_link}')"><div><div class="hw-title"> ${t('vidTitle')}</div><div class="hw-sub">${t('vidSub')}</div></div><div class="hw-right">→</div></div>`; }
+      if(hwArr.length > 0) mediaHtml += `<div class="how-it-wears-box" onclick="openLookbook('${p.id}')"><div><div class="hw-title">${t('hwTitle')}</div><div class="hw-sub">${t('hwSub')}</div></div><div class="hw-right">→</div></div>`;
+      if(p.video_link) mediaHtml += `<div class="how-it-wears-box" onclick="openVideo('${p.video_link}')"><div><div class="hw-title">${t('vidTitle')}</div><div class="hw-sub">${t('vidSub')}</div></div><div class="hw-right">→</div></div>`;
       mediaHtml += `</div>`;
   }
-
-  let fomoHtml = '';
-  if(p.badge && (p.badge.toUpperCase().includes('RARE') || p.badge.toUpperCase().includes('HOT') || p.badge.toUpperCase().includes('NEW'))) {
-      fomoHtml = `<div class="fomo-tag">⚡ ${p.badge} - ${t('fastSell')}</div>`;
-  }
-
-  const prefillOrder = t('msgOrder').replace('[NAME]', p.name).replace('[PRICE]', p.price||t('noPr')).replace('[SIZE]', p.sizes||'N/A');
-  const prefillSize = t('msgSize').replace('[NAME]', p.name);
-  const priceNoteText = (p.price_type === 'same') ? t('priceSame') : (p.price_type === 'diff' ? t('priceDiff') : (p.price_type || t('priceDiff')));
   const displayDesc = currentLang === 'vi' ? (p.description_vi || p.description_en || p.description || '') : (p.description_en || p.description || '');
 
-  // FIX 1 & 3: Layout Giá Mới + Spec Grid được căn chỉnh thẳng hàng
   document.getElementById('intModalBody').innerHTML = `
     <div class="product-split">
       <div class="gallery-section">
         <div class="gallery-main"><img id="mainGalleryImage" src="${firstImg}" onclick="openLightbox(this.src)"></div>
-        ${galHtml}
-        ${mediaHtml} 
+        ${galHtml} ${mediaHtml}
       </div>
       <div class="info-section">
-        <div class="info-cat">${t(p.category)||p.category}</div>
+        <div class="info-cat">${p.gender ? p.gender.toUpperCase() + ' · ' : ''}${t(p.category)||p.category}</div>
         <div class="info-title">${p.name}</div>
-        
         <div class="info-desc">${displayDesc.replace(/\n/g, '<br>')}</div>
-        
-        <div style="margin-top: 30px;">
-          <div style="margin-bottom: 24px;">
-            <div class="info-price">${p.price||t('noPr')}</div>
-            <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6; font-weight: 400;">
-              <div>${priceNoteText}</div>
-              <div>${t('shipNoteFull')}</div>
-            </div>
-          </div>
-          
-          <div class="spec-grid" style="margin-bottom: 40px;">
-            <div class="spec-item" style="align-items: flex-start;">
-              <span class="spec-label" style="${fomoHtml ? 'margin-top: 2px;' : ''}">${t('sz')}</span>
-              <div style="text-align: right;">
-                <div class="spec-value">${p.sizes||'N/A'}</div>
-                ${fomoHtml}
-              </div>
-            </div>
-            <div class="spec-item">
-              <span class="spec-label">${t('cnd')}</span>
-              <span class="spec-value">${t(p.condition)||p.condition||'N/A'}</span>
-            </div>
-          </div>
+        <div style="margin-top: 30px; margin-bottom: 30px;">
+          <div class="info-price">${p.price||t('noPr')}</div>
+        </div>
+        <div class="spec-grid" style="margin-bottom: 24px;">
+          <div class="spec-item"><span class="spec-label">${t('cnd')}</span><span class="spec-value">${t(p.condition)||p.condition||'N/A'}</span></div>
         </div>
         
-        <div class="policy-box"><div class="policy-title">${t('payPol')}</div><p>${t('payPolGl')}</p><p>${t('payPolVn')}</p></div>
-        
-        <div class="cta-group desktop-cta-group">
-          <button class="cta-btn" onclick="openCopyModal('IG', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordIg')}</button>
-          <button class="cta-btn" onclick="openCopyModal('WA', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordWa')}</button>
-        </div>
-        
-        <div class="size-help-wrap">
-          <div class="size-help-text">${t('szHelp')}</div>
-          <div class="size-help-links">
-            <span class="size-link" onclick="openCopyModal('IG', '${prefillSize.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('askSzIg')}</span>
-            <span class="size-link" onclick="openCopyModal('WA', '${prefillSize.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('askSzWa')}</span>
+        <div style="background:var(--navy-2); border:1px solid var(--border); padding:20px;">
+          <div style="display:flex; gap:16px; margin-bottom:16px;">
+            <div style="flex:2;">
+                <label class="form-label">SELECT SIZE</label>
+                <select class="form-select" id="modalSizeSelect" style="background:var(--navy); padding:12px; height:44px; font-weight: 600;">${sizeOptions}</select>
+            </div>
+            <div style="flex:1;">
+                <label class="form-label">QUANTITY</label>
+                <div style="display:flex; background:var(--navy); border:1px solid var(--border); height:44px; align-items:center;">
+                    <button onclick="changeQty(-1)" style="flex:1; background:none; border:none; color:var(--text); cursor:pointer; font-size:16px;">-</button>
+                    <input type="number" id="modalQty" value="1" min="1" max="50" style="width:100%; text-align:center; background:none; border:none; color:var(--white); outline:none; font-family:monospace;" readonly>
+                    <button onclick="changeQty(1)" style="flex:1; background:none; border:none; color:var(--text); cursor:pointer; font-size:16px;">+</button>
+                </div>
+            </div>
           </div>
+          <button class="cta-btn" onclick="addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', '${p.price || 'Contact for price'}', '${p.sizes || ''}')">ADD TO CART</button>
         </div>
       </div>
-    </div>
-    
-    <div class="mobile-sticky-cta">
-        <button class="cta-btn" style="flex:1;" onclick="openCopyModal('IG', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordIg')}</button>
-        <button class="cta-btn" style="flex:1; background:var(--navy-3); border-color:var(--navy-3); color:var(--white);" onclick="openCopyModal('WA', '${prefillOrder.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')">${t('ordWa')}</button>
-    </div>
-    `;
+    </div>`;
   openOverlay('intOverlay');
-}
+};
+
+window.changeQty = function(delta) {
+    const input = document.getElementById('modalQty');
+    let val = parseInt(input.value) + delta;
+    if(val < 1) val = 1; if(val > 50) val = 50;
+    input.value = val;
+};
+window.toggleCartAccordion = function(el) { el.closest('.cart-accordion').classList.toggle('active'); };
+
+window.addToCart = function(id, name, price, availableSizes) {
+    const size = document.getElementById('modalSizeSelect').value;
+    const qty = parseInt(document.getElementById('modalQty').value);
+    
+    // Nếu chọn size khác, coi như item khác, nếu trùng thì cộng dồn số lượng
+    const existing = cart.find(item => item.id === id && item.size === size);
+    if(existing) { existing.qty = Math.min(50, existing.qty + qty); } 
+    else { cart.push({ id, name, price, size, qty, availableSizes }); }
+    
+    updateCartButton();
+    openCartModal(); // Mở ngay giỏ hàng, KHÔNG ĐÓNG cái product modal đằng sau!
+};
+
+// Hàm mới: Thêm DWR vào giỏ hàng
+window.addDwrToCart = function() {
+    const dwrId = 'dwr_service';
+    const existing = cart.find(item => item.id === dwrId);
+    if(existing) { existing.qty = Math.min(50, existing.qty + 1); }
+    else { cart.push({ id: dwrId, name: t('cartDwrName'), price: t('dwrPrice'), size: 'Service', qty: 1, availableSizes: null }); }
+    
+    updateCartButton();
+    openCartModal();
+};
+
+window.updateCartButton = function() {
+    const count = cart.reduce((sum, item) => sum + item.qty, 0);
+    const deskBtn = document.getElementById('headerCartBtn');
+    const mobBtn = document.getElementById('mobileCartBtn');
+    if (count > 0) { 
+        deskBtn.textContent = `SHOPPING CART (${count})`; 
+        mobBtn.textContent = `SHOPPING CART (${count})`; 
+    } else { 
+        deskBtn.textContent = `SHOPPING CART (0)`; 
+        mobBtn.textContent = `SHOPPING CART (0)`; 
+    }
+};
+
+window.renderCartList = function() {
+    const container = document.getElementById('cartItemsList');
+    if (cart.length === 0) { 
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:12px; letter-spacing:0.1em;" data-i18n="cartEmpty">${t('cartEmpty')}</div>`; 
+        return; 
+    }
+    
+    container.innerHTML = cart.map((item, index) => {
+        // Render dropdown Size (nếu là SP thường)
+        let sizeUi = '';
+        if (item.availableSizes) {
+            let opts = item.availableSizes.split(',').map(s => {
+                let sTrim = s.trim();
+                return `<option value="${sTrim}" ${sTrim === item.size ? 'selected' : ''}>${sTrim}</option>`;
+            }).join('');
+            opts += `<option value="Need sizing advice" ${item.size === 'Need sizing advice' ? 'selected' : ''}>Need sizing advice</option>`;
+            sizeUi = `<select class="form-select" style="padding:4px 0; font-size:12px; margin-top:5px; border-bottom:1px solid var(--border-light); cursor:pointer;" onchange="updateCartItemSize(${index}, this.value)">${opts}</select>`;
+        } else {
+            sizeUi = `<div style="font-size:12px; color:var(--text-dim); margin-top:5px;">Size: ${item.size}</div>`;
+        }
+
+        return `
+        <div class="cart-item-row">
+            <div style="font-size:14px; font-weight:600; color:var(--white); margin-bottom:4px; line-height: 1.4;">${item.name}</div>
+            <div style="font-size:13px; font-weight:600; color:var(--text-dim); margin-bottom:8px;">${item.price}</div>
+            
+            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; align-items:end;">
+                <div>${sizeUi}</div>
+                
+                <div class="cart-item-controls">
+                    <button class="cart-qty-btn" onclick="updateCartItemQty(${index}, -1)">-</button>
+                    <span style="font-size:13px; font-family:monospace; min-width:20px; text-align:center;">${item.qty}</span>
+                    <button class="cart-qty-btn" onclick="updateCartItemQty(${index}, 1)">+</button>
+                </div>
+            </div>
+            
+            <div style="display:flex; justify-content:flex-end; margin-top: 10px;">
+                <button class="cart-item-del" onclick="removeFromCart(${index})">REMOVE</button>
+            </div>
+        </div>`;
+    }).join('');
+};
+
+window.updateCartItemQty = function(index, delta) {
+    cart[index].qty += delta;
+    if(cart[index].qty < 1) cart[index].qty = 1;
+    if(cart[index].qty > 50) cart[index].qty = 50;
+    updateCartButton(); renderCartList();
+};
+
+window.updateCartItemSize = function(index, newSize) {
+    cart[index].size = newSize;
+    // Kiểm tra xem đổi size xong có bị trùng với item khác cùng ID không, nếu có thì gộp lại
+    const duplicateIdx = cart.findIndex((item, i) => i !== index && item.id === cart[index].id && item.size === newSize);
+    if (duplicateIdx !== -1) {
+        cart[duplicateIdx].qty += cart[index].qty; // Cộng dồn số lượng
+        cart.splice(index, 1); // Xóa dòng bị trùng
+    }
+    updateCartButton(); renderCartList();
+};
+
+window.removeFromCart = function(index) { cart.splice(index, 1); updateCartButton(); renderCartList(); };
+window.openCartModal = function() { renderCartList(); openOverlay('cartOverlay'); };
+
+window.submitCart = async function(method, btnEl, accessKey) {
+    const name = document.getElementById('cName').value.trim();
+    const phone = document.getElementById('cPhone').value.trim();
+    const ig = document.getElementById('cIg').value.trim();
+    
+    if(!name || !phone) return alert("Please enter your Name and Zalo Phone Number.");
+    if(cart.length === 0) return alert("Your cart is empty.");
+
+    let txt = "Hi ARC'WARE, I want to request the following items:\n\n";
+    cart.forEach(item => { txt += `- ${item.qty}x ${item.name} (Size: ${item.size})\n`; });
+    txt += `\nMy info:\nName: ${name}\nZalo: ${phone}`;
+    if(ig) txt += `\nIG: ${ig}`;
+
+    if (method === 'EMAIL') {
+        const origText = btnEl.textContent; btnEl.textContent = "SENDING..."; btnEl.disabled = true;
+        try {
+            const res = await fetch("https://api.web3forms.com/submit", {
+                method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify({ access_key: accessKey, subject: `New ARC'WARE Order from ${name}`, message: txt, from_name: name })
+            });
+            const result = await res.json();
+            if(result.success) { alert("Request sent! The ARC'WARE team will contact you shortly."); cart = []; updateCartButton(); closeOverlay('cartOverlay'); } 
+            else { alert("Email failed. Please use Instagram or WhatsApp."); }
+        } catch(e) { alert("Email failed. Please use Instagram or WhatsApp."); } 
+        finally { btnEl.textContent = origText; btnEl.disabled = false; }
+    } else {
+        currentSocialPlatform = method;
+        navigator.clipboard.writeText(txt).then(() => {
+            document.getElementById('copyMsg').textContent = txt;
+            document.getElementById('copyTitle').textContent = method === 'IG' ? t('igCopied') : t('waCopied'); 
+            document.getElementById('copySub').textContent = method === 'IG' ? t('igSub') : t('waSub'); 
+            document.getElementById('copyGoBtn').textContent = method === 'IG' ? t('igGo') : t('waGo'); 
+            closeOverlay('cartOverlay');
+            setTimeout(() => openOverlay('copyOverlay'), 300);
+        }).catch(err => alert("Clipboard error. Please try Email."));
+    }
+};
 
 let currentSocialPlatform = 'IG';
 
