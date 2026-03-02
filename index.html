@@ -1084,7 +1084,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <a href="#about" class="nav-link" data-i18n="navAbout">ABOUT US</a>
   </div>
   <div class="header-right">
-<button class="lang-btn" id="headerCartBtn" style="font-weight:700; color:var(--white); display:none; padding-right:16px;" onclick="openCartModal()">SHOPPING CART (0)</button>
+<button class="lang-btn" id="headerCartBtn" style="font-weight:700; color:var(--white); display:none; padding-right:16px; align-items:center; gap:8px;" onclick="openCartModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" style="margin-top:-2px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+        <span id="headerCartText">SHOPPING CART (0)</span>
+    </button>
     <button class="theme-btn" onclick="toggleTheme()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
@@ -2297,10 +2300,10 @@ ${sizeChartHtml}
             </div>
             <div style="flex:1;">
                 <label class="form-label">${t('lblQty')}</label>
-                <div style="display:flex; background:var(--navy); border:1px solid var(--border); height:44px; align-items:center;">
-                    <button onclick="changeQty(-1)" style="flex:1; background:none; border:none; color:var(--text); cursor:pointer; font-size:16px;">-</button>
-                    <input type="number" id="modalQty" value="1" min="1" max="50" style="width:100%; text-align:center; background:none; border:none; color:var(--white); outline:none; font-family:monospace;" readonly>
-                    <button onclick="changeQty(1)" style="flex:1; background:none; border:none; color:var(--text); cursor:pointer; font-size:16px;">+</button>
+                <div style="display:flex; background:var(--navy); border:1px solid var(--border); height:44px; align-items:center; justify-content: space-between; padding: 0 4px;">
+                    <button onclick="changeQty(-1)" style="flex:0 0 36px; height:100%; background:none; border:none; color:var(--text); cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center;">−</button>
+                    <input type="number" id="modalQty" value="1" min="1" max="50" style="flex:1; text-align:center; background:none; border:none; color:var(--white); outline:none; font-family:monospace; font-size:14px; pointer-events:none;" readonly>
+                    <button onclick="changeQty(1)" style="flex:0 0 36px; height:100%; background:none; border:none; color:var(--text); cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center;">+</button>
                 </div>
             </div>
           </div>
@@ -2343,11 +2346,11 @@ window.addDwrToCart = function() {
 
 window.updateCartButton = function() {
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
-    const deskBtn = document.getElementById('headerCartBtn');
-    const mobBtn = document.getElementById('mobileCartBtn'); // Phòng hờ nếu vẫn còn sót
+    const deskText = document.getElementById('headerCartText');
+    const mobBtn = document.getElementById('mobileCartBtn');
     
     const text = `SHOPPING CART (${count})`;
-    if (deskBtn) deskBtn.textContent = text;
+    if (deskText) deskText.textContent = text;
     if (mobBtn) mobBtn.textContent = text;
 };
 
@@ -2479,14 +2482,33 @@ window.submitCart = async function(method, btnEl, accessKey) {
         }
     }
 
-    // Đóng gói thông tin (Sử dụng Phone thay vì Zalo)
-    let txt = t('tplOrder');
+    // 1. Khởi tạo nội dung lời chào và danh sách món hàng
+    let txt = t('tplOrder'); // Giữ nguyên "Hi ARC'WARE, mình muốn đặt..."
     cart.forEach(item => { 
         let displaySize = item.size === 'Need sizing advice' ? t('szAdvice') : item.size;
         txt += `- ${item.qty}x ${item.name} (Size: ${displaySize})\n`; 
     });
-    txt += t('tplInfo') + name + '\nPhone: ' + code + ' ' + phoneInput;
-    if(ig) txt += t('tplIg') + ig;
+    
+    // 2. Craft phần thông tin cá nhân (Cố định nhãn tiếng Anh để Link không bị lỗi)
+    txt += "\nMy info:";
+    txt += "\nName: " + name;
+    txt += "\nPhone: " + code + " " + phoneInput;
+    
+    // 3. Tự động Craft Zalo Link (Chỉ khi mã vùng là +84)
+    if (code === '+84') {
+        // Gọt bỏ số 0 ở đầu nếu khách lỡ nhập (VD: 094... thành 94...)
+        let cleanPhone = phoneInput.startsWith('0') ? phoneInput.substring(1) : phoneInput;
+        txt += "\nZalo: https://zalo.me/84" + cleanPhone;
+    }
+    
+    // 4. Tự động Craft Instagram Link (Xử lý cả trường hợp có hoặc không có dấu @)
+    if (ig) {
+        let cleanIg = ig.replace(/^@/, '').trim(); // Luôn gọt sạch dấu @ ở đầu
+        txt += "\nInstagram: https://www.instagram.com/" + cleanIg;
+    }
+    
+    // Thêm một dấu xuống dòng cuối cùng cho thoáng
+    txt += "\n";
 
     if (method === 'EMAIL') {
         const origText = btnEl.textContent; btnEl.textContent = "SENDING..."; btnEl.disabled = true;
