@@ -1305,19 +1305,46 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
                 <div style="margin-top:10px;" data-i18n="szChartShoe"><strong>Footwear (EU to US Men's):</strong><br>EU 40: US 7 | EU 41 1/3: US 8 | EU 42 2/3: US 9 | EU 44: US 10 | EU 45 1/3: US 11</div>
             </div>
          </div>
+<div class="cart-accordion">
+            <div class="cart-accordion-head" onclick="toggleCartAccordion(this)">
+                <span class="cart-accordion-title" data-i18n="payPol">PAYMENT POLICIES</span>
+                <span class="cart-accordion-icon">+</span>
+            </div>
+            <div class="cart-accordion-content">
+                <div style="margin-bottom:10px; font-size:13px; color:var(--white);"><strong data-i18n="payPolGl">GLOBAL: 100% Payment via PayPal G&S.</strong></div>
+                <div style="margin-bottom:12px; font-size:13px; color:var(--white);"><strong data-i18n="payPolVn">VIETNAM: 50% Deposit, 50% COD.</strong></div>
+                <div style="padding-top:12px; border-top:1px dashed var(--border-light);">
+                    <div style="font-size:11px; color:var(--text-dim); line-height:1.5;">• <span data-i18n="shipNoteFull">* Shipping fees are not included and may vary depending on regions.</span></div>
+                </div>
+            </div>
+         </div>
          <div style="font-size:12px; color:var(--text-dim); line-height:1.5;" data-i18n="cartNote">Note: No payment is required right now. Our team will contact you directly via Zalo or Instagram to confirm stock availability, double-check your sizing, and arrange payment.</div>
      </div>
 
      <div class="cart-drawer-footer">
-         <div class="form-group"><input type="text" class="form-input" id="cName" placeholder="Your Name / Họ và Tên *"></div>
-         <div class="form-group"><input type="text" class="form-input" id="cPhone" placeholder="Zalo Phone Number / Số điện thoại *"></div>
-         <div class="form-group"><input type="text" class="form-input" id="cIg" placeholder="Instagram Handle / Tên Instagram (Optional)"></div>
+             <div id="cartStep1">
+                 <div style="display:flex; flex-direction:column; gap:12px;">
+                     <button class="cta-btn" onclick="showCartStep2()" style="background:var(--white); color:var(--navy); border-color:var(--white);" data-i18n="btnReq">REQUEST ORDER</button>
+                     <button class="cta-btn" style="background:transparent; color:var(--text-muted); border-color:var(--border);" onclick="continueShopping()" data-i18n="btnCont">CONTINUE SHOPPING</button>
+                 </div>
+             </div>
 
-         <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; margin:20px 0 12px;" data-i18n="cartSendVia">SEND REQUEST VIA:</div>
-         <div style="display:flex; flex-direction:column; gap:12px;">
-             <button class="cta-btn" onclick="submitCart('EMAIL', this, '9d87c321-99b0-4cb5-afcd-592d49e03a6b')" data-i18n="cartSendEmail">SEND VIA EMAIL (FASTEST)</button>
-             <button class="cta-btn" style="background:transparent; color:var(--white); border-color:var(--border);" onclick="submitCart('IG', this)" data-i18n="cartSendIg">SEND VIA INSTAGRAM</button>
-             <button class="cta-btn" style="background:transparent; color:var(--white); border-color:var(--border);" onclick="submitCart('WA', this)" data-i18n="cartSendWa">SEND VIA WHATSAPP</button>
+             <div id="cartStep2" style="display:none;">
+                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                     <div style="font-size:12px; font-weight:700; color:var(--white); text-transform:uppercase;" data-i18n="titleCust">CUSTOMER INFO</div>
+                     <button style="background:none; border:none; color:var(--text-muted); font-size:10px; font-weight:700; letter-spacing:0.1em; cursor:pointer; padding:5px;" onclick="showCartStep1()" data-i18n="btnBack">← BACK</button>
+                 </div>
+             
+             <div class="form-group"><input type="text" class="form-input" id="cName" placeholder="Your Name / Họ và Tên *"></div>
+             <div class="form-group"><input type="text" class="form-input" id="cPhone" placeholder="Zalo Phone Number / Số điện thoại *"></div>
+             <div class="form-group"><input type="text" class="form-input" id="cIg" placeholder="Instagram Handle / Tên Instagram (Optional)"></div>
+
+             <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; margin:20px 0 12px;" data-i18n="cartSendVia">SEND REQUEST VIA:</div>
+             <div style="display:flex; flex-direction:column; gap:12px;">
+                 <button class="cta-btn" onclick="submitCart('EMAIL', this, '9d87c321-99b0-4cb5-afcd-592d49e03a6b')" data-i18n="cartSendEmail">SEND VIA EMAIL (FASTEST)</button>
+                 <button class="cta-btn" style="background:transparent; color:var(--white); border-color:var(--border);" onclick="submitCart('IG', this)" data-i18n="cartSendIg">SEND VIA INSTAGRAM</button>
+                 <button class="cta-btn" style="background:transparent; color:var(--white); border-color:var(--border);" onclick="submitCart('WA', this)" data-i18n="cartSendWa">SEND VIA WHATSAPP</button>
+             </div>
          </div>
      </div>
   </div>
@@ -1542,7 +1569,8 @@ const dictKeys = {
   srcPrompt: "Prompt - Sourcing Service", dwrPrompt: "Prompt - DWR Service",
   dwrS1Num: "STEP 01", dwrS1Title: "Send us your gear", dwrS1Sub: "Ship or drop off in Sa Dec, Đồng Tháp", dwrS2Num: "STEP 02", dwrS2Title: "Professional treatment", dwrS2Sub: "DWR wash-in, heat activation", dwrS3Num: "STEP 03", dwrS3Title: "Factory performance", dwrS3Sub: "Water beads like new again", dwrNote: "Works on Arc'teryx GORE-TEX...", dwrPrice: "13.000.000 VND / ~$499", revSideTitle: "WHAT CUSTOMERS SAY", revSideSub: "Real gear on real people. We don't use fake reviews. Check out our Instagram community...", revSideBtn: "LET'S FIND OUT",
   cartTitle: "Cart - Main Title", cartSizeChart: "Cart - Size Chart Title", cartNote: "Cart - Disclaimer Note", cartSendVia: "Cart - Send Via Label", cartSendEmail: "Cart - Button Email", cartSendIg: "Cart - Button IG", cartSendWa: "Cart - Button WA", cartEmpty: "Cart - Empty Text",
-  szChartDesc: "Size Chart - Warning Note", szChartMenJ: "Size Chart - Men's Jacket", szChartMenP: "Size Chart - Men's Pants", szChartShoe: "Size Chart - Footwear", cartDwrName: "Cart - DWR Service Name"
+  szChartDesc: "Size Chart - Warning Note", szChartMenJ: "Size Chart - Men's Jacket", szChartMenP: "Size Chart - Men's Pants", szChartShoe: "Size Chart - Footwear", cartDwrName: "Cart - DWR Service Name",
+  lblSize: "Label - Select Size", lblQty: "Label - Quantity", szAdvice: "Option - Need Sizing Advice", btnAdd: "Button - Add To Cart", btnReq: "Button - Request Order", btnCont: "Button - Continue Shopping", titleCust: "Title - Customer Info", btnBack: "Button - Back", btnRem: "Button - Remove", errForm: "Alert - Missing Form Info", errCart: "Alert - Empty Cart", msgSent: "Alert - Request Sent Success", tplOrder: "Template - Order Intro", tplInfo: "Template - Customer Info", tplZalo: "Template - Zalo Label", tplIg: "Template - IG Label"
 };
 
 const defaultEN = { 
@@ -1575,7 +1603,8 @@ const defaultEN = {
   szChartMenJ: "<strong>Men's Jackets (Chest):</strong><br>XS: 92cm | S: 97cm | M: 102cm | L: 110cm | XL: 118cm | XXL: 128cm",
   szChartMenP: "<strong>Men's Pants (Waist):</strong><br>28: 71cm | 30: 76cm | 32: 81cm | 34: 86cm | 36: 91cm | 38: 96cm",
   szChartShoe: "<strong>Footwear (EU to US Men's):</strong><br>EU 40: US 7 | EU 41 1/3: US 8 | EU 42 2/3: US 9 | EU 44: US 10 | EU 45 1/3: US 11",
-  cartDwrName: "DWR Re-waterproofing Service"
+  cartDwrName: "DWR Re-waterproofing Service",
+  lblSize: "SELECT SIZE", lblQty: "QUANTITY", szAdvice: "Need sizing advice", btnAdd: "ADD TO CART", btnReq: "REQUEST ORDER", btnCont: "CONTINUE SHOPPING", titleCust: "CUSTOMER INFO", btnBack: "← BACK", btnRem: "REMOVE", errForm: "Please enter your Name and Zalo Phone Number.", errCart: "Your cart is empty.", msgSent: "Request sent! The ARC'WARE team will contact you shortly.", tplOrder: "Hi ARC'WARE, I want to request the following items:\n\n", tplInfo: "\nMy info:\nName: ", tplZalo: "\nZalo: ", tplIg: "\nIG: "
 };
 
 const defaultVI = { 
@@ -1608,7 +1637,8 @@ const defaultVI = {
   szChartMenJ: "<strong>Áo Khoác Nam (Vòng ngực):</strong><br>XS: 92cm | S: 97cm | M: 102cm | L: 110cm | XL: 118cm | XXL: 128cm",
   szChartMenP: "<strong>Quần Nam (Vòng eo):</strong><br>28: 71cm | 30: 76cm | 32: 81cm | 34: 86cm | 36: 91cm | 38: 96cm",
   szChartShoe: "<strong>Giày Dép (EU sang US):</strong><br>EU 40: US 7 | EU 41 1/3: US 8 | EU 42 2/3: US 9 | EU 44: US 10 | EU 45 1/3: US 11",
-  cartDwrName: "Dịch vụ phục hồi DWR"
+  cartDwrName: "Dịch vụ phục hồi DWR",
+  lblSize: "CHỌN SIZE", lblQty: "SỐ LƯỢNG", szAdvice: "Cần tư vấn chọn size", btnAdd: "THÊM VÀO GIỎ", btnReq: "TIẾN HÀNH ĐẶT HÀNG", btnCont: "TIẾP TỤC MUA SẮM", titleCust: "THÔNG TIN KHÁCH HÀNG", btnBack: "← QUAY LẠI", btnRem: "XÓA", errForm: "Vui lòng nhập Tên và Số Zalo của bạn.", errCart: "Giỏ hàng của bạn đang trống.", msgSent: "Đã gửi yêu cầu! Đội ngũ ARC'WARE sẽ liên hệ bạn sớm nhất.", tplOrder: "Chào ARC'WARE, mình muốn đặt các món sau:\n\n", tplInfo: "\nThông tin của mình:\nTên: ", tplZalo: "\nZalo: ", tplIg: "\nIG: "
 };
 
 const dictGroups = [
@@ -1620,7 +1650,8 @@ const dictGroups = [
   { id: 'editorial', name: 'Editorial Sec', keys: ['secAboutTitle', 'secAboutText', 'secGuarTitle', 'secGuarText', 'secPolTitle', 'secPolText', 'secContactTitle', 'secContactSub', 'ctIg', 'ctWa', 'btnZalo', 'btnPhone', 'ctWaSub', 'ctZaloSub', 'phoneCopiedToast'] },
   { id: 'modal', name: 'Modals', keys: ['lbHint', 'zlTitle', 'zlSub', 'zlSales', 'zlTech', 'igCopied', 'igSub', 'igGo', 'igCancel', 'waCopied', 'waSub', 'waGo'] },
   { id: 'footer', name: 'Footer', keys: ['ftContact', 'ftAddress', 'ftEmail', 'ftHours', 'ftDays', 'ftTime', 'ftBrand', 'ftCopy'] },
-  { id: 'cart', name: 'Shopping Cart', keys: ['cartTitle', 'cartSizeChart', 'cartNote', 'cartSendVia', 'cartSendEmail', 'cartSendIg', 'cartSendWa', 'cartEmpty', 'szChartDesc', 'szChartMenJ', 'szChartMenP', 'szChartShoe', 'cartDwrName'] }
+  { id: 'cart', name: 'Shopping Cart', keys: ['cartTitle', 'cartSizeChart', 'cartNote', 'cartSendVia', 'cartSendEmail', 'cartSendIg', 'cartSendWa', 'cartEmpty', 'szChartDesc', 'szChartMenJ', 'szChartMenP', 'szChartShoe', 'cartDwrName'] },
+  { id: 'checkout', name: 'Checkout & System', keys: ['lblSize', 'lblQty', 'szAdvice', 'btnAdd', 'btnReq', 'btnCont', 'titleCust', 'btnBack', 'btnRem', 'errForm', 'errCart', 'msgSent', 'tplOrder', 'tplInfo', 'tplZalo', 'tplIg'] }
 ];
 
 let currentLang = 'vi';
@@ -2133,7 +2164,7 @@ window.openInterest = function(id) {
   if (p.sizes) {
       p.sizes.split(',').forEach(s => { sizeOptions += `<option value="${s.trim()}">${s.trim()}</option>`; });
   } else { sizeOptions = `<option value="One Size">One Size</option>`; }
-  sizeOptions += `<option value="Need sizing advice">Need sizing advice</option>`;
+  sizeOptions += `<option value="Need sizing advice">${t('szAdvice')}</option>`;
 
   let mediaHtml = ''; let hwArr = [];
   try { if(p.how_it_wears) hwArr = JSON.parse(p.how_it_wears); } catch(e){}
@@ -2144,6 +2175,15 @@ window.openInterest = function(id) {
       mediaHtml += `</div>`;
   }
   const displayDesc = currentLang === 'vi' ? (p.description_vi || p.description_en || p.description || '') : (p.description_en || p.description || '');
+
+  let priceNoteHtml = '';
+  if (p.price_type && p.price_type.trim() !== '') {
+      let pText = '';
+      if (p.price_type === 'same') pText = t('priceSame');
+      else if (p.price_type === 'diff') pText = t('priceDiff');
+      else pText = p.price_type;
+      priceNoteHtml = `<div style="font-size:11px; color:var(--text-dim); margin-bottom:6px; line-height:1.5;">• ${pText}</div>`;
+  }
 
   document.getElementById('intModalBody').innerHTML = `
     <div class="product-split">
@@ -2162,14 +2202,29 @@ window.openInterest = function(id) {
           <div class="spec-item"><span class="spec-label">${t('cnd')}</span><span class="spec-value">${t(p.condition)||p.condition||'N/A'}</span></div>
         </div>
         
+        <div class="cart-accordion" style="margin-bottom: 24px;">
+            <div class="cart-accordion-head" onclick="toggleCartAccordion(this)">
+                <span class="cart-accordion-title">${t('payPol')}</span>
+                <span class="cart-accordion-icon">+</span>
+            </div>
+            <div class="cart-accordion-content">
+                <div style="margin-bottom:10px; font-size:13px; color:var(--white);"><strong>${t('payPolGl')}</strong></div>
+                <div style="margin-bottom:12px; font-size:13px; color:var(--white);"><strong>${t('payPolVn')}</strong></div>
+                <div style="padding-top:12px; border-top:1px dashed var(--border-light);">
+                    ${priceNoteHtml}
+                    <div style="font-size:11px; color:var(--text-dim); line-height:1.5;">• ${t('shipNoteFull')}</div>
+                </div>
+            </div>
+        </div>
+
         <div style="background:var(--navy-2); border:1px solid var(--border); padding:20px;">
           <div style="display:flex; gap:16px; margin-bottom:16px;">
             <div style="flex:2;">
-                <label class="form-label">SELECT SIZE</label>
+                <label class="form-label">${t('lblSize')}</label>
                 <select class="form-select" id="modalSizeSelect" style="background:var(--navy); padding:12px; height:44px; font-weight: 600;">${sizeOptions}</select>
             </div>
             <div style="flex:1;">
-                <label class="form-label">QUANTITY</label>
+                <label class="form-label">${t('lblQty')}</label>
                 <div style="display:flex; background:var(--navy); border:1px solid var(--border); height:44px; align-items:center;">
                     <button onclick="changeQty(-1)" style="flex:1; background:none; border:none; color:var(--text); cursor:pointer; font-size:16px;">-</button>
                     <input type="number" id="modalQty" value="1" min="1" max="50" style="width:100%; text-align:center; background:none; border:none; color:var(--white); outline:none; font-family:monospace;" readonly>
@@ -2177,7 +2232,7 @@ window.openInterest = function(id) {
                 </div>
             </div>
           </div>
-          <button class="cta-btn" onclick="addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', '${p.price || 'Contact for price'}', '${p.sizes || ''}')">ADD TO CART</button>
+          <button class="cta-btn" onclick="addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', '${p.price || 'Contact for price'}', '${p.sizes || ''}')">${t('btnAdd')}</button>
         </div>
       </div>
     </div>`;
@@ -2196,16 +2251,14 @@ window.addToCart = function(id, name, price, availableSizes) {
     const size = document.getElementById('modalSizeSelect').value;
     const qty = parseInt(document.getElementById('modalQty').value);
     
-    // Nếu chọn size khác, coi như item khác, nếu trùng thì cộng dồn số lượng
     const existing = cart.find(item => item.id === id && item.size === size);
     if(existing) { existing.qty = Math.min(50, existing.qty + qty); } 
     else { cart.push({ id, name, price, size, qty, availableSizes }); }
     
-    updateCartButton();
-    openCartModal(); // Mở ngay giỏ hàng, KHÔNG ĐÓNG cái product modal đằng sau!
+    updateCartButton(); 
+    openCartModal(); // Mở Pop-up giỏ hàng đè lên, không tắt Pop-up sản phẩm
 };
 
-// Hàm mới: Thêm DWR vào giỏ hàng
 window.addDwrToCart = function() {
     const dwrId = 'dwr_service';
     const existing = cart.find(item => item.id === dwrId);
@@ -2213,7 +2266,7 @@ window.addDwrToCart = function() {
     else { cart.push({ id: dwrId, name: t('cartDwrName'), price: t('dwrPrice'), size: 'Service', qty: 1, availableSizes: null }); }
     
     updateCartButton();
-    openCartModal();
+    openCartModal(); // Mở Pop-up giỏ hàng đè lên
 };
 
 window.updateCartButton = function() {
@@ -2232,22 +2285,27 @@ window.updateCartButton = function() {
 window.renderCartList = function() {
     const container = document.getElementById('cartItemsList');
     if (cart.length === 0) { 
-        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:12px; letter-spacing:0.1em;" data-i18n="cartEmpty">${t('cartEmpty')}</div>`; 
+        container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted); font-size:12px; letter-spacing:0.1em;">${t('cartEmpty')}</div>`; 
+        document.getElementById('cartStep1').style.display = 'none';
         return; 
     }
     
+    document.getElementById('cartStep1').style.display = 'block';
+
     container.innerHTML = cart.map((item, index) => {
-        // Render dropdown Size (nếu là SP thường)
         let sizeUi = '';
-        if (item.availableSizes) {
+        if (item.id === 'dwr_service') {
+            sizeUi = `<div style="font-size:11px; color:var(--text-muted); margin-top:5px; font-style:italic;">DWR price might be different between products</div>`;
+        } else if (item.availableSizes) {
             let opts = item.availableSizes.split(',').map(s => {
                 let sTrim = s.trim();
                 return `<option value="${sTrim}" ${sTrim === item.size ? 'selected' : ''}>${sTrim}</option>`;
             }).join('');
-            opts += `<option value="Need sizing advice" ${item.size === 'Need sizing advice' ? 'selected' : ''}>Need sizing advice</option>`;
+            opts += `<option value="Need sizing advice" ${item.size === 'Need sizing advice' ? 'selected' : ''}>${t('szAdvice')}</option>`;
             sizeUi = `<select class="form-select" style="padding:4px 0; font-size:12px; margin-top:5px; border-bottom:1px solid var(--border-light); cursor:pointer;" onchange="updateCartItemSize(${index}, this.value)">${opts}</select>`;
         } else {
-            sizeUi = `<div style="font-size:12px; color:var(--text-dim); margin-top:5px;">Size: ${item.size}</div>`;
+            let displaySize = item.size === 'Need sizing advice' ? t('szAdvice') : item.size;
+            sizeUi = `<div style="font-size:12px; color:var(--text-dim); margin-top:5px;">Size: ${displaySize}</div>`;
         }
 
         return `
@@ -2266,7 +2324,7 @@ window.renderCartList = function() {
             </div>
             
             <div style="display:flex; justify-content:flex-end; margin-top: 10px;">
-                <button class="cart-item-del" onclick="removeFromCart(${index})">REMOVE</button>
+                <button class="cart-item-del" onclick="removeFromCart(${index})">${t('btnRem')}</button>
             </div>
         </div>`;
     }).join('');
@@ -2281,30 +2339,51 @@ window.updateCartItemQty = function(index, delta) {
 
 window.updateCartItemSize = function(index, newSize) {
     cart[index].size = newSize;
-    // Kiểm tra xem đổi size xong có bị trùng với item khác cùng ID không, nếu có thì gộp lại
     const duplicateIdx = cart.findIndex((item, i) => i !== index && item.id === cart[index].id && item.size === newSize);
     if (duplicateIdx !== -1) {
-        cart[duplicateIdx].qty += cart[index].qty; // Cộng dồn số lượng
-        cart.splice(index, 1); // Xóa dòng bị trùng
+        cart[duplicateIdx].qty += cart[index].qty; 
+        cart.splice(index, 1); 
     }
     updateCartButton(); renderCartList();
 };
 
 window.removeFromCart = function(index) { cart.splice(index, 1); updateCartButton(); renderCartList(); };
-window.openCartModal = function() { renderCartList(); openOverlay('cartOverlay'); };
+
+window.showCartStep1 = function() {
+    document.getElementById('cartStep1').style.display = 'block';
+    document.getElementById('cartStep2').style.display = 'none';
+};
+
+window.showCartStep2 = function() {
+    document.getElementById('cartStep1').style.display = 'none';
+    document.getElementById('cartStep2').style.display = 'block';
+};
+
+window.continueShopping = function() {
+    closeOverlay('cartOverlay'); 
+};
+
+window.openCartModal = function() { 
+    renderCartList(); 
+    showCartStep1(); 
+    openOverlay('cartOverlay'); 
+};
 
 window.submitCart = async function(method, btnEl, accessKey) {
     const name = document.getElementById('cName').value.trim();
     const phone = document.getElementById('cPhone').value.trim();
     const ig = document.getElementById('cIg').value.trim();
     
-    if(!name || !phone) return alert("Please enter your Name and Zalo Phone Number.");
-    if(cart.length === 0) return alert("Your cart is empty.");
+    if(!name || !phone) return alert(t('errForm'));
+    if(cart.length === 0) return alert(t('errCart'));
 
-    let txt = "Hi ARC'WARE, I want to request the following items:\n\n";
-    cart.forEach(item => { txt += `- ${item.qty}x ${item.name} (Size: ${item.size})\n`; });
-    txt += `\nMy info:\nName: ${name}\nZalo: ${phone}`;
-    if(ig) txt += `\nIG: ${ig}`;
+    let txt = t('tplOrder');
+    cart.forEach(item => { 
+        let displaySize = item.size === 'Need sizing advice' ? t('szAdvice') : item.size;
+        txt += `- ${item.qty}x ${item.name} (Size: ${displaySize})\n`; 
+    });
+    txt += t('tplInfo') + name + t('tplZalo') + phone;
+    if(ig) txt += t('tplIg') + ig;
 
     if (method === 'EMAIL') {
         const origText = btnEl.textContent; btnEl.textContent = "SENDING..."; btnEl.disabled = true;
@@ -2314,7 +2393,7 @@ window.submitCart = async function(method, btnEl, accessKey) {
                 body: JSON.stringify({ access_key: accessKey, subject: `New ARC'WARE Order from ${name}`, message: txt, from_name: name })
             });
             const result = await res.json();
-            if(result.success) { alert("Request sent! The ARC'WARE team will contact you shortly."); cart = []; updateCartButton(); closeOverlay('cartOverlay'); } 
+            if(result.success) { alert(t('msgSent')); cart = []; updateCartButton(); closeOverlay('cartOverlay'); } 
             else { alert("Email failed. Please use Instagram or WhatsApp."); }
         } catch(e) { alert("Email failed. Please use Instagram or WhatsApp."); } 
         finally { btnEl.textContent = origText; btnEl.disabled = false; }
@@ -2364,11 +2443,11 @@ function showToast(msg) { const t=document.getElementById('toast'); t.textConten
 // Standard overflow:hidden does NOT lock scroll on iOS. We use position:fixed + restore scrollY.
 let _bodyScrollY = 0;
 function _lockBody() {
+  if (document.body.style.position === 'fixed') return; // Chốt an toàn: Không khóa đè nếu đã khóa
   _bodyScrollY = window.pageYOffset || window.scrollY || 0;
   document.body.style.position = 'fixed';
   document.body.style.top = '-' + _bodyScrollY + 'px';
   document.body.style.width = '100%';
-  // NOTE: Do NOT set overflow:hidden — it prevents overlay scroll on iOS Safari
 }
 function _unlockBody() {
   document.body.style.position = '';
