@@ -1339,7 +1339,34 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
                  </div>
              
              <div class="form-group"><input type="text" class="form-input" id="cName" placeholder="Your Name / Họ và Tên *"></div>
-             <div class="form-group"><input type="text" class="form-input" id="cPhone" placeholder="Zalo Phone Number / Số điện thoại *"></div>
+             <div class="form-group" style="display:flex; gap:10px;">
+                 <select id="cCountryCode" class="form-select" style="width: 100px; flex-shrink: 0; padding-left: 5px;" onchange="handleCountryCodeChange(this)">
+                     <option value="+84">🇻🇳 +84</option>
+                     <option value="+1">🇺🇸 +1</option>
+                     <option value="+1">🇨🇦 +1</option>
+                     <option value="+44">🇬🇧 +44</option>
+                     <option value="+61">🇦🇺 +61</option>
+                     <option value="+65">🇸🇬 +65</option>
+                     <option value="+66">🇹🇭 +66</option>
+                     <option value="+60">🇲🇾 +60</option>
+                     <option value="+62">🇮🇩 +62</option>
+                     <option value="+63">🇵🇭 +63</option>
+                     <option value="+82">🇰🇷 +82</option>
+                     <option value="+81">🇯🇵 +81</option>
+                     <option value="+886">🇹🇼 +886</option>
+                     <option value="+86">🇨🇳 +86</option>
+                     <option value="+852">🇭🇰 +852</option>
+                     <option value="+33">🇫🇷 +33</option>
+                     <option value="+49">🇩🇪 +49</option>
+                     <option value="+39">🇮🇹 +39</option>
+                     <option value="+34">🇪🇸 +34</option>
+                     <option value="+31">🇳🇱 +31</option>
+                     <option value="OTHER">🌍 Other</option>
+                 </select>
+                 <input type="text" id="cCustomCode" class="form-input" placeholder="+..." style="display:none; width: 60px; flex-shrink: 0;">
+                 <input type="text" class="form-input" id="cPhone" placeholder="PHONE NUMBER *" style="flex: 1;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+             </div>
+             <input type="text" id="cHoney" style="display:none;" tabindex="-1" autocomplete="off">
              <div class="form-group"><input type="text" class="form-input" id="cIg" placeholder="Instagram Handle / Tên Instagram (Optional)"></div>
 
              <div style="font-size:11px; font-weight:700; letter-spacing:0.1em; color:var(--text-muted); text-transform:uppercase; margin:20px 0 12px;" data-i18n="cartSendVia">SEND REQUEST VIA:</div>
@@ -2202,6 +2229,23 @@ window.openInterest = function(id) {
       mediaHtml += `</div>`;
   }
   const displayDesc = currentLang === 'vi' ? (p.description_vi || p.description_en || p.description || '') : (p.description_en || p.description || '');
+let sizeChartHtml = '';
+  const isVi = (currentLang === 'vi');
+  const s = window.sizeChartSettings || {};
+  const img_jM = isVi ? s.sz_img_jacket_m_vi : s.sz_img_jacket_m_en;
+  const img_pM = isVi ? s.sz_img_pants_m_vi : s.sz_img_pants_m_en;
+  const img_jW = isVi ? s.sz_img_jacket_w_vi : s.sz_img_jacket_w_en;
+  const img_pW = isVi ? s.sz_img_pants_w_vi : s.sz_img_pants_w_en;
+  
+  if(img_jM || img_pM || img_jW || img_pW) {
+      const t_hint = isVi ? "Chạm để phóng to" : "Click image to zoom in";
+      const t_szGuideTitle = isVi ? "BẢNG SIZE" : "AVERAGE SIZE CHART"; // Tách rạch ròi 2 ngôn ngữ
+      const makeAcc = (title, imgUrl) => {
+          if(!imgUrl) return ''; 
+          return `<div class="cart-accordion" style="margin-bottom: 12px; border: 1px solid var(--border-light); background: transparent;"><div class="cart-accordion-head" style="padding: 12px 16px;" onclick="toggleCartAccordion(this)"><span class="cart-accordion-title" style="font-size: 10px;">${title}</span><span class="cart-accordion-icon" style="font-size: 16px;">+</span></div><div class="cart-accordion-content" style="padding: 0 16px 16px;"><div style="position: relative; cursor: pointer; border-radius: 2px; overflow: hidden; border: 1px solid var(--border);" onclick="openLightbox('${imgUrl}')"><img src="${imgUrl}" style="width: 100%; display: block; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"><div style="position: absolute; bottom: 8px; right: 8px; background: var(--navy); color: var(--white); font-size: 9px; font-weight: bold; padding: 4px 8px; border-radius: 2px; pointer-events: none;">${t_hint}</div></div></div></div>`;
+      };
+      sizeChartHtml = `<div class="cart-accordion" style="margin-bottom: 16px;"><div class="cart-accordion-head" onclick="toggleCartAccordion(this)"><span class="cart-accordion-title" style="color:var(--text-muted); font-weight:700; letter-spacing:0.1em; font-size:11px;">📏 ${t_szGuideTitle}</span><span class="cart-accordion-icon">+</span></div><div class="cart-accordion-content" style="padding:0 16px 16px;"><p style="margin-bottom: 16px; font-size: 12px; color: var(--text-dim); line-height: 1.5;"><em>${t('szChartDesc')}</em></p>${makeAcc("MEN'S JACKET", img_jM) + makeAcc("MEN'S PANTS", img_pM) + makeAcc("WOMEN'S JACKET", img_jW) + makeAcc("WOMEN'S PANTS", img_pW)}</div></div>`;
+  }
 
   let priceNoteHtml = '';
   if (p.price_type && p.price_type.trim() !== '') {
@@ -2245,6 +2289,7 @@ window.openInterest = function(id) {
         </div>
 
         <div style="background:var(--navy-2); border:1px solid var(--border); padding:20px;">
+${sizeChartHtml}
           <div style="display:flex; gap:16px; margin-bottom:16px;">
             <div style="flex:2;">
                 <label class="form-label">${t('lblSize')}</label>
@@ -2393,20 +2438,54 @@ window.openCartModal = function() {
     openOverlay('cartOverlay'); 
 };
 
+window.handleCountryCodeChange = function(sel) {
+    const custom = document.getElementById('cCustomCode');
+    if (sel.value === 'OTHER') { custom.style.display = 'block'; custom.focus(); } 
+    else { custom.style.display = 'none'; custom.value = ''; }
+};
+
 window.submitCart = async function(method, btnEl, accessKey) {
+    // 1. CHỐNG BOT (HONEYPOT) - Bot điền vào là âm thầm từ chối ngay
+    if (document.getElementById('cHoney').value) return; 
+
     const name = document.getElementById('cName').value.trim();
-    const phone = document.getElementById('cPhone').value.trim();
+    const phoneInput = document.getElementById('cPhone').value.trim();
     const ig = document.getElementById('cIg').value.trim();
     
-    if(!name || !phone) return alert(t('errForm'));
+    // Lấy mã vùng
+    let code = document.getElementById('cCountryCode').value;
+    if (code === 'OTHER') {
+        code = document.getElementById('cCustomCode').value.trim();
+        if(!code) return alert(currentLang === 'vi' ? "Vui lòng nhập mã vùng quốc gia." : "Please enter country code.");
+    }
+
+    if(!name || !phoneInput) return alert(t('errForm'));
+    
+    // 2. CHỐNG SPAM TAY (VALIDATION SỐ ĐT)
+    if (code === '+84' && (phoneInput.length < 9 || phoneInput.length > 10)) {
+        return alert(currentLang === 'vi' ? "Số điện thoại Việt Nam phải có 9 hoặc 10 chữ số." : "Vietnam phone number must be 9 or 10 digits.");
+    }
+    if (code !== '+84' && (phoneInput.length < 7 || phoneInput.length > 15)) {
+        return alert(currentLang === 'vi' ? "Số điện thoại không hợp lệ (7-15 chữ số)." : "Invalid phone number length.");
+    }
+
     if(cart.length === 0) return alert(t('errCart'));
 
+    // 3. KHÓA MÕM SPAM LIÊN HOÀN (COOLDOWN 3 PHÚT)
+    if (method === 'EMAIL') {
+        const lastSent = localStorage.getItem('aw_last_order_time');
+        if (lastSent && Date.now() - parseInt(lastSent) < 180000) {
+            return alert(currentLang === 'vi' ? "Bạn thao tác quá nhanh. Vui lòng thử lại sau 3 phút." : "Please wait 3 minutes before sending another request.");
+        }
+    }
+
+    // Đóng gói thông tin (Sử dụng Phone thay vì Zalo)
     let txt = t('tplOrder');
     cart.forEach(item => { 
         let displaySize = item.size === 'Need sizing advice' ? t('szAdvice') : item.size;
         txt += `- ${item.qty}x ${item.name} (Size: ${displaySize})\n`; 
     });
-    txt += t('tplInfo') + name + t('tplZalo') + phone;
+    txt += t('tplInfo') + name + '\nPhone: ' + code + ' ' + phoneInput;
     if(ig) txt += t('tplIg') + ig;
 
     if (method === 'EMAIL') {
@@ -2417,8 +2496,11 @@ window.submitCart = async function(method, btnEl, accessKey) {
                 body: JSON.stringify({ access_key: accessKey, subject: `New ARC'WARE Order from ${name}`, message: txt, from_name: name })
             });
             const result = await res.json();
-            if(result.success) { alert(t('msgSent')); cart = []; updateCartButton(); closeOverlay('cartOverlay'); } 
-            else { alert("Email failed. Please use Instagram or WhatsApp."); }
+            if(result.success) { 
+                alert(t('msgSent')); 
+                localStorage.setItem('aw_last_order_time', Date.now()); // Lưu lại giờ để bắt Cooldown
+                cart = []; updateCartButton(); closeOverlay('cartOverlay'); 
+            } else { alert("Email failed. Please use Instagram or WhatsApp."); }
         } catch(e) { alert("Email failed. Please use Instagram or WhatsApp."); } 
         finally { btnEl.textContent = origText; btnEl.disabled = false; }
     } else {
@@ -2429,7 +2511,7 @@ window.submitCart = async function(method, btnEl, accessKey) {
             document.getElementById('copySub').textContent = method === 'IG' ? t('igSub') : t('waSub'); 
             document.getElementById('copyGoBtn').textContent = method === 'IG' ? t('igGo') : t('waGo'); 
             closeOverlay('cartOverlay');
-            setTimeout(() => openOverlay('copyOverlay'), 300);
+            setTimeout(() => openOverlay('copyOverlay'), 10);
         }).catch(err => alert("Clipboard error. Please try Email."));
     }
 };
