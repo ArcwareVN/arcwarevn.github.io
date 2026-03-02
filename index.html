@@ -1075,7 +1075,6 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
 
   <div class="mobile-top-nav">
-<a class="nav-link" id="mobileCartBtn" style="display:none; color:var(--white);" onclick="openCartModal()">SHOPPING CART (0)</a>
     <a href="#products" class="nav-link" data-i18n="navShop">SHOPPING</a>
     <a href="#dwr" class="nav-link" data-i18n="dwrNav">RE-APPLY DWR</a>
     <a href="#contact" class="nav-link" data-i18n="navContact">CONTACT</a>
@@ -2272,14 +2271,11 @@ window.addDwrToCart = function() {
 window.updateCartButton = function() {
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     const deskBtn = document.getElementById('headerCartBtn');
-    const mobBtn = document.getElementById('mobileCartBtn');
-    if (count > 0) { 
-        deskBtn.textContent = `SHOPPING CART (${count})`; 
-        mobBtn.textContent = `SHOPPING CART (${count})`; 
-    } else { 
-        deskBtn.textContent = `SHOPPING CART (0)`; 
-        mobBtn.textContent = `SHOPPING CART (0)`; 
-    }
+    const mobBtn = document.getElementById('mobileCartBtn'); // Phòng hờ nếu vẫn còn sót
+    
+    const text = `SHOPPING CART (${count})`;
+    if (deskBtn) deskBtn.textContent = text;
+    if (mobBtn) mobBtn.textContent = text;
 };
 
 window.renderCartList = function() {
