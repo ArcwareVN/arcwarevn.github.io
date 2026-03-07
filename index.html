@@ -1746,7 +1746,7 @@ let currentLang = 'vi';
 let customEN = getSafeObject('aw_custom_en', defaultEN);
 let customVI = getSafeObject('aw_custom_vi', defaultVI);
 
-let settings = getSafeObject('aw_settings', { ig: 'arcwarevn', wa: '84901234567', zalo1: '84900000000', zalo2: '84911111111', phone: '0901234567' });
+let settings = getSafeObject('aw_settings', { ig: 'arcwarevn', wa: '84901234567', zalo1: '84900000000', zalo2: '84911111111', phone1: '0901234567', phone2: '' });
 
 let dbMode = 'local'; 
 let products = [];
@@ -1887,8 +1887,8 @@ async function loadSettingsFromCloud() {
     
     if (map['ig']) settings.ig = map['ig']; if (map['wa']) settings.wa = map['wa'];
     if (map['zalo1']) settings.zalo1 = map['zalo1']; if (map['zalo2']) settings.zalo2 = map['zalo2']; 
-    if (map['phone']) settings.phone = map['phone'];
-    
+if (map['phone1']) settings.phone1 = map['phone1']; else if (map['phone']) settings.phone1 = map['phone'];
+    if (map['phone2']) settings.phone2 = map['phone2'];    
     localStorage.setItem('aw_settings', JSON.stringify(settings));
     updateContactSettingsDisplay();
     if (map['content_en']) { try { customEN = { ...defaultEN, ...JSON.parse(map['content_en']) }; localStorage.setItem('aw_custom_en', JSON.stringify(customEN)); } catch(e){} }
