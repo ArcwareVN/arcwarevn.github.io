@@ -1250,7 +1250,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         <a class="contact-card" onclick="openSupportModal('IG', 'supportPrompt')">
           <div class="contact-icon"></div>
           <div class="contact-label" data-i18n="ctIg">INSTAGRAM</div>
-          <div class="contact-sub" id="displayIgCard">@arcwarevn</div>
+       <div class="contact-sub" id="displayIgCard"></div>
+          
         </a>
         <a class="contact-card" onclick="openSupportModal('WA', 'supportPrompt')">
           <div class="contact-icon"></div>
@@ -1262,10 +1263,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
           <div class="contact-label" data-i18n="btnZalo">MESSAGE ZALO</div>
           <div class="contact-sub" data-i18n="ctZaloSub">Vietnam Fast Support</div>
         </a>
-        <a class="contact-card" onclick="copyPhoneOnly()">
+        <a class="contact-card" onclick="openPhoneModal()">
           <div class="contact-icon"></div>
           <div class="contact-label" data-i18n="btnPhone">PHONE NUMBER</div>
-          <div class="contact-sub" id="displayPhoneCard">090 123 4567</div>
+        
         </a>
       </div>
     </div>
@@ -1428,7 +1429,25 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     </div>
   </div>
 </div>
-
+<div class="overlay" id="phoneOverlay">
+  <div class="modal copy-modal" style="max-width:400px; padding:40px;">
+    <button class="modal-close-abs" onclick="closeOverlay('phoneOverlay')">✕</button>
+    <div class="copy-title">PHONE NUMBERS</div>
+    <div class="copy-sub" style="margin-bottom: 24px;">Click a number to copy it to your clipboard.</div>
+    
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <button class="cta-btn" style="padding: 16px;" onclick="copySpecificPhone(settings.phone1)">
+        <span style="display: block; font-size: 16px; margin-bottom: 4px; letter-spacing: 0.1em;" id="modalPhone1"></span>
+        <span style="font-size: 10px; font-weight: 500; opacity: 0.8; text-transform: none; letter-spacing: 0;">Phone 1</span>
+      </button>
+      
+      <button class="cta-btn" style="padding: 16px; background: transparent; color: var(--white); border-color: var(--border);" onclick="copySpecificPhone(settings.phone2)" onmouseover="this.style.borderColor='var(--white)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span style="display: block; font-size: 16px; margin-bottom: 4px; letter-spacing: 0.1em;" id="modalPhone2"></span>
+        <span style="font-size: 10px; font-weight: 500; color: var(--text-dim); text-transform: none; letter-spacing: 0;">Phone 2</span>
+      </button>
+    </div>
+  </div>
+</div>
 <div class="overlay" id="copyOverlay">
   <div class="modal copy-modal">
     <div class="copy-title" id="copyTitle">COPIED TO CLIPBOARD</div>
@@ -1598,7 +1617,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <div class="form-group"><label class="form-label">WhatsApp Number</label><input type="text" class="form-input" id="sWa" placeholder="84901234567"></div>
     <div class="form-group"><label class="form-label">Zalo Number 1 (Sales)</label><input type="text" class="form-input" id="sZalo1" placeholder="84900000000"></div>
     <div class="form-group"><label class="form-label">Zalo Number 2 (Technical)</label><input type="text" class="form-input" id="sZalo2" placeholder="84911111111"></div>
-    <div class="form-group"><label class="form-label">Display Phone Number</label><input type="text" class="form-input" id="sPhone" placeholder="090 123 4567"></div>
+    <div class="form-group"><label class="form-label">Phone Number 1</label><input type="text" class="form-input" id="sPhone1" placeholder="090 123 4567"></div>
+    <div class="form-group"><label class="form-label">Phone Number 2</label><input type="text" class="form-input" id="sPhone2" placeholder="098 765 4321"></div>
     <button class="btn-primary" onclick="saveSettings()">SAVE SETTINGS</button>
   </div>
 </div>
@@ -1782,13 +1802,19 @@ function startAdminTimer() {
 }
 
 function updateContactSettingsDisplay() {
-  document.getElementById('displayIgCard').textContent = '@' + settings.ig;
-  document.getElementById('displayPhoneCard').textContent = settings.phone;
-  document.getElementById('footerPhone').textContent = settings.phone;
+  const igEl = document.getElementById('displayIgCard');
+  if(igEl) igEl.textContent = settings.ig.replace(/^@/, '');
+  
+  const fPhone = document.getElementById('footerPhone');
+  if(fPhone) fPhone.textContent = (settings.phone1 || '') + (settings.phone2 ? ' / ' + settings.phone2 : '');
+  
+  const p1 = document.getElementById('modalPhone1'); if(p1) p1.textContent = settings.phone1 || '';
+  const p2 = document.getElementById('modalPhone2'); if(p2) p2.textContent = settings.phone2 || '';
+  const sp1 = document.getElementById('sPhone1'); if(sp1) sp1.value = settings.phone1 || '';
+  const sp2 = document.getElementById('sPhone2'); if(sp2) sp2.value = settings.phone2 || '';
   const z1 = document.getElementById('modalZalo1'); if(z1) z1.textContent = '+' + (settings.zalo1 || '84900000000');
   const z2 = document.getElementById('modalZalo2'); if(z2) z2.textContent = '+' + (settings.zalo2 || '84911111111');
 }
-
 async function initApp() {
   if (SUPABASE_URL !== "YOUR_SUPABASE_PROJECT_URL_HERE" && typeof window.supabase !== 'undefined') {
     try {
@@ -1952,13 +1978,14 @@ async function saveDictionary() {
 async function saveSettings() { 
   settings.ig = document.getElementById('sIg').value.trim(); settings.wa = document.getElementById('sWa').value.trim(); 
   settings.zalo1 = document.getElementById('sZalo1').value.trim(); settings.zalo2 = document.getElementById('sZalo2').value.trim(); 
-  settings.phone = document.getElementById('sPhone').value.trim(); 
+  settings.phone1 = document.getElementById('sPhone1').value.trim(); 
+  settings.phone2 = document.getElementById('sPhone2').value.trim(); 
   
   localStorage.setItem('aw_settings', JSON.stringify(settings));
   
   await saveToCloud('ig', settings.ig); await saveToCloud('wa', settings.wa); 
   await saveToCloud('zalo1', settings.zalo1); await saveToCloud('zalo2', settings.zalo2); 
-  await saveToCloud('phone', settings.phone);
+  await saveToCloud('phone1', settings.phone1); await saveToCloud('phone2', settings.phone2);
   
   updateContactSettingsDisplay(); showToast("SETTINGS SYNCED TO DATABASE ✓"); 
 }
@@ -2260,7 +2287,7 @@ let sizeChartHtml = '';
       const t_szGuideTitle = isVi ? "BẢNG SIZE" : "AVERAGE SIZE CHART"; // Tách rạch ròi 2 ngôn ngữ
       const makeAcc = (title, imgUrl) => {
           if(!imgUrl) return ''; 
-          return `<div class="cart-accordion" style="margin-bottom: 12px; border: 1px solid var(--border-light); background: transparent;"><div class="cart-accordion-head" style="padding: 12px 16px;" onclick="toggleCartAccordion(this)"><span class="cart-accordion-title" style="font-size: 10px;">${title}</span><span class="cart-accordion-icon" style="font-size: 16px;">+</span></div><div class="cart-accordion-content" style="padding: 0 16px 16px;"><div style="position: relative; cursor: pointer; border-radius: 2px; overflow: hidden; border: 1px solid var(--border);" onclick="openLightbox('${imgUrl}')"><img src="${imgUrl}" style="width: 100%; display: block; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"><div style="position: absolute; bottom: 8px; right: 8px; background: var(--navy); color: var(--white); font-size: 9px; font-weight: bold; padding: 4px 8px; border-radius: 2px; pointer-events: none;">${t_hint}</div></div></div></div>`;
+          return `<div class="cart-accordion" style="margin-bottom: 12px; border: 1px solid var(--border-light); background: transparent;"><div class="cart-accordion-head" style="padding: 12px 16px; justify-content: center;" onclick="toggleCartAccordion(this)"><span class="cart-accordion-title" style="font-size: 10px;">${title}</span></div><div class="cart-accordion-content" style="padding: 0 16px 16px;"><div style="position: relative; cursor: pointer; border-radius: 2px; overflow: hidden; border: 1px solid var(--border);" onclick="openLightbox('${imgUrl}')"><img src="${imgUrl}" style="width: 100%; display: block; transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"><div style="position: absolute; bottom: 8px; right: 8px; background: var(--navy); color: var(--white); font-size: 9px; font-weight: bold; padding: 4px 8px; border-radius: 2px; pointer-events: none;">${t_hint}</div></div></div></div>`;
       };
       sizeChartHtml = `<div class="cart-accordion" style="margin-bottom: 16px;"><div class="cart-accordion-head" onclick="toggleCartAccordion(this)"><span class="cart-accordion-title" style="color:var(--text-muted); font-weight:700; letter-spacing:0.1em; font-size:11px;"> ${t_szGuideTitle}</span><span class="cart-accordion-icon">+</span></div><div class="cart-accordion-content" style="padding:0 16px 16px;"><p style="margin-bottom: 16px; font-size: 12px; color: var(--text-dim); line-height: 1.5;"><em>${t('szChartDesc')}</em></p>${makeAcc("MEN'S JACKET", img_jM) + makeAcc("MEN'S PANTS", img_pM) + makeAcc("WOMEN'S JACKET", img_jW) + makeAcc("WOMEN'S PANTS", img_pW)}</div></div>`;
   }
@@ -2571,14 +2598,23 @@ function openCopyModal(platform, msg) {
 }
 
 function openZaloModal() { openOverlay('zaloOverlay'); }
-function copyPhoneOnly() { navigator.clipboard.writeText(settings.phone).then(() => { showToast(t('phoneCopiedToast')); }); }
+function openPhoneModal() { openOverlay('phoneOverlay'); }
+function copySpecificPhone(num) { 
+  if(!num) return;
+  navigator.clipboard.writeText(num).then(() => { 
+    showToast(t('phoneCopiedToast')); 
+    closeOverlay('phoneOverlay');
+  }); 
+}
 function proceedToSocial() {
   const msg = document.getElementById('copyMsg').textContent;
-  if (currentSocialPlatform === 'IG') { window.open(`https://instagram.com/${settings.ig}`, '_blank'); } 
+  if (currentSocialPlatform === 'IG') { 
+      const cleanIg = settings.ig.replace(/^@/, '').trim(); // Gọt sạch dấu @ nếu có
+      window.open(`https://www.instagram.com/${cleanIg}`, '_blank'); 
+  } 
   else { window.open(`https://wa.me/${settings.wa}?text=${encodeURIComponent(msg)}`, '_blank'); }
   closeOverlay('copyOverlay');
 }
-
 function filterProducts(cat, el) { currentFilter = cat; document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active')); el.classList.add('active'); renderProducts(); }
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 
@@ -2759,9 +2795,8 @@ window.renderSizeCharts = function() {
         if(!imgUrl) return ''; 
         return `
         <div class="cart-accordion" style="margin-bottom: 12px; border: 1px solid var(--border-light); background: transparent;">
-            <div class="cart-accordion-head" style="padding: 12px 16px;" onclick="toggleCartAccordion(this)">
+            <div class="cart-accordion-head" style="padding: 12px 16px; justify-content: center;" onclick="toggleCartAccordion(this)">
                 <span class="cart-accordion-title" style="font-size: 10px;">${title}</span>
-                <span class="cart-accordion-icon" style="font-size: 16px;">+</span>
             </div>
             <div class="cart-accordion-content" style="padding: 0 16px 16px;">
                 <div style="position: relative; cursor: pointer; border-radius: 2px; overflow: hidden; border: 1px solid var(--border);" onclick="openLightbox('${imgUrl}')">
