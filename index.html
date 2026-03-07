@@ -79,12 +79,21 @@ img { max-width: 100%; height: auto; }
   --logo-color: #000000; --btn-text: #ffffff;
 }
 [data-theme="dark"] {
-  --navy: #0d1117; --navy-2: #161b22; --navy-3: #21262d; 
-  --border: #30363d; --border-light: #484f58; 
-  --text: #c9d1d9; --text-dim: #8b949e; --text-muted: #6e7681; 
-  --white: #ffffff; --blue: #ffffff; --blue-bright: #cccccc; 
-  --gold: #ffffff; --red: #ff7b72;
-  --logo-color: #ffffff; --btn-text: #000000;
+  --navy: #000000;         /* Nền chính: Đen tuyền (OLED Black) */
+  --navy-2: #0f0f0f;       /* Khối nổi/Pop-up: Đen xám */
+  --navy-3: #1a1a1a;       /* Nút Hover: Xám than */
+  --border: #2a2a2a;       /* Viền kỹ thuật chính */
+  --border-light: #1a1a1a; /* Viền phụ (ngăn cách nhẹ nhàng) */
+  --text: #ffffff;         /* Chữ chính: Trắng tinh */
+  --text-dim: #a0a0a0;     /* Chữ phụ: Xám sáng (dễ đọc) */
+  --text-muted: #666666;   /* Chữ ghi chú/chữ nhỏ: Xám tối */
+  --white: #ffffff;        /* Giữ nguyên tương phản */
+  --blue: #ffffff;         /* Biến các điểm nhấn màu xanh thành Trắng */
+  --blue-bright: #e0e0e0;  
+  --gold: #ffffff;         /* Loại bỏ màu vàng thừa thãi */
+  --red: #d32f2f;          /* Giữ màu đỏ cho các cảnh báo/lỗi */
+  --logo-color: #ffffff;   /* Logo trắng trên nền đen */
+  --btn-text: #000000;     /* Chữ màu đen trên nút bấm màu trắng */
 }
 body, header, .modal, .admin-panel, .product-card { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -979,8 +988,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .cart-accordion-title { font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--white); }
 .cart-accordion-icon { font-size: 20px; font-weight: 300; transition: transform 0.3s ease; line-height: 1; color: var(--text-muted); }
 .cart-accordion-content { display: none; padding: 0 20px 20px; font-size: 12px; color: var(--text-dim); line-height: 1.6; }
-.cart-accordion.active .cart-accordion-content { display: block; animation: fadeDown 0.3s ease-out forwards; }
-.cart-accordion.active .cart-accordion-icon { transform: rotate(45deg); color: var(--white); }
+.cart-accordion.active > .cart-accordion-content { display: block; animation: fadeDown 0.3s ease-out forwards; }
+.cart-accordion.active > .cart-accordion-head .cart-accordion-icon { transform: rotate(45deg); color: var(--white); }
 
 .cart-item-row { padding: 20px 0; border-bottom: 1px solid var(--border-light); }
 .cart-item-row:last-child { border-bottom: none; }
@@ -988,6 +997,11 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .cart-qty-btn { background: var(--navy-2); border: 1px solid var(--border); color: var(--white); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
 .cart-qty-btn:hover { border-color: var(--white); }
 .cart-item-del { color: var(--red); cursor: pointer; font-size: 10px; font-weight: 700; background: none; border: none; letter-spacing: 0.1em; padding: 6px 10px; margin-left: auto;}
+/* Tự động tráo Logo PNG theo chế độ Sáng/Tối */
+.logo-light { display: block; height: 99px; width: auto; object-fit: contain; }
+.logo-dark { display: none; height: 99px; width: auto; object-fit: contain; }
+[data-theme="dark"] .logo-light { display: none; }
+[data-theme="dark"] .logo-dark { display: block; }
 </style>
 <script type="application/ld+json">
 {
@@ -1063,8 +1077,9 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
 <header>
   <div class="logo-wrap" ondblclick="openPass()">
-    <svg width="24" height="24" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 75 L40 25 L65 75" stroke="var(--logo-color)" stroke-width="6" stroke-linejoin="miter"/><path d="M45 60 L70 20 L90 60" stroke="var(--logo-color)" stroke-width="6" stroke-linejoin="miter"/><path d="M40 75 L55 50 L70 75 Z" fill="var(--logo-color)"/></svg>
-    <span class="logo-text">ARC'WARE</span>
+    <img src="https://ooashjkxkkteuhqfswlt.supabase.co/storage/v1/object/public/arcware-media/logoblack.png" alt="ARC'WARE" class="logo-light">
+    
+    <img src="https://ooashjkxkkteuhqfswlt.supabase.co/storage/v1/object/public/arcware-media/logowhite.png" alt="ARC'WARE" class="logo-dark">
   </div>
   
   <div class="header-nav">
