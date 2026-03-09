@@ -2027,13 +2027,29 @@ function toggleTheme() {
 async function refreshProducts() {
   if (dbMode === 'supabase') {
     try {
-      // Sort: sort_order ASC (nulls last), then created_at DESC as tiebreaker
+      // Fetch data từ Supabase
       const { data, error } = await sbClient.from('products')
         .select('*')
         .order('sort_order', { ascending: true, nullsFirst: false })
         .order('created_at', { ascending: false });
       if (error) throw error;
-      products = data || [];
+      
+      let fetchedProducts = data || [];
+      
+      // LOGIC MỚI: Ép thứ tự Category hiển thị chuẩn xác
+      const catOrder = { 'Shell Jacket': 1, 'Insulated Layer': 2, 'Footwear': 3, 'Backpack': 4, 'Others': 5 };
+      fetchedProducts.sort((a, b) => {
+        const weightA = catOrder[a.category] || 99;
+        const weightB = catOrder[b.category] || 99;
+        
+        // Nếu khác danh mục -> Sắp xếp theo thứ tự quy định ở trên
+        if (weightA !== weightB) return weightA - weightB;
+        
+        // Nếu cùng danh mục -> Giữ nguyên thứ tự ưu tiên (Sản phẩm mới lên đầu, hoặc theo thứ tự ông đã kéo thả)
+        return 0; 
+      });
+      
+      products = fetchedProducts;
       document.getElementById('dbStatusAlert').innerHTML = "STATUS: ONLINE (SUPABASE CONNECTED)";
     } catch (e) { document.getElementById('dbStatusAlert').innerHTML = "STATUS: ERROR FETCHING PRODUCTS"; }
   }
