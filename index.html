@@ -800,6 +800,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 #productOverlay, #addProductOverlay, #editOverlay { z-index: 99999 !important; } 
 #lookbookOverlay, #videoOverlay { z-index: 999999 !important; } 
 #passOverlay { z-index: 9999999 !important; }
+#imageLightbox { z-index: 99999999 !important; }
 
 /* ====================================================
    📱 CHỈ DÀNH CHO MOBILE (TỪ 900PX TRỞ XUỐNG)
@@ -1002,6 +1003,30 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .logo-dark { display: none; height: 99px; width: auto; object-fit: contain; }
 [data-theme="dark"] .logo-light { display: none; }
 [data-theme="dark"] .logo-dark { display: block; }
+.lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 36px;
+  font-weight: 300;
+  cursor: pointer;
+  padding: 20px;
+  z-index: 11001;
+  opacity: 0.5;
+  transition: opacity 0.2s, transform 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.lightbox-nav:hover { opacity: 1; }
+.lightbox-nav:active { transform: translateY(-50%) scale(0.9); }
+.nav-prev { left: 10px; }
+.nav-next { right: 10px; }
+
+@media (max-width: 768px) {
+  .lightbox-nav { font-size: 28px; padding: 15px; }
+}
 </style>
 <script type="application/ld+json">
 {
@@ -1051,9 +1076,11 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 </head>
 <body>
 
-<div class="lightbox" id="imageLightbox" onclick="closeLightbox()">
-  <button class="lightbox-close">✕</button>
-  <img id="lightboxImg" src="" alt="Full Size">
+<div class="lightbox" id="imageLightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav nav-prev" id="lbPrev" onclick="changeLightboxImage(-1)">◀</button>
+  <button class="lightbox-nav nav-next" id="lbNext" onclick="changeLightboxImage(1)">▶</button>
+  <img id="lightboxImg" src="" alt="Full Size" onclick="event.stopPropagation()">
 </div>
 
 <div class="overlay" id="lookbookOverlay" style="z-index: 10500;">
@@ -2230,7 +2257,46 @@ function renderProducts() {
     </div>`).join('');
 }
 
-function openLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('imageLightbox').classList.add('show'); }
+// Biến để ghi nhớ danh sách ảnh và vị trí hiện tại
+let currentLbGallery = [];
+let currentLbIndex = 0;
+
+window.openLightbox = function(src, galleryArray = []) {
+  const img = document.getElementById('lightboxImg');
+  img.src = src;
+  
+  // Xử lý nếu danh sách ảnh truyền vào là chuỗi JSON (từ database)
+  let images = galleryArray;
+  if (typeof galleryArray === 'string') {
+      try { images = JSON.parse(galleryArray); } catch(e) { images = []; }
+  }
+
+  // Nếu có từ 2 ảnh trở lên thì hiện nút ◀ ▶, nếu có 1 ảnh thì giấu đi
+  if (images && images.length > 1) {
+      currentLbGallery = images;
+      currentLbIndex = images.indexOf(src);
+      if (currentLbIndex === -1) currentLbIndex = 0;
+      document.getElementById('lbPrev').style.display = 'block';
+      document.getElementById('lbNext').style.display = 'block';
+  } else {
+      currentLbGallery = [src];
+      currentLbIndex = 0;
+      document.getElementById('lbPrev').style.display = 'none';
+      document.getElementById('lbNext').style.display = 'none';
+  }
+  
+  document.getElementById('imageLightbox').classList.add('show');
+  _lockBody();
+};
+
+// Hàm xử lý khi bấm nút ◀ hoặc ▶
+window.changeLightboxImage = function(direction) {
+    if (currentLbGallery.length <= 1) return;
+    currentLbIndex += direction;
+    if (currentLbIndex < 0) currentLbIndex = currentLbGallery.length - 1;
+    if (currentLbIndex >= currentLbGallery.length) currentLbIndex = 0;
+    document.getElementById('lightboxImg').src = currentLbGallery[currentLbIndex];
+};
 function closeLightbox() { document.getElementById('imageLightbox').classList.remove('show'); }
 function swapMainImage(src) { document.getElementById('mainGalleryImage').src = src; document.querySelectorAll('.gallery-thumbs img').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); }
 
@@ -2247,7 +2313,7 @@ function openLookbook(id) {
    const p = products.find(x => x.id === id); if (!p) return;
    let hwArr = []; try { hwArr = JSON.parse(p.how_it_wears); } catch(e){}
    const grid = document.getElementById('lookbookGrid');
-   grid.innerHTML = hwArr.map(src => `<img src="${src}" style="height:65vmax; max-height:70vh; width:auto; max-width:85vw; aspect-ratio:4/5; object-fit:cover; border:1px solid var(--border-light); border-radius:4px; box-shadow:0 10px 40px rgba(0,0,0,0.6); cursor:zoom-in; flex-shrink:0;" onclick="openLightbox(this.src)">`).join('');
+   grid.innerHTML = hwArr.map(src => `<img src="${src}" style="height:65vmax; max-height:70vh; width:auto; max-width:85vw; aspect-ratio:4/5; object-fit:cover; border:1px solid var(--border-light); border-radius:4px; box-shadow:0 10px 40px rgba(0,0,0,0.6); cursor:zoom-in; flex-shrink:0;" onclick='openLightbox(this.src, ${JSON.stringify(hwArr)})'>`).join('');
    openOverlay('lookbookOverlay');
 }
 
@@ -2307,7 +2373,7 @@ let sizeChartHtml = '';
   document.getElementById('intModalBody').innerHTML = `
     <div class="product-split">
       <div class="gallery-section">
-        <div class="gallery-main"><img id="mainGalleryImage" src="${firstImg}" onclick="openLightbox(this.src)"></div>
+        <div class="gallery-main"><img id="mainGalleryImage" src="${firstImg}" onclick='openLightbox(this.src, ${p.gallery || "[]"})'></div>
         ${galHtml} ${mediaHtml}
       </div>
       <div class="info-section">
