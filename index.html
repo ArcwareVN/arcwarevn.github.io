@@ -2136,41 +2136,44 @@ function compressAndCropPortraitBlob(file, callback) {
 }
 
 async function handleMultipleImages(input) {
-  const files = Array.from(input.files).slice(0,5); 
-  if(files.length === 0) return;
-  document.getElementById('saveProductBtn').textContent = "UPLOADING IMAGES..."; document.getElementById('saveProductBtn').disabled = true;
-  uploadedImagesArray = []; document.getElementById('imgPreviewGrid').innerHTML = '';
+  const files = Array.from(input.files).slice(0, 5); 
+  if (files.length === 0) return;
   
+  const btn = document.getElementById('saveProductBtn');
+  btn.textContent = "UPLOADING..."; btn.disabled = true;
+
+  // Lần lượt upload từng tấm và đẩy vào mảng để giữ đúng thứ tự
   for (let file of files) {
     const blob = await new Promise(resolve => compressAndCropSquareBlob(file, resolve));
     const publicUrl = await uploadBlobToSupabase(blob);
-    if(publicUrl) {
-      uploadedImagesArray.push(publicUrl);
-      const img = document.createElement('img'); img.src = publicUrl; img.style.width = '60px'; img.style.height = '60px'; img.style.objectFit = 'cover'; img.style.border = '1px solid var(--border)';
-      document.getElementById('imgPreviewGrid').appendChild(img);
+    if (publicUrl) {
+      uploadedImagesArray.push(publicUrl); 
+      // Gọi trình quản lý để vẽ lại giao diện có nút điều hướng
+      renderGalleryManager('imgPreviewGrid', uploadedImagesArray); 
     }
   }
-  document.getElementById('saveProductBtn').textContent = "SAVE PRODUCT"; document.getElementById('saveProductBtn').disabled = false;
+  btn.textContent = "SAVE PRODUCT"; btn.disabled = false;
+  input.value = ""; // Reset để có thể chọn lại file cũ nếu muốn
 }
-
 async function handleHowItWearsImages(input) {
-  const files = Array.from(input.files).slice(0,5); 
-  if(files.length === 0) return;
-  document.getElementById('saveProductBtn').textContent = "UPLOADING LOOKBOOK..."; document.getElementById('saveProductBtn').disabled = true;
-  uploadedHowItWearsArray = []; document.getElementById('howItWearsPreviewGrid').innerHTML = '';
+  const files = Array.from(input.files).slice(0, 5);
+  if (files.length === 0) return;
   
+  const btn = document.getElementById('saveProductBtn');
+  btn.textContent = "UPLOADING LOOKBOOK..."; btn.disabled = true;
+
   for (let file of files) {
     const blob = await new Promise(resolve => compressAndCropPortraitBlob(file, resolve));
     const publicUrl = await uploadBlobToSupabase(blob);
-    if(publicUrl) {
+    if (publicUrl) {
       uploadedHowItWearsArray.push(publicUrl);
-      const img = document.createElement('img'); img.src = publicUrl; img.style.width = '48px'; img.style.height = '60px'; img.style.objectFit = 'cover'; img.style.border = '1px solid var(--border)';
-      document.getElementById('howItWearsPreviewGrid').appendChild(img);
+      // Gọi trình quản lý để vẽ lại giao diện có nút điều hướng
+      renderGalleryManager('howItWearsPreviewGrid', uploadedHowItWearsArray);
     }
   }
-  document.getElementById('saveProductBtn').textContent = "SAVE PRODUCT"; document.getElementById('saveProductBtn').disabled = false;
+  btn.textContent = "SAVE PRODUCT"; btn.disabled = false;
+  input.value = "";
 }
-
 // ── CRUD ──
 async function saveProduct() {
   const name = document.getElementById('pName').value.trim();
@@ -2725,16 +2728,25 @@ function openAddProduct() {
 function openEditProduct(id) { 
   const p = products.find(x => x.id === id); if(!p) return; 
   editingId = id; document.getElementById('productModalTitle').textContent = "EDIT PRODUCT"; 
-  document.getElementById('pName').value = p.name; document.getElementById('pCat').value = p.category || 'Shell Jacket'; document.getElementById('pCond').value = p.condition || 'Brand new with tags (BNWT)'; document.getElementById('pPriceFinal').value = p.price || ''; document.getElementById('pPriceVND').value = ''; document.getElementById('pSizes').value = p.sizes || ''; document.getElementById('pBadge').value = p.badge || ''; document.getElementById('pDescEN').value = p.description_en || p.description || ''; document.getElementById('pDescVI').value = p.description_vi || p.description || ''; 
-  
+  document.getElementById('pName').value = p.name; 
+  document.getElementById('pCat').value = p.category || 'Shell Jacket'; 
+  document.getElementById('pCond').value = p.condition || 'Brand new with tags (BNWT)'; 
+  document.getElementById('pPriceFinal').value = p.price || ''; 
+  document.getElementById('pSizes').value = p.sizes || ''; 
+  document.getElementById('pBadge').value = p.badge || ''; 
+  document.getElementById('pDescEN').value = p.description_en || ''; 
+  document.getElementById('pDescVI').value = p.description_vi || ''; 
   document.getElementById('pPriceType').value = p.price_type || 'diff'; 
   document.getElementById('pVideoLink').value = p.video_link || ''; 
   
-  try { const g = JSON.parse(p.gallery || '[]'); uploadedImagesArray = Array.isArray(g) ? g : (p.image ? [p.image] : []); } catch(e) { uploadedImagesArray = p.image ? [p.image] : []; }
-  const grid = document.getElementById('imgPreviewGrid'); grid.innerHTML = uploadedImagesArray.map(src => `<img src="${src}" style="width:60px;height:60px;object-fit:cover;border:1px solid var(--border);opacity:0.7;">`).join('') + (uploadedImagesArray.length ? `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;width:100%;">↑ Thêm ảnh mới sẽ chèn thêm vào mảng.</div>` : '');
+  // Nạp ảnh Gallery
+  try { uploadedImagesArray = JSON.parse(p.gallery || '[]'); } catch(e) { uploadedImagesArray = p.image ? [p.image] : []; }
+  renderGalleryManager('imgPreviewGrid', uploadedImagesArray);
 
-  try { uploadedHowItWearsArray = JSON.parse(p.how_it_wears || '[]'); if(!Array.isArray(uploadedHowItWearsArray)) uploadedHowItWearsArray = []; } catch(e) { uploadedHowItWearsArray = []; }
-  const hwGrid = document.getElementById('howItWearsPreviewGrid'); hwGrid.innerHTML = uploadedHowItWearsArray.map(src => `<img src="${src}" style="width:48px;height:60px;object-fit:cover;border:1px solid var(--border);opacity:0.7;">`).join('') + (uploadedHowItWearsArray.length ? `<div style="font-size:11px;color:var(--text-muted);margin-top:8px;width:100%;">↑ Existing lookbook — upload new ones to replace.</div>` : '');
+  // Nạp ảnh Lookbook
+  try { uploadedHowItWearsArray = JSON.parse(p.how_it_wears || '[]'); } catch(e) { uploadedHowItWearsArray = []; }
+  renderGalleryManager('howItWearsPreviewGrid', uploadedHowItWearsArray);
+  
   openOverlay('productOverlay');
 }
 
@@ -2809,6 +2821,51 @@ window.renderSizeCharts = function() {
 
     container.innerHTML = makeAccordion(t_jM, img_jM) + makeAccordion(t_pM, img_pM) + makeAccordion(t_jW, img_jW) + makeAccordion(t_pW, img_pW);
 };
+// Trình quản lý ảnh: Hiện ảnh kèm nút di chuyển và xóa
+function renderGalleryManager(containerId, array) {
+  const grid = document.getElementById(containerId);
+  grid.style.display = 'flex';
+  grid.style.flexWrap = 'wrap';
+  grid.style.gap = '15px';
+  
+  grid.innerHTML = array.map((src, idx) => `
+    <div style="position:relative; width:80px; text-align:center; border:1px solid var(--border); padding:5px; background:var(--navy-3);">
+      <img src="${src}" style="width:100%; aspect-ratio:1/1; object-fit:cover; margin-bottom:5px;">
+      <div style="display:flex; justify-content:space-between; gap:2px;">
+        <button type="button" onclick="moveGalleryItem('${containerId}', ${idx}, -1)" style="flex:1; font-size:10px; cursor:pointer; background:var(--navy); color:var(--white); border:1px solid var(--border);" ${idx === 0 ? 'disabled' : ''}>◀</button>
+        <button type="button" onclick="moveGalleryItem('${containerId}', ${idx}, 1)" style="flex:1; font-size:10px; cursor:pointer; background:var(--navy); color:var(--white); border:1px solid var(--border);" ${idx === array.length - 1 ? 'disabled' : ''}>▶</button>
+      </div>
+      <button type="button" onclick="removeGalleryItem('${containerId}', ${idx})" style="width:100%; margin-top:5px; font-size:9px; font-weight:700; background:var(--red); color:#fff; border:none; cursor:pointer; padding:2px 0;">DELETE</button>
+    </div>
+  `).join('');
+  
+  if (array.length > 0) {
+    grid.innerHTML += `<div style="width:100%;"><button type="button" onclick="clearUploadArray('${containerId}')" style="background:transparent; color:var(--red); border:1px solid var(--red); padding:4px 12px; font-size:10px; cursor:pointer; font-weight:700;">CLEAR ALL</button></div>`;
+  }
+}
+
+// Hàm đổi chỗ ảnh
+function moveGalleryItem(containerId, idx, direction) {
+  const arr = (containerId === 'imgPreviewGrid') ? uploadedImagesArray : uploadedHowItWearsArray;
+  const targetIdx = idx + direction;
+  if (targetIdx < 0 || targetIdx >= arr.length) return;
+  [arr[idx], arr[targetIdx]] = [arr[targetIdx], arr[idx]];
+  renderGalleryManager(containerId, arr);
+}
+
+// Hàm xóa lẻ từng ảnh
+function removeGalleryItem(containerId, idx) {
+  const arr = (containerId === 'imgPreviewGrid') ? uploadedImagesArray : uploadedHowItWearsArray;
+  arr.splice(idx, 1);
+  renderGalleryManager(containerId, arr);
+}
+
+// Cập nhật lại hàm xóa tất cả
+function clearUploadArray(containerId) {
+  if (containerId === 'imgPreviewGrid') { uploadedImagesArray = []; }
+  else { uploadedHowItWearsArray = []; }
+  document.getElementById(containerId).innerHTML = '';
+}
 </script>
 </body>
 </html>
