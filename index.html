@@ -281,6 +281,18 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 .lightbox-close{position:absolute; top:30px; right:40px; background:none; border:none; color:#fff; font-size:30px; font-weight:300; cursor:pointer;}
 
 /* ════ FORMS & ADMIN ════ */
+/* ════ VISUAL FILTER BUILDER ════ */
+.fb-group { background: var(--navy); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 12px; overflow: hidden; }
+.fb-parent { display: flex; align-items: center; justify-content: space-between; background: var(--navy-2); padding: 10px 15px; border-bottom: 1px solid var(--border); }
+.fb-input { background: transparent; border: none; color: var(--white); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; outline: none; width: 100%; }
+.fb-input::placeholder { color: var(--text-muted); font-weight: 400; }
+.fb-child-list { padding: 10px 15px 10px 40px; display: flex; flex-direction: column; gap: 8px; }
+.fb-child { display: flex; align-items: center; justify-content: space-between; background: var(--navy); border: 1px solid var(--border-light); padding: 6px 12px; border-radius: 2px; }
+.fb-child input { background: transparent; border: none; color: var(--text-dim); font-size: 13px; outline: none; width: 100%; }
+.fb-child input:focus { color: var(--white); }
+.fb-btn { background: transparent; border: none; cursor: pointer; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.fb-btn-add { color: var(--text-dim); } .fb-btn-add:hover { color: var(--white); }
+.fb-btn-del { color: var(--red); font-size: 14px; margin-left: 10px; }
 .form-group{margin-bottom:24px}
 .form-label{display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px; color:var(--text-dim);}
 .form-input, .form-select, .form-textarea{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border);padding:10px 0;font-family:var(--font-main);font-size:14px;color:var(--text);outline:none; transition:0.2s;}
@@ -1027,6 +1039,24 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 @media (max-width: 768px) {
   .lightbox-nav { font-size: 28px; padding: 15px; }
 }
+/* ==========================================
+   SMART FILTER CSS
+   ========================================== */
+.smart-filter-group { margin-bottom: 30px; }
+.smart-filter-title { font-size: 11px; font-weight: 700; color: var(--white); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;}
+.smart-filter-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; cursor: pointer; }
+.smart-filter-item input { appearance: none; width: 16px; height: 16px; border: 1px solid var(--text-muted); border-radius: 2px; background: transparent; cursor: pointer; position: relative; transition: 0.2s;}
+.smart-filter-item input:checked { background: var(--white); border-color: var(--white); }
+.smart-filter-item input:checked::after { content: '✓'; position: absolute; color: var(--navy); font-size: 11px; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; }
+.smart-filter-item span { font-size: 13px; color: var(--text-dim); transition: 0.2s;}
+.smart-filter-item:hover span { color: var(--white); }
+
+@media (max-width: 900px) {
+  .shop-layout { flex-direction: column !important; padding: 0 20px !important; gap: 20px !important; border-top:none !important; padding-top:20px !important;}
+  .desktop-filter { display: none !important; }
+  .mobile-filter-bar { display: block !important; }
+  #filterOverlay.open .modal { transform: translateX(0) !important; }
+}
 </style>
 <script type="application/ld+json">
 {
@@ -1156,7 +1186,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 </section>
 
 <section id="products">
-  <div class="section-header">
+  <div class="section-header" style="border-bottom:none; padding-bottom:10px;">
     <div class="section-title" data-i18n="curCol">COLLECTION</div>
     <div class="filter-tabs">
       <button class="filter-tab active" onclick="filterProducts('all',this)" data-i18n="fAll">ALL</button>
@@ -1167,10 +1197,32 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
       <button class="filter-tab" onclick="filterProducts('Others',this)" data-i18n="fOth">OTHERS</button>
     </div>
   </div>
-  <div class="products-grid" id="productsGrid">
-      <div class="product-card"><div class="card-img skeleton"></div><div class="card-body"><div class="skeleton" style="height:10px; width:50%; margin-bottom:10px;"></div><div class="skeleton" style="height:16px; width:80%; margin-bottom:20px;"></div><div class="skeleton" style="height:14px; width:40%;"></div></div></div>
+  
+  <div class="shop-layout" style="display:flex; padding:0 48px; gap:40px; border-top:1px solid var(--border); padding-top:40px;">
+    
+    <div class="filter-sidebar desktop-filter" id="desktopFilterContainer" style="width:200px; flex-shrink:0;"></div>
+    
+    <div style="flex:1; min-width:0;">
+      <div class="mobile-filter-bar" style="display:none; margin-bottom:20px;">
+        <button onclick="openOverlay('filterOverlay')" style="width:100%; padding:14px; background:var(--navy-2); color:var(--white); border:1px solid var(--border); font-size:11px; font-weight:700; letter-spacing:0.1em; cursor:pointer;">+ SMART FILTER</button>
+      </div>
+      <div class="products-grid" id="productsGrid" style="padding:0; gap:20px;">
+          <div class="product-card"><div class="card-img skeleton"></div><div class="card-body"><div class="skeleton" style="height:10px; width:50%; margin-bottom:10px;"></div><div class="skeleton" style="height:16px; width:80%; margin-bottom:20px;"></div></div></div>
+      </div>
+    </div>
   </div>
 </section>
+
+<div class="overlay" id="filterOverlay" style="justify-content:flex-end; padding:0; z-index: 10500;">
+  <div class="modal" style="margin:0; height:100dvh; max-height:100dvh; width:100%; max-width:350px; border-radius:0; transform:translateX(100%); transition:transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); display:flex; flex-direction:column; padding:0;">
+    <button class="modal-close-abs" style="top:20px; right:20px; z-index:50;" onclick="closeOverlay('filterOverlay')">✕</button>
+    <div style="padding:30px; border-bottom:1px solid var(--border); font-size:16px; font-weight:700; color:var(--white); letter-spacing:0.1em; text-transform:uppercase;">Filters</div>
+    <div id="mobileFilterContainer" style="flex:1; overflow-y:auto; padding:30px; -webkit-overflow-scrolling:touch;"></div>
+    <div style="padding:20px; border-top:1px solid var(--border); background:var(--navy-2);">
+      <button class="cta-btn" onclick="closeOverlay('filterOverlay')">APPLY FILTERS</button>
+    </div>
+  </div>
+</div>
 
 <section id="dwr" class="editorial-wrapper" style="border-top: 1px solid var(--border);">
   <div class="dwr-split-grid">
@@ -1636,7 +1688,20 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     </div>
   </div>
 
-  <div class="tab-panel" id="tab-settings">
+ <div class="tab-panel" id="tab-settings">
+    <div class="form-group" style="padding:20px; background:var(--navy-3); border:1px solid var(--border); border-radius:4px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <div>
+            <label class="form-label" style="color:var(--white); margin-bottom:4px;">SMART FILTER BUILDER</label>
+            <div style="font-size:11px; color:var(--text-muted);">Visual interface. Changes will be auto-converted to text.</div>
+        </div>
+        <button class="cta-btn" style="padding:8px 16px; min-height:0; width:auto; background:var(--white); color:var(--navy);" onclick="addFbParent()">+ ADD CATEGORY</button>
+      </div>
+      
+      <div id="visualFilterBuilder"></div>
+      
+      <textarea id="sSmartFilter" style="display:none;"></textarea>
+    </div>
     <div class="form-group"><label class="form-label">Instagram Handle</label><input type="text" class="form-input" id="sIg" placeholder="arcwarevn"></div>
     <div class="form-group"><label class="form-label">WhatsApp Number</label><input type="text" class="form-input" id="sWa" placeholder="84901234567"></div>
     <div class="form-group"><label class="form-label">Zalo Number 1 (Sales)</label><input type="text" class="form-input" id="sZalo1" placeholder="84900000000"></div>
@@ -1770,7 +1835,7 @@ let currentLang = 'vi';
 let customEN = getSafeObject('aw_custom_en', defaultEN);
 let customVI = getSafeObject('aw_custom_vi', defaultVI);
 
-let settings = getSafeObject('aw_settings', { ig: 'arcwarevn', wa: '84901234567', zalo1: '84900000000', zalo2: '84911111111', phone1: '0901234567', phone2: '' });
+let settings = getSafeObject('aw_settings', { ig: 'arcwarevn', wa: '84901234567', zalo1: '84900000000', zalo2: '84911111111', phone1: '0901234567', phone2: '', smartFilter: '' });
 
 let dbMode = 'local'; 
 let products = [];
@@ -1914,9 +1979,11 @@ async function loadSettingsFromCloud() {
     if (map['ig']) settings.ig = map['ig']; if (map['wa']) settings.wa = map['wa'];
     if (map['zalo1']) settings.zalo1 = map['zalo1']; if (map['zalo2']) settings.zalo2 = map['zalo2']; 
 if (map['phone1']) settings.phone1 = map['phone1']; else if (map['phone']) settings.phone1 = map['phone'];
-    if (map['phone2']) settings.phone2 = map['phone2'];    
+    if (map['phone2']) settings.phone2 = map['phone2'];
+if (map['smart_filter']) { settings.smartFilter = map['smart_filter']; document.getElementById('sSmartFilter').value = settings.smartFilter; }    
     localStorage.setItem('aw_settings', JSON.stringify(settings));
     updateContactSettingsDisplay();
+if (typeof renderSmartFilterUI === 'function') renderSmartFilterUI();
     if (map['content_en']) { try { customEN = { ...defaultEN, ...JSON.parse(map['content_en']) }; localStorage.setItem('aw_custom_en', JSON.stringify(customEN)); } catch(e){} }
     if (map['content_vi']) { try { customVI = { ...defaultVI, ...JSON.parse(map['content_vi']) }; localStorage.setItem('aw_custom_vi', JSON.stringify(customVI)); } catch(e){} }
 if (map['size_charts']) { try { window.sizeChartSettings = JSON.parse(map['size_charts']); for (let k in window.sizeChartSettings) { if(document.getElementById('set_' + k)) document.getElementById('set_' + k).value = window.sizeChartSettings[k]; } } catch(e){} }
@@ -2006,16 +2073,19 @@ async function saveSettings() {
   settings.zalo1 = document.getElementById('sZalo1').value.trim(); settings.zalo2 = document.getElementById('sZalo2').value.trim(); 
   settings.phone1 = document.getElementById('sPhone1').value.trim(); 
   settings.phone2 = document.getElementById('sPhone2').value.trim(); 
+  settings.smartFilter = document.getElementById('sSmartFilter').value;
   
   localStorage.setItem('aw_settings', JSON.stringify(settings));
   
   await saveToCloud('ig', settings.ig); await saveToCloud('wa', settings.wa); 
   await saveToCloud('zalo1', settings.zalo1); await saveToCloud('zalo2', settings.zalo2); 
   await saveToCloud('phone1', settings.phone1); await saveToCloud('phone2', settings.phone2);
+  await saveToCloud('smart_filter', settings.smartFilter);
   
-  updateContactSettingsDisplay(); showToast("SETTINGS SYNCED TO DATABASE ✓"); 
+  updateContactSettingsDisplay(); 
+  if (typeof renderSmartFilterUI === 'function') renderSmartFilterUI();
+  showToast("SETTINGS SYNCED TO DATABASE ✓"); 
 }
-
 function toggleTheme() {
   const root = document.documentElement;
   const newTheme = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -3019,19 +3089,186 @@ function clearUploadArray(containerId) {
 // TÍNH NĂNG PHÂN TRANG (PAGINATION)
 // ==========================================
 
+// ==========================================
+// TÍNH NĂNG PHÂN TRANG & SMART FILTER
+// ==========================================
+// VISUAL SMART FILTER BUILDER LOGIC
+// ==========================================
+let fbData = []; // Mảng chứa dữ liệu của Builder
+
+// 1. Dịch từ Text cũ sang Mảng để vẽ UI
+function parseTextToFbData() {
+    const text = document.getElementById('sSmartFilter').value || '';
+    fbData = [];
+    const lines = text.split('\n').filter(l => l.trim() !== '');
+    lines.forEach(line => {
+        if (line.trim().startsWith('-')) {
+            if (fbData.length > 0) fbData[fbData.length - 1].children.push(line.replace('-', '').trim());
+        } else {
+            fbData.push({ parent: line.trim(), children: [] });
+        }
+    });
+    renderFbUI();
+}
+
+// 2. Dịch từ Mảng về lại Text ẩn (Để hàm Save cũ hoạt động bình thường)
+function syncFbDataToText() {
+    let textOut = '';
+    fbData.forEach(group => {
+        if(group.parent) textOut += group.parent + '\n';
+        group.children.forEach(child => { if(child) textOut += '- ' + child + '\n'; });
+    });
+    document.getElementById('sSmartFilter').value = textOut.trim();
+}
+
+// 3. Vẽ giao diện HTML cho các nút bấm
+function renderFbUI() {
+    const container = document.getElementById('visualFilterBuilder');
+    if(fbData.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">No filters yet. Click + ADD CATEGORY.</div>'; return; }
+    
+    container.innerHTML = fbData.map((group, pIdx) => `
+        <div class="fb-group">
+            <div class="fb-parent">
+                <input type="text" class="fb-input" value="${group.parent}" placeholder="e.g. JACKET" oninput="updateFbParent(${pIdx}, this.value)">
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <button class="fb-btn fb-btn-add" onclick="addFbChild(${pIdx})">+ ADD LINE</button>
+                    <button class="fb-btn fb-btn-del" onclick="delFbParent(${pIdx})">✕</button>
+                </div>
+            </div>
+            <div class="fb-child-list" style="${group.children.length === 0 ? 'display:none;' : ''}">
+                ${group.children.map((child, cIdx) => `
+                    <div class="fb-child">
+                        <input type="text" value="${child}" placeholder="e.g. Beta AR" oninput="updateFbChild(${pIdx}, ${cIdx}, this.value)">
+                        <button class="fb-btn fb-btn-del" onclick="delFbChild(${pIdx}, ${cIdx})">✕</button>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
+    syncFbDataToText();
+}
+
+// 4. Các hàm bắt sự kiện bấm nút
+function addFbParent() { fbData.push({ parent: '', children: [] }); renderFbUI(); }
+function addFbChild(pIdx) { fbData[pIdx].children.push(''); renderFbUI(); }
+function delFbParent(pIdx) { if(confirm('Delete this category?')) { fbData.splice(pIdx, 1); renderFbUI(); } }
+function delFbChild(pIdx, cIdx) { fbData[pIdx].children.splice(cIdx, 1); renderFbUI(); }
+function updateFbParent(pIdx, val) { fbData[pIdx].parent = val; syncFbDataToText(); }
+function updateFbChild(pIdx, cIdx, val) { fbData[pIdx].children[cIdx] = val; syncFbDataToText(); }
+
+// 5. Kích hoạt Builder khi mở Web
+document.addEventListener("DOMContentLoaded", () => {
+    // Chờ 1 chút để loadSettingsFromCloud tải xong chữ cũ về rồi mới vẽ
+    setTimeout(parseTextToFbData, 1000); 
+});
+// ==========================================
+
+let selectedSmartFilters = []; // Mảng chứa các từ khóa khách đang tick
+
+window.toggleSmartFilter = function(keyword) {
+  const idx = selectedSmartFilters.indexOf(keyword);
+  if (idx > -1) selectedSmartFilters.splice(idx, 1);
+  else selectedSmartFilters.push(keyword);
+  
+  // Đồng bộ checkbox giữa Desktop và Mobile
+  document.querySelectorAll(`.sf-checkbox[data-key="${keyword}"]`).forEach(cb => cb.checked = (idx === -1));
+  
+  currentPage = 1; 
+  renderProducts();
+};
+
+// 1. THÊM HÀM XÓA TẤT CẢ TICK CHO KHÁCH
+window.clearSmartFilters = function() {
+    selectedSmartFilters = [];
+    document.querySelectorAll('.sf-checkbox').forEach(cb => cb.checked = false);
+    currentPage = 1;
+    renderProducts();
+};
+
+// 2. VẼ GIAO DIỆN BỘ LỌC (CÓ NÚT CLEAR, BẬC CHA CLICK ĐƯỢC & BẬC CON THỤT LỀ)
+window.renderSmartFilterUI = function() {
+  const text = settings.smartFilter || '';
+  if (!text.trim()) {
+    document.getElementById('desktopFilterContainer').innerHTML = '';
+    document.getElementById('mobileFilterContainer').innerHTML = '';
+    return;
+  }
+  
+  const lines = text.split('\n').filter(l => l.trim() !== '');
+  
+  // Header chứa chữ FILTERS và nút ✕ CLEAR
+  let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+                <span style="font-size:12px; font-weight:700; color:var(--white); letter-spacing:0.1em;">FILTERS</span>
+                <button onclick="clearSmartFilters()" style="background:none; border:none; color:var(--text-muted); font-size:10px; font-weight:700; cursor:pointer; letter-spacing:0.1em; transition:0.2s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--text-muted)'">✕ CLEAR</button>
+              </div>`;
+  
+  let isFirstGroup = true;
+
+  lines.forEach(line => {
+    if (line.trim().startsWith('-')) {
+      const keyword = line.replace('-', '').trim();
+      const isChecked = selectedSmartFilters.includes(keyword) ? 'checked' : '';
+      
+      // BẬC CON: Thêm margin-left: 16px để thụt lề vào trong
+      html += `
+        <label class="smart-filter-item" style="margin-left: 16px;">
+          <input type="checkbox" class="sf-checkbox" data-key="${keyword}" onchange="toggleSmartFilter('${keyword}')" ${isChecked}>
+          <span>${keyword}</span>
+        </label>`;
+    } else {
+      const keyword = line.trim();
+      const isChecked = selectedSmartFilters.includes(keyword) ? 'checked' : '';
+      if (!isFirstGroup) html += `</div>`; // Đóng group cũ
+      isFirstGroup = false;
+      
+      // BẬC CHA: Căn lề trái bình thường, chữ in hoa, in đậm
+      html += `<div class="smart-filter-group">
+                <label class="smart-filter-item" style="margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">
+                  <input type="checkbox" class="sf-checkbox" data-key="${keyword}" onchange="toggleSmartFilter('${keyword}')" ${isChecked}>
+                  <span style="font-size: 11px; font-weight: 700; color: var(--white); letter-spacing: 0.1em; text-transform: uppercase;">${keyword}</span>
+                </label>`;
+    }
+  });
+  if (!isFirstGroup) html += `</div>`; 
+  
+  document.getElementById('desktopFilterContainer').innerHTML = html;
+  document.getElementById('mobileFilterContainer').innerHTML = html;
+};
+
+
 function renderProducts() {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
   
-  const filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
+  // 1. Lọc theo danh mục ngang (ALL, SHELL JACKET...)
+  let filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
   
+ // 2. LỌC CHÉO THEO SMART FILTER (Quét cả Tên Sản Phẩm lẫn Danh Mục + Bao thầu số ít/nhiều)
+  if (selectedSmartFilters.length > 0) {
+    filtered = filtered.filter(p => {
+      const pName = p.name.toLowerCase();
+      const pCat = (p.category || '').toLowerCase(); 
+      
+      return selectedSmartFilters.some(keyword => {
+          let k = keyword.toLowerCase();
+          
+          // Thuật toán bóc chữ "s": Nếu từ khóa là "beanies", nó sẽ tạo thêm một từ "beanie"
+          let kSingular = k.endsWith('s') ? k.slice(0, -1) : k;
+          
+          // Quét cả từ khóa gốc LẪN từ khóa đã bóc chữ "s"
+          return pName.includes(k) || pCat.includes(k) || 
+                 pName.includes(kSingular) || pCat.includes(kSingular);
+      });
+    });
+  }
+  // NẾU TRỐNG: Hiện chữ thông báo Empty
   if (!filtered.length) { 
     grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-size:12px; letter-spacing:0.1em; color:var(--text-muted);" data-i18n="emptyCol">${t('emptyCol')}</div>`; 
     if(document.getElementById('paginationWrap')) document.getElementById('paginationWrap').innerHTML = '';
     return; 
   }
   
-  // LOGIC PHÂN TRANG (Cắt mảng sản phẩm ra tối đa 30 cái)
+  // LOGIC PHÂN TRANG (Áp dụng sau khi đã lọc xong)
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
@@ -3040,7 +3277,7 @@ function renderProducts() {
   const endIndex = startIndex + itemsPerPage;
   const currentProducts = filtered.slice(startIndex, endIndex);
 
-  // VẼ DANH SÁCH SẢN PHẨM (Của riêng trang hiện tại)
+  // VẼ DANH SÁCH
   grid.innerHTML = currentProducts.map(p => `
     <div class="product-card" onclick="openInterest('${p.id}')">
       <div class="card-img"><img src="${p.image||''}" loading="lazy" onerror="this.style.display='none'">${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}</div>
@@ -3052,7 +3289,6 @@ function renderProducts() {
       </div>
     </div>`).join('');
     
-  // Gọi hàm vẽ nút phân trang
   renderPagination(totalPages);
 }
 
@@ -3069,29 +3305,21 @@ function renderPagination(totalPages) {
   if (totalPages <= 1) { pagWrap.innerHTML = ''; return; }
   
   let html = '';
-  // Nút Lùi
   if (currentPage > 1) {
       html += `<button class="filter-tab" style="padding: 10px 18px; min-height: 0;" onclick="changePage(${currentPage - 1})">◀</button>`;
   }
-  
-  // Các nút Số trang
   for (let i = 1; i <= totalPages; i++) {
       html += `<button class="filter-tab ${currentPage === i ? 'active' : ''}" style="padding: 10px 18px; min-height: 0;" onclick="changePage(${i})">${i}</button>`;
   }
-  
-  // Nút Tiến
   if (currentPage < totalPages) {
       html += `<button class="filter-tab" style="padding: 10px 18px; min-height: 0;" onclick="changePage(${currentPage + 1})">▶</button>`;
   }
-  
   pagWrap.innerHTML = html;
 }
 
-// HÀM XỬ LÝ KHI BẤM CHUYỂN TRANG
 function changePage(page) {
   currentPage = page;
   renderProducts();
-  // Cuộn mượt mà lên đầu khu vực sản phẩm cho khách dễ xem
   document.getElementById('products').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 </script>
