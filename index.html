@@ -1697,18 +1697,16 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         </div>
         <button class="cta-btn" style="padding:8px 16px; min-height:0; width:auto; background:var(--white); color:var(--navy);" onclick="addFbParent()">+ ADD CATEGORY</button>
       </div>
-      
       <div id="visualFilterBuilder"></div>
-      
       <textarea id="sSmartFilter" style="display:none;"></textarea>
     </div>
-    <div class="form-group"><label class="form-label">Instagram Handle</label><input type="text" class="form-input" id="sIg" placeholder="arcwarevn"></div>
-    <div class="form-group"><label class="form-label">WhatsApp Number</label><input type="text" class="form-input" id="sWa" placeholder="84901234567"></div>
-    <div class="form-group"><label class="form-label">Zalo Number 1 (Sales)</label><input type="text" class="form-input" id="sZalo1" placeholder="84900000000"></div>
-    <div class="form-group"><label class="form-label">Zalo Number 2 (Technical)</label><input type="text" class="form-input" id="sZalo2" placeholder="84911111111"></div>
-    <div class="form-group"><label class="form-label">Phone Number 1</label><input type="text" class="form-input" id="sPhone1" placeholder="090 123 4567"></div>
-    <div class="form-group"><label class="form-label">Phone Number 2</label><input type="text" class="form-input" id="sPhone2" placeholder="098 765 4321"></div>
-    <button class="btn-primary" onclick="saveSettings()">SAVE SETTINGS</button>
+    <div class="form-group"><label class="form-label">Instagram Handle</label><input type="text" class="form-input" id="sIg"></div>
+    <div class="form-group"><label class="form-label">WhatsApp Number</label><input type="text" class="form-input" id="sWa"></div>
+    <div class="form-group"><label class="form-label">Zalo 1 (Sales)</label><input type="text" class="form-input" id="sZalo1"></div>
+    <div class="form-group"><label class="form-label">Zalo 2 (Tech)</label><input type="text" class="form-input" id="sZalo2"></div>
+    <div class="form-group"><label class="form-label">Phone 1</label><input type="text" class="form-input" id="sPhone1"></div>
+    <div class="form-group"><label class="form-label">Phone 2</label><input type="text" class="form-input" id="sPhone2"></div>
+    <button class="btn-primary" style="width:100%" onclick="saveSettings()">SAVE SETTINGS</button>
   </div>
 </div>
 
@@ -1848,6 +1846,51 @@ let uploadedImagesArray = [];
 let uploadedHowItWearsArray = [];
 let adminInterval;
 let orderModified = false; // Tracks whether admin has reordered products without saving
+// --- BỘ NÃO DỊCH THUẬT & ADMIN CONTENT ---
+const t = (key) => (currentLang === 'vi' ? customVI[key] : customEN[key]) || key;
+
+function setLang(lang, el) {
+  currentLang = lang; localStorage.setItem('aw_lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('[data-i18n]').forEach(item => { item.innerHTML = t(item.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(item => { item.placeholder = t(item.getAttribute('data-i18n-placeholder')); });
+  renderProducts();
+  if (typeof renderCartList === 'function') renderCartList();
+  if (typeof renderSizeCharts === 'function') renderSizeCharts();
+  updateContactSettingsDisplay();
+}
+
+function buildDictionaryEditor() {
+  const sidebar = document.getElementById('dictSidebar'); const container = document.getElementById('dictEditorContainer');
+  if (!sidebar || !container) return;
+  sidebar.innerHTML = dictGroups.map((g, i) => `<button class="dict-menu-btn ${i===0?'active':''}" onclick="openDictGroup('${g.id}', this)">${g.name}</button>`).join('');
+  let editorHtml = '';
+  dictGroups.forEach((g, i) => {
+    editorHtml += `<div id="dict-grp-${g.id}" style="${i===0?'block':'none'}">`;
+    g.keys.forEach(k => { editorHtml += `<div class="dict-item"><span class="dict-key-title">${dictKeys[k]}</span><div class="dict-grid"><div><label class="dict-label">English (EN)</label><textarea class="form-textarea dict-textarea" id="dict_en_${k}">${customEN[k]||''}</textarea></div><div><label class="dict-label">Tiếng Việt (VI)</label><textarea class="form-textarea dict-textarea" id="dict_vi_${k}">${customVI[k]||''}</textarea></div></div></div>`; });
+    editorHtml += `</div>`;
+  });
+  container.innerHTML = editorHtml;
+}
+
+function openDictGroup(id, btn) {
+  document.querySelectorAll('.dict-menu-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+  dictGroups.forEach(g => { document.getElementById('dict-grp-'+g.id).style.display = (g.id === id) ? 'block' : 'none'; });
+}
+
+async function saveDictionary() {
+  if (dbMode !== 'supabase') return alert("Supabase not connected");
+  dictGroups.forEach(g => { g.keys.forEach(k => { customEN[k] = document.getElementById('dict_en_'+k).value; customVI[k] = document.getElementById('dict_vi_'+k).value; }); });
+  const btn = document.querySelector('#tab-translations .btn-primary'); const orig = btn.textContent; btn.textContent = "SAVING..."; btn.disabled = true;
+  try {
+    await sbClient.from('site_settings').upsert([{ key: 'content_en', value: JSON.stringify(customEN) }, { key: 'content_vi', value: JSON.stringify(customVI) }], { onConflict: 'key' });
+    showToast("CONTENT SAVED ✓"); setLang(currentLang, document.querySelector('.lang-btn.active'));
+  } catch(e) { alert("Error: " + e.message); } finally { btn.textContent = orig; btn.disabled = false; }
+}
+
+async function saveToCloud(k, v) { if(dbMode === 'supabase') await sbClient.from('site_settings').upsert({key: k, value: v}, {onConflict: 'key'}); }
+// ----------------------------------------
 
 window.onload = async () => {
   const savedLang = localStorage.getItem('aw_lang') || 'vi';
@@ -1969,123 +2012,96 @@ async function logoutAdmin() {
   showToast("LOGGED OUT ✓");
 }
 
+let fbData = []; // Dữ liệu của Visual Builder
+
 async function loadSettingsFromCloud() {
   try {
     const { data, error } = await sbClient.from('site_settings').select('*');
     if (error) throw error;
     if (!data || !data.length) return;
+
     const map = {}; data.forEach(row => { map[row.key] = row.value; });
+    const keysToLoad = ['ig', 'wa', 'zalo1', 'zalo2', 'phone1', 'phone2', 'smart_filter'];
     
-    if (map['ig']) settings.ig = map['ig']; if (map['wa']) settings.wa = map['wa'];
-    if (map['zalo1']) settings.zalo1 = map['zalo1']; if (map['zalo2']) settings.zalo2 = map['zalo2']; 
-if (map['phone1']) settings.phone1 = map['phone1']; else if (map['phone']) settings.phone1 = map['phone'];
-    if (map['phone2']) settings.phone2 = map['phone2'];
-if (map['smart_filter']) { settings.smartFilter = map['smart_filter']; document.getElementById('sSmartFilter').value = settings.smartFilter; }    
+    keysToLoad.forEach(k => {
+        const dbKey = (k === 'smart_filter') ? 'smart_filter' : k;
+        if (map.hasOwnProperty(dbKey)) {
+            settings[k === 'smart_filter' ? 'smartFilter' : k] = map[dbKey];
+            const inputEl = document.getElementById(k === 'smart_filter' ? 'sSmartFilter' : 's' + k.charAt(0).toUpperCase() + k.slice(1));
+            if (inputEl) inputEl.value = map[dbKey];
+        }
+    });
+
+    if (!map['phone1'] && map['phone']) settings.phone1 = map['phone'];
+
     localStorage.setItem('aw_settings', JSON.stringify(settings));
     updateContactSettingsDisplay();
-if (typeof renderSmartFilterUI === 'function') renderSmartFilterUI();
-    if (map['content_en']) { try { customEN = { ...defaultEN, ...JSON.parse(map['content_en']) }; localStorage.setItem('aw_custom_en', JSON.stringify(customEN)); } catch(e){} }
-    if (map['content_vi']) { try { customVI = { ...defaultVI, ...JSON.parse(map['content_vi']) }; localStorage.setItem('aw_custom_vi', JSON.stringify(customVI)); } catch(e){} }
-if (map['size_charts']) { try { window.sizeChartSettings = JSON.parse(map['size_charts']); for (let k in window.sizeChartSettings) { if(document.getElementById('set_' + k)) document.getElementById('set_' + k).value = window.sizeChartSettings[k]; } } catch(e){} }
-    if(typeof renderSizeCharts === 'function') renderSizeCharts();
-    buildDictionaryEditor(); setLang(currentLang, document.querySelector(currentLang==='vi' ? '.lang-btn:nth-child(2)' : '.lang-btn:nth-child(1)'));
-  } catch(e) {}
-}
+    parseTextToFbData(); // Kích hoạt Builder
+    if (typeof renderSmartFilterUI === 'function') renderSmartFilterUI();
 
-async function saveToCloud(key, value) {
-  if (dbMode !== 'supabase') return;
-  try { await sbClient.from('site_settings').upsert({ key, value }, { onConflict: 'key' }); } catch(e) {}
-}
-
-function t(key) {
-  if (!key) return ""; let res;
-  if (currentLang === 'vi') { res = customVI[key] !== undefined ? customVI[key] : defaultVI[key]; } 
-  else { res = customEN[key] !== undefined ? customEN[key] : defaultEN[key]; }
-  return res !== undefined ? res : key;
-}
-
-function setLang(langCode, btnElement) {
-  currentLang = langCode; localStorage.setItem('aw_lang', langCode);
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  if(btnElement) btnElement.classList.add('active');
-  document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n')); });
-if(typeof renderSizeCharts === 'function') renderSizeCharts();  
-renderProducts();
-
-}
-
-// ── CẬP NHẬT GROUP ĐỂ QUẢN LÝ CONTENT MỚI THÊM VÀO ──
-
-function updateLivePreview(key, lang, value) {
-  if (lang === 'en') customEN[key] = value;
-  if (lang === 'vi') customVI[key] = value;
-  if (lang === currentLang) {
-    document.querySelectorAll(`[data-i18n="${key}"]`).forEach(el => { el.innerHTML = value; });
-  }
-}
-
-function renderDictGroup(groupId) {
-  document.querySelectorAll('.dict-menu-btn').forEach(btn => btn.classList.remove('active'));
-  document.getElementById(`btn-group-${groupId}`).classList.add('active');
-  
-  const group = dictGroups.find(g => g.id === groupId);
-  let html = '';
-  group.keys.forEach(key => {
-    let enVal = customEN[key] !== undefined ? customEN[key] : defaultEN[key];
-    let viVal = customVI[key] !== undefined ? customVI[key] : defaultVI[key];
-    html += `
-      <div class="dict-item">
-        <div class="dict-key-title">${dictKeys[key] || key}</div>
-        <div class="dict-grid">
-          <div>
-            <label class="dict-label">ENGLISH</label>
-            <textarea class="form-textarea dict-textarea" id="dict_en_${key}" oninput="updateLivePreview('${key}', 'en', this.value)">${enVal}</textarea>
-          </div>
-          <div>
-            <label class="dict-label">VIETNAMESE</label>
-            <textarea class="form-textarea dict-textarea" id="dict_vi_${key}" oninput="updateLivePreview('${key}', 'vi', this.value)">${viVal}</textarea>
-          </div>
-        </div>
-      </div>`;
-  });
-  document.getElementById('dictEditorContainer').innerHTML = html;
-}
-
-function buildDictionaryEditor() {
-  const sidebar = document.getElementById('dictSidebar');
-  if(!sidebar) return; 
-  sidebar.innerHTML = dictGroups.map(g => `<button class="dict-menu-btn" id="btn-group-${g.id}" onclick="renderDictGroup('${g.id}')">${g.name}</button>`).join('');
-  renderDictGroup(dictGroups[0].id); 
-}
-
-async function saveDictionary() {
-  Object.keys(dictKeys).forEach(key => {
-    let enEl = document.getElementById(`dict_en_${key}`); let viEl = document.getElementById(`dict_vi_${key}`);
-    if(enEl) customEN[key] = enEl.value; if(viEl) customVI[key] = viEl.value;
-  });
-  localStorage.setItem('aw_custom_en', JSON.stringify(customEN)); localStorage.setItem('aw_custom_vi', JSON.stringify(customVI));
-  await saveToCloud('content_en', JSON.stringify(customEN)); await saveToCloud('content_vi', JSON.stringify(customVI));
-  showToast("CONTENT SYNCED TO DATABASE ✓"); setLang(currentLang, document.querySelector(`.lang-btn.active`));
+    if (map['content_en']) { try { customEN = { ...defaultEN, ...JSON.parse(map['content_en']) }; } catch(e){} }
+    if (map['content_vi']) { try { customVI = { ...defaultVI, ...JSON.parse(map['content_vi']) }; } catch(e){} }
+    if (map['size_charts']) { try { window.sizeChartSettings = JSON.parse(map['size_charts']); } catch(e){} }
+    
+    renderSizeCharts(); buildDictionaryEditor();
+    setLang(currentLang, document.querySelector(`.lang-btn[onclick*="${currentLang}"]`));
+  } catch(e) { console.error("Load Settings Error:", e); }
 }
 
 async function saveSettings() { 
-  settings.ig = document.getElementById('sIg').value.trim(); settings.wa = document.getElementById('sWa').value.trim(); 
-  settings.zalo1 = document.getElementById('sZalo1').value.trim(); settings.zalo2 = document.getElementById('sZalo2').value.trim(); 
-  settings.phone1 = document.getElementById('sPhone1').value.trim(); 
-  settings.phone2 = document.getElementById('sPhone2').value.trim(); 
+  const keys = ['ig', 'wa', 'zalo1', 'zalo2', 'phone1', 'phone2'];
+  keys.forEach(k => { settings[k] = document.getElementById('s' + k.charAt(0).toUpperCase() + k.slice(1)).value.trim(); });
   settings.smartFilter = document.getElementById('sSmartFilter').value;
   
   localStorage.setItem('aw_settings', JSON.stringify(settings));
   
-  await saveToCloud('ig', settings.ig); await saveToCloud('wa', settings.wa); 
-  await saveToCloud('zalo1', settings.zalo1); await saveToCloud('zalo2', settings.zalo2); 
-  await saveToCloud('phone1', settings.phone1); await saveToCloud('phone2', settings.phone2);
-  await saveToCloud('smart_filter', settings.smartFilter);
-  
-  updateContactSettingsDisplay(); 
-  if (typeof renderSmartFilterUI === 'function') renderSmartFilterUI();
-  showToast("SETTINGS SYNCED TO DATABASE ✓"); 
+  const bulkData = keys.map(k => ({ key: k, value: settings[k] }));
+  bulkData.push({ key: 'smart_filter', value: settings.smartFilter });
+
+  const btn = document.querySelector('#tab-settings .btn-primary');
+  const origText = btn.textContent; btn.textContent = "SAVING ALL..."; btn.disabled = true;
+
+  try {
+    const { error } = await sbClient.from('site_settings').upsert(bulkData, { onConflict: 'key' });
+    if (error) throw error;
+    updateContactSettingsDisplay(); renderSmartFilterUI();
+    showToast("SETTINGS SYNCED GLOBALLY ✓"); 
+  } catch(e) { alert("Save Error: " + e.message); } 
+  finally { btn.textContent = origText; btn.disabled = false; }
 }
+
+// ════ VISUAL BUILDER LOGIC ════
+function parseTextToFbData() {
+    const text = document.getElementById('sSmartFilter').value || '';
+    fbData = [];
+    text.split('\n').filter(l => l.trim() !== '').forEach(line => {
+        if (line.trim().startsWith('-')) { if (fbData.length > 0) fbData[fbData.length - 1].children.push(line.replace('-', '').trim()); } 
+        else { fbData.push({ parent: line.trim(), children: [] }); }
+    });
+    renderFbUI();
+}
+function renderFbUI() {
+    const container = document.getElementById('visualFilterBuilder');
+    if(fbData.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">No filters yet. Click + ADD CATEGORY.</div>'; return; }
+    container.innerHTML = fbData.map((group, pIdx) => `
+        <div style="background:var(--navy); border:1px solid var(--border); border-radius:4px; margin-bottom:12px; overflow:hidden;">
+            <div style="display:flex; align-items:center; justify-content:space-between; background:var(--navy-2); padding:10px 15px; border-bottom:1px solid var(--border);">
+                <input type="text" value="${group.parent}" placeholder="e.g. JACKET" style="background:transparent; border:none; color:var(--white); font-weight:700; font-size:13px; text-transform:uppercase; outline:none; width:100%;" oninput="fbData[${pIdx}].parent=this.value;syncFb();">
+                <div style="display:flex; gap:15px;"><button style="background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:10px; font-weight:700;" onclick="fbData[${pIdx}].children.push('');renderFbUI();">+ LINE</button><button style="background:none; border:none; color:var(--red); cursor:pointer; font-size:14px;" onclick="fbData.splice(${pIdx},1);renderFbUI();">✕</button></div>
+            </div>
+            <div style="padding:10px 15px 10px 40px; display:flex; flex-direction:column; gap:8px; ${group.children.length===0?'display:none;':''}">
+                ${group.children.map((c, cIdx) => `<div style="display:flex; justify-content:space-between; background:var(--navy); border:1px solid var(--border-light); padding:6px 12px;"><input type="text" value="${c}" style="background:transparent; border:none; color:var(--text-dim); font-size:13px; outline:none; width:100%;" oninput="fbData[${pIdx}].children[${cIdx}]=this.value;syncFb();"><button style="background:none; border:none; color:var(--red); cursor:pointer;" onclick="fbData[${pIdx}].children.splice(${cIdx},1);renderFbUI();">✕</button></div>`).join('')}
+            </div>
+        </div>`).join('');
+    syncFb();
+}
+function syncFb() {
+    let out = '';
+    fbData.forEach(g => { if(g.parent) { out += g.parent + '\n'; g.children.forEach(c => { if(c) out += '- ' + c + '\n'; }); } });
+    document.getElementById('sSmartFilter').value = out.trim();
+}
+function addFbParent() { fbData.push({ parent: '', children: [] }); renderFbUI(); }
+
 function toggleTheme() {
   const root = document.documentElement;
   const newTheme = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -2831,13 +2847,6 @@ function proceedToSocial() {
   else { window.open(`https://wa.me/${settings.wa}?text=${encodeURIComponent(msg)}`, '_blank'); }
   closeOverlay('copyOverlay');
 }
-function filterProducts(cat, el) { 
-  currentFilter = cat; 
-  currentPage = 1; // Reset về trang 1 khi đổi danh mục
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active')); 
-  el.classList.add('active'); 
-  renderProducts(); 
-}
 function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 
 // ── iOS SAFARI SCROLL LOCK ──
@@ -3090,102 +3099,24 @@ function clearUploadArray(containerId) {
 // ==========================================
 
 // ==========================================
-// TÍNH NĂNG PHÂN TRANG & SMART FILTER
-// ==========================================
-// VISUAL SMART FILTER BUILDER LOGIC
-// ==========================================
-let fbData = []; // Mảng chứa dữ liệu của Builder
 
-// 1. Dịch từ Text cũ sang Mảng để vẽ UI
-function parseTextToFbData() {
-    const text = document.getElementById('sSmartFilter').value || '';
-    fbData = [];
-    const lines = text.split('\n').filter(l => l.trim() !== '');
-    lines.forEach(line => {
-        if (line.trim().startsWith('-')) {
-            if (fbData.length > 0) fbData[fbData.length - 1].children.push(line.replace('-', '').trim());
-        } else {
-            fbData.push({ parent: line.trim(), children: [] });
-        }
-    });
-    renderFbUI();
-}
 
-// 2. Dịch từ Mảng về lại Text ẩn (Để hàm Save cũ hoạt động bình thường)
-function syncFbDataToText() {
-    let textOut = '';
-    fbData.forEach(group => {
-        if(group.parent) textOut += group.parent + '\n';
-        group.children.forEach(child => { if(child) textOut += '- ' + child + '\n'; });
-    });
-    document.getElementById('sSmartFilter').value = textOut.trim();
-}
-
-// 3. Vẽ giao diện HTML cho các nút bấm
-function renderFbUI() {
-    const container = document.getElementById('visualFilterBuilder');
-    if(fbData.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">No filters yet. Click + ADD CATEGORY.</div>'; return; }
-    
-    container.innerHTML = fbData.map((group, pIdx) => `
-        <div class="fb-group">
-            <div class="fb-parent">
-                <input type="text" class="fb-input" value="${group.parent}" placeholder="e.g. JACKET" oninput="updateFbParent(${pIdx}, this.value)">
-                <div style="display:flex; align-items:center; gap:15px;">
-                    <button class="fb-btn fb-btn-add" onclick="addFbChild(${pIdx})">+ ADD LINE</button>
-                    <button class="fb-btn fb-btn-del" onclick="delFbParent(${pIdx})">✕</button>
-                </div>
-            </div>
-            <div class="fb-child-list" style="${group.children.length === 0 ? 'display:none;' : ''}">
-                ${group.children.map((child, cIdx) => `
-                    <div class="fb-child">
-                        <input type="text" value="${child}" placeholder="e.g. Beta AR" oninput="updateFbChild(${pIdx}, ${cIdx}, this.value)">
-                        <button class="fb-btn fb-btn-del" onclick="delFbChild(${pIdx}, ${cIdx})">✕</button>
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `).join('');
-    syncFbDataToText();
-}
-
-// 4. Các hàm bắt sự kiện bấm nút
-function addFbParent() { fbData.push({ parent: '', children: [] }); renderFbUI(); }
-function addFbChild(pIdx) { fbData[pIdx].children.push(''); renderFbUI(); }
-function delFbParent(pIdx) { if(confirm('Delete this category?')) { fbData.splice(pIdx, 1); renderFbUI(); } }
-function delFbChild(pIdx, cIdx) { fbData[pIdx].children.splice(cIdx, 1); renderFbUI(); }
-function updateFbParent(pIdx, val) { fbData[pIdx].parent = val; syncFbDataToText(); }
-function updateFbChild(pIdx, cIdx, val) { fbData[pIdx].children[cIdx] = val; syncFbDataToText(); }
-
-// 5. Kích hoạt Builder khi mở Web
-document.addEventListener("DOMContentLoaded", () => {
-    // Chờ 1 chút để loadSettingsFromCloud tải xong chữ cũ về rồi mới vẽ
-    setTimeout(parseTextToFbData, 1000); 
-});
-// ==========================================
-
-let selectedSmartFilters = []; // Mảng chứa các từ khóa khách đang tick
+let selectedSmartFilters = []; 
 
 window.toggleSmartFilter = function(keyword) {
   const idx = selectedSmartFilters.indexOf(keyword);
   if (idx > -1) selectedSmartFilters.splice(idx, 1);
   else selectedSmartFilters.push(keyword);
-  
-  // Đồng bộ checkbox giữa Desktop và Mobile
   document.querySelectorAll(`.sf-checkbox[data-key="${keyword}"]`).forEach(cb => cb.checked = (idx === -1));
-  
-  currentPage = 1; 
-  renderProducts();
+  currentPage = 1; renderProducts();
 };
 
-// 1. THÊM HÀM XÓA TẤT CẢ TICK CHO KHÁCH
 window.clearSmartFilters = function() {
     selectedSmartFilters = [];
     document.querySelectorAll('.sf-checkbox').forEach(cb => cb.checked = false);
-    currentPage = 1;
-    renderProducts();
+    currentPage = 1; renderProducts();
 };
 
-// 2. VẼ GIAO DIỆN BỘ LỌC (CÓ NÚT CLEAR, BẬC CHA CLICK ĐƯỢC & BẬC CON THỤT LỀ)
 window.renderSmartFilterUI = function() {
   const text = settings.smartFilter || '';
   if (!text.trim()) {
@@ -3194,22 +3125,18 @@ window.renderSmartFilterUI = function() {
     return;
   }
   
-  const lines = text.split('\n').filter(l => l.trim() !== '');
-  
-  // Header chứa chữ FILTERS và nút ✕ CLEAR
   let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid var(--border);">
                 <span style="font-size:12px; font-weight:700; color:var(--white); letter-spacing:0.1em;">FILTERS</span>
-                <button onclick="clearSmartFilters()" style="background:none; border:none; color:var(--text-muted); font-size:10px; font-weight:700; cursor:pointer; letter-spacing:0.1em; transition:0.2s;" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--text-muted)'">✕ CLEAR</button>
+                <button onclick="clearSmartFilters()" style="background:none; border:none; color:var(--text-muted); font-size:10px; font-weight:700; cursor:pointer; letter-spacing:0.1em;">✕ CLEAR</button>
               </div>`;
   
   let isFirstGroup = true;
+  const lines = text.split('\n').filter(l => l.trim() !== '');
 
   lines.forEach(line => {
     if (line.trim().startsWith('-')) {
       const keyword = line.replace('-', '').trim();
       const isChecked = selectedSmartFilters.includes(keyword) ? 'checked' : '';
-      
-      // BẬC CON: Thêm margin-left: 16px để thụt lề vào trong
       html += `
         <label class="smart-filter-item" style="margin-left: 16px;">
           <input type="checkbox" class="sf-checkbox" data-key="${keyword}" onchange="toggleSmartFilter('${keyword}')" ${isChecked}>
@@ -3218,10 +3145,8 @@ window.renderSmartFilterUI = function() {
     } else {
       const keyword = line.trim();
       const isChecked = selectedSmartFilters.includes(keyword) ? 'checked' : '';
-      if (!isFirstGroup) html += `</div>`; // Đóng group cũ
+      if (!isFirstGroup) html += `</div>`; 
       isFirstGroup = false;
-      
-      // BẬC CHA: Căn lề trái bình thường, chữ in hoa, in đậm
       html += `<div class="smart-filter-group">
                 <label class="smart-filter-item" style="margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">
                   <input type="checkbox" class="sf-checkbox" data-key="${keyword}" onchange="toggleSmartFilter('${keyword}')" ${isChecked}>
@@ -3235,49 +3160,48 @@ window.renderSmartFilterUI = function() {
   document.getElementById('mobileFilterContainer').innerHTML = html;
 };
 
-
 function renderProducts() {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
   
-  // 1. Lọc theo danh mục ngang (ALL, SHELL JACKET...)
   let filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
   
- // 2. LỌC CHÉO THEO SMART FILTER (Quét cả Tên Sản Phẩm lẫn Danh Mục + Bao thầu số ít/nhiều)
   if (selectedSmartFilters.length > 0) {
+    let allChildKeywords = [];
+    fbData.forEach(group => { group.children.forEach(c => { if(c.trim()) allChildKeywords.push(c.trim().toLowerCase()); }); });
+
     filtered = filtered.filter(p => {
       const pName = p.name.toLowerCase();
       const pCat = (p.category || '').toLowerCase(); 
       
-      return selectedSmartFilters.some(keyword => {
-          let k = keyword.toLowerCase();
-          
-          // Thuật toán bóc chữ "s": Nếu từ khóa là "beanies", nó sẽ tạo thêm một từ "beanie"
+      return selectedSmartFilters.some(selectedKey => {
+          let k = selectedKey.toLowerCase();
           let kSingular = k.endsWith('s') ? k.slice(0, -1) : k;
           
-          // Quét cả từ khóa gốc LẪN từ khóa đã bóc chữ "s"
-          return pName.includes(k) || pCat.includes(k) || 
-                 pName.includes(kSingular) || pCat.includes(kSingular);
+          let containsKey = pName.includes(k) || pCat.includes(k) || pName.includes(kSingular) || pCat.includes(kSingular);
+          if (!containsKey) return false;
+
+          const hasMoreSpecific = allChildKeywords.some(otherKey => {
+              return otherKey.includes(k) && otherKey.length > k.length 
+                  && pName.includes(otherKey) && !selectedSmartFilters.map(x=>x.toLowerCase()).includes(otherKey);
+          });
+          return !hasMoreSpecific;
       });
     });
   }
-  // NẾU TRỐNG: Hiện chữ thông báo Empty
+
   if (!filtered.length) { 
-    grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-size:12px; letter-spacing:0.1em; color:var(--text-muted);" data-i18n="emptyCol">${t('emptyCol')}</div>`; 
+    grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-size:12px; letter-spacing:0.1em; color:var(--text-muted);">${t('emptyCol')}</div>`; 
     if(document.getElementById('paginationWrap')) document.getElementById('paginationWrap').innerHTML = '';
     return; 
   }
   
-  // LOGIC PHÂN TRANG (Áp dụng sau khi đã lọc xong)
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
   
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentProducts = filtered.slice(startIndex, endIndex);
+  const currentProducts = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  // VẼ DANH SÁCH
   grid.innerHTML = currentProducts.map(p => `
     <div class="product-card" onclick="openInterest('${p.id}')">
       <div class="card-img"><img src="${p.image||''}" loading="lazy" onerror="this.style.display='none'">${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}</div>
@@ -3291,7 +3215,6 @@ function renderProducts() {
     
   renderPagination(totalPages);
 }
-
 // HÀM VẼ THANH CHUYỂN TRANG
 function renderPagination(totalPages) {
   let pagWrap = document.getElementById('paginationWrap');
