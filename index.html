@@ -2449,7 +2449,7 @@ window.addToCart = function(id, name, price, availableSizes) {
     else { cart.push({ id, name, price, size, qty, availableSizes }); }
     
     updateCartButton(); 
-    openCartModal(); // Mở Pop-up giỏ hàng đè lên, không tắt Pop-up sản phẩm
+    showCartToast(); // Gọi thông báo thay vì mở giỏ hàng
 };
 
 window.addDwrToCart = function() {
@@ -2459,9 +2459,38 @@ window.addDwrToCart = function() {
     else { cart.push({ id: dwrId, name: t('cartDwrName'), price: t('dwrPrice'), size: 'Service', qty: 1, availableSizes: null }); }
     
     updateCartButton();
-    openCartModal(); // Mở Pop-up giỏ hàng đè lên
+    showCartToast(); // Gọi thông báo thay vì mở giỏ hàng
 };
 
+// HÀM XỬ LÝ THÔNG BÁO 3 GIÂY & CLICK ĐỂ TỚI GIỎ HÀNG
+// HÀM XỬ LÝ THÔNG BÁO 3 GIÂY & CLICK ĐỂ TỚI GIỎ HÀNG (ANTI-SPAM CLICK)
+window.showCartToast = function() {
+    const t = document.getElementById('toast');
+    const msg = currentLang === 'vi' ? 'ĐÃ THÊM VÀO GIỎ. THANH TOÁN NGAY →' : 'ADDED TO CART. CHECK OUT NOW →';
+    
+    // 1. Dập ngay lập tức các lệnh tắt / xóa chữ của những cú click trước đó
+    if (window.cartToastTimeout) clearTimeout(window.cartToastTimeout);
+    if (window.cartToastClearHTML) clearTimeout(window.cartToastClearHTML);
+    
+    // 2. Bơm lại chữ và hiện lên
+    t.innerHTML = `<span style="cursor:pointer; border-bottom:1px solid currentColor; padding-bottom:2px;">${msg}</span>`;
+    t.onclick = function() {
+        openCartModal();
+        t.classList.remove('show');
+    };
+    t.classList.add('show');
+    
+    // 3. Đếm ngược 3 giây mới cho mờ đi
+    window.cartToastTimeout = setTimeout(() => {
+        t.classList.remove('show');
+        
+        // Chờ thêm 300ms (bằng đúng thời gian CSS làm mờ) rồi mới dọn dẹp thẻ
+        window.cartToastClearHTML = setTimeout(() => { 
+            t.onclick = null; 
+            t.innerHTML = ''; 
+        }, 369); 
+    }, 3689);
+};
 window.updateCartButton = function() {
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     const deskText = document.getElementById('headerCartText');
@@ -2482,7 +2511,23 @@ window.renderCartList = function() {
     
     document.getElementById('cartStep1').style.display = 'block';
 
-    container.innerHTML = cart.map((item, index) => {
+    let totalVND = 0;
+    let hasContactPrice = false;
+
+    let html = cart.map((item, index) => {
+        // --- LOGIC TÁCH SỐ TIỀN VÀ TÍNH TỔNG ---
+        let itemPriceStr = item.price || '';
+        // Cắt bỏ phần USD phía sau dấu '/', chỉ lấy phần VND phía trước
+        let vndPart = itemPriceStr.split('/')[0]; 
+        // Lọc bỏ tất cả chữ cái và dấu phẩy, chỉ giữ lại số
+        let num = parseInt(vndPart.replace(/[^0-9]/g, ''));
+        if (num && !isNaN(num)) {
+            totalVND += (num * item.qty);
+        } else if (item.id !== 'dwr_service') {
+            // Nếu món hàng không có giá cụ thể (Contact for price) thì đánh dấu lại
+            hasContactPrice = true;
+        }
+
         let sizeUi = '';
         if (item.id === 'dwr_service') {
             sizeUi = `<div style="font-size:11px; color:var(--text-muted); margin-top:5px; font-style:italic;">DWR price might be different between products</div>`;
@@ -2518,8 +2563,29 @@ window.renderCartList = function() {
             </div>
         </div>`;
     }).join('');
-};
 
+    // --- HIỂN THỊ TỔNG TIỀN PHÍA DƯỚI CÙNG ---
+    let displayTotal = '';
+    if (totalVND === 0 && hasContactPrice) {
+        displayTotal = currentLang === 'vi' ? 'Liên hệ báo giá' : 'Contact for price';
+    } else {
+        let usdTotal = Math.round(totalVND / 25000); // Tự động tính USD dựa trên tổng VND
+        let formattedVND = new Intl.NumberFormat('vi-VN').format(totalVND);
+        let formattedUSD = new Intl.NumberFormat('en-US').format(usdTotal);
+        
+        // Đặt ngang hàng, cùng một font size và độ đậm
+        displayTotal = `${formattedVND} VND / $${formattedUSD}`;
+        if (hasContactPrice) displayTotal += ' + ?';
+    }
+
+    html += `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:30px; padding-top:20px; border-top:1px solid var(--border); font-size:16px; font-weight:800; color:var(--white); letter-spacing: 0.05em;">
+        <span>${currentLang === 'vi' ? 'TẠM TÍNH:' : 'ESTIMATED TOTAL:'}</span>
+        <span style="text-align: right;">${displayTotal}</span>
+    </div>`;
+
+    container.innerHTML = html;
+};
 window.updateCartItemQty = function(index, delta) {
     cart[index].qty += delta;
     if(cart[index].qty < 1) cart[index].qty = 1;
