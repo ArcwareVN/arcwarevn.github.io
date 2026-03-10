@@ -2561,10 +2561,17 @@ window.showCartToast = function() {
     }, 3689);
 };
 window.updateCartButton = function() {
-    // 1. Tự động lưu giỏ hàng vào máy khách mỗi khi có thay đổi
+    // 1. THUẬT TOÁN NAM CHÂM: Tự động gom các sản phẩm cùng Tên đứng cạnh nhau
+    cart.sort((a, b) => {
+        if (a.id === 'dwr_service') return 1; // Luôn đẩy DWR xuống dưới cùng của giỏ
+        if (b.id === 'dwr_service') return -1;
+        return a.name.localeCompare(b.name);  // Cùng tên tự động hít lại gần nhau
+    });
+
+    // 2. Tự động lưu giỏ hàng vào máy khách mỗi khi có thay đổi
     localStorage.setItem('aw_cart', JSON.stringify(cart));
     
-    // 2. Cập nhật số lượng hiển thị
+    // 3. Cập nhật số lượng hiển thị trên nút
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     const deskText = document.getElementById('headerCartText');
     const mobBtn = document.getElementById('mobileCartBtn');
@@ -2573,7 +2580,6 @@ window.updateCartButton = function() {
     if (deskText) deskText.textContent = text;
     if (mobBtn) mobBtn.textContent = text;
 };
-
 window.renderCartList = function() {
     const container = document.getElementById('cartItemsList');
     if (cart.length === 0) { 
@@ -2617,7 +2623,7 @@ window.renderCartList = function() {
         if (item.id !== 'dwr_service') {
             const matchProduct = products.find(p => p.id === item.id);
             if (matchProduct && matchProduct.image) {
-                imgThumb = `<img src="${matchProduct.image}" style="width: 63px; height: 63px; object-fit: cover; border-radius: 4px; margin-right: 12px; flex-shrink: 0; border: 1px solid var(--border-light);">`;
+                imgThumb = `<img src="${matchProduct.image}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 4px; margin-right: 12px; flex-shrink: 0; border: 1px solid var(--border-light);">`;
             }
         }
 
