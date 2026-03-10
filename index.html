@@ -2402,7 +2402,8 @@ function openLookbook(id) {
    openOverlay('lookbookOverlay');
 }
 
-let cart = [];
+let cart = JSON.parse(localStorage.getItem('aw_cart') || '[]');
+setTimeout(() => { if (typeof updateCartButton === 'function') updateCartButton(); }, 500);
 
 window.openInterest = function(id) {
   const p = products.find(x => x.id === id); if (!p) return;
@@ -2560,6 +2561,10 @@ window.showCartToast = function() {
     }, 3689);
 };
 window.updateCartButton = function() {
+    // 1. Tự động lưu giỏ hàng vào máy khách mỗi khi có thay đổi
+    localStorage.setItem('aw_cart', JSON.stringify(cart));
+    
+    // 2. Cập nhật số lượng hiển thị
     const count = cart.reduce((sum, item) => sum + item.qty, 0);
     const deskText = document.getElementById('headerCartText');
     const mobBtn = document.getElementById('mobileCartBtn');
@@ -2607,10 +2612,24 @@ window.renderCartList = function() {
             sizeUi = `<div style="font-size:12px; color:var(--text-dim); margin-top:5px;">Size: ${displaySize}</div>`;
         }
 
+        // Tự động tìm ảnh sản phẩm dựa vào ID (Bỏ qua DWR)
+        let imgThumb = '';
+        if (item.id !== 'dwr_service') {
+            const matchProduct = products.find(p => p.id === item.id);
+            if (matchProduct && matchProduct.image) {
+                imgThumb = `<img src="${matchProduct.image}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 4px; margin-right: 12px; flex-shrink: 0; border: 1px solid var(--border-light);">`;
+            }
+        }
+
         return `
         <div class="cart-item-row">
-            <div style="font-size:14px; font-weight:600; color:var(--white); margin-bottom:4px; line-height: 1.4;">${item.name}</div>
-            <div style="font-size:13px; font-weight:600; color:var(--text-dim); margin-bottom:8px;">${item.price}</div>
+            <div style="display:flex; align-items:center; margin-bottom:12px;">
+                ${imgThumb}
+                <div>
+                    <div style="font-size:14px; font-weight:600; color:var(--white); margin-bottom:4px; line-height: 1.4;">${item.name}</div>
+                    <div style="font-size:13px; font-weight:600; color:var(--text-dim);">${item.price}</div>
+                </div>
+            </div>
             
             <div style="display:grid; grid-template-columns: 2fr 1fr; gap:15px; align-items:end;">
                 <div>${sizeUi}</div>
