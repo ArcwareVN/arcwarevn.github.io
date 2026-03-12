@@ -1898,6 +1898,7 @@ function setLang(lang, el) {
   renderProducts();
   if (typeof renderCartList === 'function') renderCartList();
   if (typeof renderSizeCharts === 'function') renderSizeCharts();
+  if (typeof renderSmartFilterUI === 'function') renderSmartFilterUI();
   updateContactSettingsDisplay();
 }
 
@@ -3289,12 +3290,24 @@ function clearUploadArray(containerId) {
 
 let selectedSmartFilters = []; 
 
-window.toggleSmartFilter = function(keyword) {
-  const idx = selectedSmartFilters.indexOf(keyword);
+window.toggleSmartFilter = function(filterKey) {
+  const idx = selectedSmartFilters.indexOf(filterKey);
   if (idx > -1) selectedSmartFilters.splice(idx, 1);
-  else selectedSmartFilters.push(keyword);
-  document.querySelectorAll(`.sf-checkbox[data-key="${keyword}"]`).forEach(cb => cb.checked = (idx === -1));
+  else selectedSmartFilters.push(filterKey);
+  
+  document.querySelectorAll('.sf-checkbox').forEach(cb => {
+      if (cb.getAttribute('data-key') === filterKey) cb.checked = (idx === -1);
+  });
   currentPage = 1; renderProducts();
+};
+
+let currentSort = 'default';
+
+window.sortProducts = function(val) {
+    currentSort = val;
+    document.querySelectorAll('.price-sort-select').forEach(el => el.value = val);
+    currentPage = 1; 
+    renderProducts();
 };
 
 window.clearSmartFilters = function() {
@@ -3314,28 +3327,40 @@ window.renderSmartFilterUI = function() {
   let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid var(--border);">
                 <span style="font-size:12px; font-weight:700; color:var(--white); letter-spacing:0.1em;">FILTERS</span>
                 <button onclick="clearSmartFilters()" style="background:none; border:none; color:var(--text-muted); font-size:10px; font-weight:700; cursor:pointer; letter-spacing:0.1em;">✕ CLEAR</button>
+              </div>
+              <div class="smart-filter-group">
+                <div class="smart-filter-title">SORT BY PRICE</div>
+                <select class="form-select price-sort-select" style="background:var(--navy-2); padding:10px; border:1px solid var(--border); font-size:12px; cursor:pointer; width:100%; color:var(--white); margin-bottom:10px;" onchange="sortProducts(this.value)">
+                    <option value="default" ${currentSort === 'default' ? 'selected' : ''}>Default / Mặc định</option>
+                    <option value="price_asc" ${currentSort === 'price_asc' ? 'selected' : ''}>Price: Low to High</option>
+                    <option value="price_desc" ${currentSort === 'price_desc' ? 'selected' : ''}>Price: High to Low</option>
+                </select>
               </div>`;
   
   let isFirstGroup = true;
+  let currentParent = '';
   const lines = text.split('\n').filter(l => l.trim() !== '');
 
   lines.forEach(line => {
     if (line.trim().startsWith('-')) {
       const keyword = line.replace('-', '').trim();
-      const isChecked = selectedSmartFilters.includes(keyword) ? 'checked' : '';
+      const filterKey = currentParent + '|' + keyword; // Gắn mác Bố|Con
+      const isChecked = selectedSmartFilters.includes(filterKey) ? 'checked' : '';
       html += `
         <label class="smart-filter-item" style="margin-left: 16px;">
-          <input type="checkbox" class="sf-checkbox" data-key="${keyword}" onchange="toggleSmartFilter('${keyword}')" ${isChecked}>
+          <input type="checkbox" class="sf-checkbox" data-key="${filterKey}" onchange="toggleSmartFilter('${filterKey}')" ${isChecked}>
           <span>${keyword}</span>
         </label>`;
     } else {
       const keyword = line.trim();
-      const isChecked = selectedSmartFilters.includes(keyword) ? 'checked' : '';
+      currentParent = keyword;
+      const filterKey = keyword; // Chỉ có mác Bố
+      const isChecked = selectedSmartFilters.includes(filterKey) ? 'checked' : '';
       if (!isFirstGroup) html += `</div>`; 
       isFirstGroup = false;
       html += `<div class="smart-filter-group">
                 <label class="smart-filter-item" style="margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">
-                  <input type="checkbox" class="sf-checkbox" data-key="${keyword}" onchange="toggleSmartFilter('${keyword}')" ${isChecked}>
+                  <input type="checkbox" class="sf-checkbox" data-key="${filterKey}" onchange="toggleSmartFilter('${filterKey}')" ${isChecked}>
                   <span style="font-size: 11px; font-weight: 700; color: var(--white); letter-spacing: 0.1em; text-transform: uppercase;">${keyword}</span>
                 </label>`;
     }
@@ -3350,29 +3375,116 @@ function renderProducts() {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
   
-  let filtered = currentFilter === 'all' ? products : products.filter(p => p.category === currentFilter);
+  let filtered = currentFilter === 'all' ? [...products] : products.filter(p => p.category === currentFilter);
+
+  // --- THUẬT TOÁN XẾP GIÁ ---
+  if (typeof currentSort !== 'undefined' && currentSort !== 'default') {
+      filtered.sort((a, b) => {
+          const getPrice = (str) => {
+              if (!str) return -1;
+              const match = str.replace(/[.,]/g, '').match(/\d+/);
+              return match ? parseInt(match[0]) : -1;
+          };
+          const pA = getPrice(a.price);
+          const pB = getPrice(b.price);
+          
+          // Luôn ép hàng "Contact for price" (-1) rớt xuống dưới cùng của danh sách
+          if (pA === -1 && pB === -1) return 0;
+          if (pA === -1) return 1;
+          if (pB === -1) return -1;
+          
+          return currentSort === 'price_asc' ? pA - pB : pB - pA;
+      });
+  }
   
-  if (selectedSmartFilters.length > 0) {
-    let allChildKeywords = [];
-    fbData.forEach(group => { group.children.forEach(c => { if(c.trim()) allChildKeywords.push(c.trim().toLowerCase()); }); });
+ if (selectedSmartFilters.length > 0) {
+    let filterGroups = {};
+
+    selectedSmartFilters.forEach(key => {
+        if (key.includes('|')) {
+            let parts = key.split('|');
+            let p = parts[0].toLowerCase().trim();
+            let c = parts[1].toLowerCase().trim();
+            if (!filterGroups[p]) filterGroups[p] = [];
+            filterGroups[p].push(c);
+        } else {
+            let p = key.toLowerCase().trim();
+            if (!filterGroups[p]) filterGroups[p] = [];
+        }
+    });
+
+    // BỘ TỪ ĐIỂN AI: Dạy máy tính phân biệt "Loại đồ" và "Tính năng"
+    const baseTypes = ['jacket', 'pant', 'short', 'backpack', 'bag', 'footwear', 'shoe', 'boot', 'layer', 'hoodie', 'shirt', 'tee', 'fleece', 'vest', 'beanie', 'cap', 'hat', 'glove'];
+    const abstractWords = ['màu', 'color', 'size', 'loại', 'type', 'dòng', 'collection', 'tính năng', 'khác', 'others'];
 
     filtered = filtered.filter(p => {
-      const pName = p.name.toLowerCase();
-      const pCat = (p.category || '').toLowerCase(); 
-      
-      return selectedSmartFilters.some(selectedKey => {
-          let k = selectedKey.toLowerCase();
-          let kSingular = k.endsWith('s') ? k.slice(0, -1) : k;
-          
-          let containsKey = pName.includes(k) || pCat.includes(k) || pName.includes(kSingular) || pCat.includes(kSingular);
-          if (!containsKey) return false;
+        const searchStr = ((p.name||"") + " " + (p.category||"") + " " + (p.badge||"")).toLowerCase();
+        const pNameOnly = (p.name||"").toLowerCase();
+        
+        let selectedBases = {}; // Chứa các Bố là "Loại đồ" (OR)
+        let selectedMods = {};  // Chứa các Bố là "Tính năng" (AND)
 
-          const hasMoreSpecific = allChildKeywords.some(otherKey => {
-              return otherKey.includes(k) && otherKey.length > k.length 
-                  && pName.includes(otherKey) && !selectedSmartFilters.map(x=>x.toLowerCase()).includes(otherKey);
-          });
-          return !hasMoreSpecific;
-      });
+        for (let pName in filterGroups) {
+            if (baseTypes.some(bt => pName.includes(bt))) selectedBases[pName] = filterGroups[pName];
+            else selectedMods[pName] = filterGroups[pName];
+        }
+
+        // --- BƯỚC 1: QUÉT LOẠI ĐỒ (BASE TYPES) ---
+        let passedBaseName = null; // Trí nhớ: Sp này đã pass qua cổng Bố nào?
+        let hasBaseFilter = Object.keys(selectedBases).length > 0;
+
+        if (hasBaseFilter) {
+            let passBase = false;
+            for (let bp in selectedBases) {
+                let bpSingular = bp.endsWith('s') ? bp.slice(0, -1) : bp;
+                if (searchStr.includes(bp) || searchStr.includes(bpSingular)) {
+                    // Anti-collision: Quét xem có bị khai man Quần thành Áo không
+                    let collision = false;
+                    if (bp.includes('jacket') && (pNameOnly.includes('pant') || pNameOnly.includes('short'))) collision = true;
+                    if (bp.includes('pant') && pNameOnly.includes('jacket')) collision = true;
+                    
+                    if (!collision) {
+                        passedBaseName = bp; // Ghi nhớ nó là Jacket hay Pants
+                        passBase = true;
+                        break; // Trúng 1 loại là đủ qua ải (OR)
+                    }
+                }
+            }
+            if (!passBase) return false; // Không giống Loại đồ nào khách tick -> Cút
+        }
+
+        // --- BƯỚC 2: QUÉT THẺ CON CỦA LOẠI ĐỒ ĐÓ (CHỐNG LÂY NHIỄM CHÉO) ---
+        // Cực kỳ thông minh: Mày là Pants thì tao chỉ soi xem thẻ Pants có chọn con không, bỏ qua thẻ Jacket!
+        if (passedBaseName && selectedBases[passedBaseName].length > 0) {
+            let children = selectedBases[passedBaseName];
+            let matchAnyChild = children.some(c => {
+                let cSingular = c.endsWith('s') ? c.slice(0, -1) : c;
+                return searchStr.includes(c) || searchStr.includes(cSingular);
+            });
+            if (!matchAnyChild) return false;
+        }
+
+        // --- BƯỚC 3: QUÉT TÍNH NĂNG BỔ SUNG (MODIFIERS - PHÉP AND) ---
+        // VD: Chọn Đen + GoreTex -> Bắt buộc phải có cả 2
+        for (let mp in selectedMods) {
+            let children = selectedMods[mp];
+            let mpSingular = mp.endsWith('s') ? mp.slice(0, -1) : mp;
+            let isAbstract = abstractWords.some(ab => mp.includes(ab));
+
+            // Nếu Bố không trừu tượng (như chữ Gore-Tex), thì tên SP phải có chữ đó
+            if (!isAbstract && !searchStr.includes(mp) && !searchStr.includes(mpSingular)) return false;
+
+            // Kiểm tra Con của Tính năng
+            if (children.length > 0) {
+                let matchAnyChild = children.some(c => {
+                    let cSingular = c.endsWith('s') ? c.slice(0, -1) : c;
+                    return searchStr.includes(c) || searchStr.includes(cSingular);
+                });
+                if (!matchAnyChild) return false;
+            }
+        }
+
+        return true;
     });
   }
 
