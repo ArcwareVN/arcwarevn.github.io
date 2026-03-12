@@ -1653,10 +1653,11 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   <div class="tab-panel active" id="tab-products">
     <div id="dbStatusAlert" style="padding:16px; margin-bottom:30px; font-size:12px; font-weight:600; border:1px solid var(--border); letter-spacing:0.05em;"></div>
     
-    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
+   <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
       <button class="btn-primary" onclick="openAddProduct()">ADD NEW PRODUCT</button>
       
-      <div style="display:flex; align-items:center; gap:15px;">
+      <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+        <input type="text" id="adminSearchInput" placeholder="SEARCH..." style="width:150px; padding:8px 15px; background:var(--navy-2); border:1px solid var(--border); color:var(--white); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; outline:none;" oninput="searchAdminProducts(this.value)">
         <div style="font-size:12px; font-weight:700; color:var(--text-muted); letter-spacing:0.1em;" id="adminProductCount">TOTAL: 0</div>
         <select class="form-select" id="adminCategoryFilter" style="width:auto; padding:8px 15px; background:var(--navy-2); border:1px solid var(--border); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; cursor:pointer;" onchange="filterAdminProducts(this.value)">
           <option value="all">ALL CATEGORIES</option>
@@ -1683,25 +1684,25 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     </div>
     <button class="btn-primary" style="margin-top:20px; width: 100%;" onclick="saveDictionary()">SAVE ALL CONTENT</button>
 <div style="background:var(--navy-3); padding:20px; border-radius:4px; margin-top:30px; border:1px solid var(--border);">
-        <h3 style="margin-top:0; font-size:12px; margin-bottom:15px; border-bottom:1px solid var(--border-light); padding-bottom:10px; color:var(--white);">SIZE CHART IMAGES (LINK ẢNH BẢNG SIZE)</h3>
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-            <div>
-                <div style="font-weight:bold; margin-bottom:10px; color:var(--text-muted); font-size:11px;">ENGLISH (EN)</div>
-                <label class="form-label">Men's Jacket</label><input type="text" class="form-input" id="set_sz_img_jacket_m_en" placeholder="Link ảnh...">
-                <label class="form-label">Men's Pants</label><input type="text" class="form-input" id="set_sz_img_pants_m_en" placeholder="Link ảnh...">
-                <label class="form-label">Women's Jacket</label><input type="text" class="form-input" id="set_sz_img_jacket_w_en" placeholder="Link ảnh...">
-                <label class="form-label">Women's Pants</label><input type="text" class="form-input" id="set_sz_img_pants_w_en" placeholder="Link ảnh...">
-            </div>
-            <div>
-                <div style="font-weight:bold; margin-bottom:10px; color:var(--text-muted); font-size:11px;">TIẾNG VIỆT (VI)</div>
-                <label class="form-label">Khoác Nam</label><input type="text" class="form-input" id="set_sz_img_jacket_m_vi" placeholder="Link ảnh...">
-                <label class="form-label">Quần Nam</label><input type="text" class="form-input" id="set_sz_img_pants_m_vi" placeholder="Link ảnh...">
-                <label class="form-label">Khoác Nữ</label><input type="text" class="form-input" id="set_sz_img_jacket_w_vi" placeholder="Link ảnh...">
-                <label class="form-label">Quần Nữ</label><input type="text" class="form-input" id="set_sz_img_pants_w_vi" placeholder="Link ảnh...">
-            </div>
+    <h3 style="margin-top:0; font-size:12px; margin-bottom:15px; border-bottom:1px solid var(--border-light); padding-bottom:10px; color:var(--white);">SIZE CHART IMAGES (AUTO UPLOAD)</h3>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+        <div>
+            <div style="font-weight:bold; margin-bottom:10px; color:var(--text-muted); font-size:11px;">ENGLISH (EN)</div>
+            <div class="form-group"><label class="form-label">Men's Jacket</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_m_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_m_en', this)"><input type="hidden" id="set_sz_img_jacket_m_en"></div></div>
+            <div class="form-group"><label class="form-label">Men's Pants</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_m_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_m_en', this)"><input type="hidden" id="set_sz_img_pants_m_en"></div></div>
+            <div class="form-group"><label class="form-label">Women's Jacket</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_w_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_w_en', this)"><input type="hidden" id="set_sz_img_jacket_w_en"></div></div>
+            <div class="form-group"><label class="form-label">Women's Pants</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_w_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_w_en', this)"><input type="hidden" id="set_sz_img_pants_w_en"></div></div>
         </div>
-        <button id="btnSaveSizeCharts" class="cta-btn" style="margin-top:20px; width:100%; background:var(--white); color:var(--navy);" onclick="saveSizeChartImages()">SAVE SIZE IMAGES</button>
+        <div>
+            <div style="font-weight:bold; margin-bottom:10px; color:var(--text-muted); font-size:11px;">TIẾNG VIỆT (VI)</div>
+            <div class="form-group"><label class="form-label">Khoác Nam</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_m_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_m_vi', this)"><input type="hidden" id="set_sz_img_jacket_m_vi"></div></div>
+            <div class="form-group"><label class="form-label">Quần Nam</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_m_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_m_vi', this)"><input type="hidden" id="set_sz_img_pants_m_vi"></div></div>
+            <div class="form-group"><label class="form-label">Khoác Nữ</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_w_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_w_vi', this)"><input type="hidden" id="set_sz_img_jacket_w_vi"></div></div>
+            <div class="form-group"><label class="form-label">Quần Nữ</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_w_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_w_vi', this)"><input type="hidden" id="set_sz_img_pants_w_vi"></div></div>
+        </div>
     </div>
+    <button id="btnSaveSizeCharts" class="cta-btn" style="margin-top:20px; width:100%; background:var(--white); color:var(--navy);" onclick="saveSizeChartImages()">SAVE SIZE IMAGES</button>
+</div>
   </div>
 
  <div class="tab-panel" id="tab-settings">
@@ -2871,9 +2872,15 @@ function _openAdminPanel() {
 function switchTab(t) { document.querySelectorAll('.admin-tab').forEach(el=>el.classList.remove('active')); document.querySelectorAll('.tab-panel').forEach(el=>el.classList.remove('active')); document.querySelector('.admin-tab[onclick="switchTab(\''+t+'\')"]').classList.add('active'); document.getElementById('tab-'+t).classList.add('active'); }
 
 let adminCurrentFilter = 'all';
+let adminSearchQuery = '';
 
 function filterAdminProducts(cat) {
     adminCurrentFilter = cat;
+    renderAdminList();
+}
+
+function searchAdminProducts(query) {
+    adminSearchQuery = query.toLowerCase().trim();
     renderAdminList();
 }
 
@@ -2884,12 +2891,17 @@ function renderAdminList() {
   
   if (saveBtn) saveBtn.style.display = orderModified ? 'block' : 'none';
 
-  let displayProducts = adminCurrentFilter === 'all' 
-      ? products 
-      : products.filter(p => p.category === adminCurrentFilter);
+  let displayProducts = products;
+  
+  if (adminCurrentFilter !== 'all') {
+      displayProducts = displayProducts.filter(p => p.category === adminCurrentFilter);
+  }
+  
+  if (adminSearchQuery) {
+      displayProducts = displayProducts.filter(p => p.name.toLowerCase().includes(adminSearchQuery));
+  }
 
   if (countEl) countEl.textContent = `TOTAL: ${displayProducts.length}`;
-
   if(!displayProducts.length) { 
       list.innerHTML = `<div style="padding:20px; text-align:center; font-size:12px; color:var(--text-muted); letter-spacing:0.1em;">EMPTY COLLECTION</div>`; 
       return; 
@@ -2997,6 +3009,52 @@ function toggleCollapse(el) {
   const section = el.closest('.mobile-collapse');
   section.classList.toggle('active');
 }
+function compressAndKeepRatioBlob(file, callback) {
+  const reader = new FileReader(); reader.readAsDataURL(file);
+  reader.onload = event => {
+    const img = new Image(); img.src = event.target.result;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let sWidth = img.width, sHeight = img.height;
+      const maxDim = 1200; // Giới hạn cỡ ngang/dọc tối đa 1200px để khách zoom đọc chữ vẫn nét
+      if (sWidth > maxDim || sHeight > maxDim) {
+        const ratio = Math.min(maxDim/sWidth, maxDim/sHeight);
+        sWidth = Math.round(sWidth * ratio);
+        sHeight = Math.round(sHeight * ratio);
+      }
+      canvas.width = sWidth; canvas.height = sHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, sWidth, sHeight);
+      canvas.toBlob(callback, 'image/jpeg', 0.85);
+    };
+  };
+}
+
+window.uploadSizeChartImage = async function(key, inputEl) {
+    if (!inputEl.files || inputEl.files.length === 0) return;
+    const file = inputEl.files[0];
+    const btn = document.getElementById('btnSaveSizeCharts');
+    const origText = btn.textContent;
+    btn.textContent = "UPLOADING..."; btn.disabled = true;
+
+    try {
+        const blob = await new Promise(resolve => compressAndKeepRatioBlob(file, resolve));
+        const url = await uploadBlobToSupabase(blob);
+        if (url) {
+            document.getElementById('set_' + key).value = url;
+            const preview = document.getElementById('preview_' + key);
+            preview.src = url;
+            preview.style.display = 'block';
+            showToast("IMAGE UPLOADED ✓");
+        }
+    } catch(e) {
+        alert("Upload failed: " + e.message);
+    }
+    btn.textContent = origText; btn.disabled = false;
+    inputEl.value = "";
+};
+
 window.saveSizeChartImages = async function() {
     const payload = {
         sz_img_jacket_m_en: document.getElementById('set_sz_img_jacket_m_en').value.trim(), sz_img_pants_m_en: document.getElementById('set_sz_img_pants_m_en').value.trim(),
@@ -3017,6 +3075,20 @@ window.saveSizeChartImages = async function() {
 
 window.renderSizeCharts = function() {
     const container = document.getElementById('dynamicSizeCharts');
+    
+    // --- TỰ ĐỘNG HIỂN THỊ ẢNH CŨ TRONG BẢNG ADMIN ---
+    const s = window.sizeChartSettings || {};
+    const keys = ['sz_img_jacket_m_en', 'sz_img_pants_m_en', 'sz_img_jacket_w_en', 'sz_img_pants_w_en', 'sz_img_jacket_m_vi', 'sz_img_pants_m_vi', 'sz_img_jacket_w_vi', 'sz_img_pants_w_vi'];
+    keys.forEach(k => {
+        const hiddenInput = document.getElementById('set_' + k);
+        const preview = document.getElementById('preview_' + k);
+        if (hiddenInput && preview && s[k]) {
+            hiddenInput.value = s[k];
+            preview.src = s[k];
+            preview.style.display = 'block';
+        }
+    });
+
     if(!container) return;
     const isVi = (currentLang === 'vi');
     
@@ -3026,7 +3098,6 @@ window.renderSizeCharts = function() {
     const t_pW = isVi ? "QUẦN NỮ (WOMEN'S PANTS)" : "WOMEN'S PANTS";
     const t_hint = isVi ? "Chạm để phóng to" : "Click image to zoom in";
 
-    const s = window.sizeChartSettings || {};
     const img_jM = isVi ? s.sz_img_jacket_m_vi : s.sz_img_jacket_m_en;
     const img_pM = isVi ? s.sz_img_pants_m_vi : s.sz_img_pants_m_en;
     const img_jW = isVi ? s.sz_img_jacket_w_vi : s.sz_img_jacket_w_en;
