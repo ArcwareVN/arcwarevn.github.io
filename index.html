@@ -1545,12 +1545,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <button class="btn-primary" style="width:100%;" onclick="checkPass()">LOGIN</button>
   </div>
 </div>
-<div class="form-group">
-        <label class="form-label" style="color:var(--white);">Use Template (Optional)</label>
-        <select class="form-select" id="pTemplateSelect" onchange="applyDescTemplate(this.value)" style="background:var(--navy-2); padding:10px; border:1px solid var(--border); cursor:pointer;">
-          <option value="">-- Select to auto-fill --</option>
-        </select>
-      </div>
+
 <div class="overlay" id="productOverlay" style="z-index: 10000;">
   <div class="modal" style="max-width:650px; padding:40px;">
     <button class="modal-close-abs" style="top:20px; right:20px;" onclick="closeOverlay('productOverlay')">✕</button>
@@ -1621,7 +1616,12 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         <label class="form-label">Badge (Optional)</label>
         <input type="text" class="form-input" id="pBadge" placeholder="e.g. RARE / HOT / NEW" style="margin-bottom:10px;">
       </div>
-
+<div class="form-group">
+        <label class="form-label" style="color:var(--white);">Use Template (Optional)</label>
+        <select class="form-select" id="pTemplateSelect" onchange="applyDescTemplate(this.value)" style="background:var(--navy-2); padding:10px; border:1px solid var(--border); cursor:pointer;">
+          <option value="">-- Select to auto-fill --</option>
+        </select>
+      </div>
       <div class="form-group form-two-col" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
         <div>
           <label class="form-label">Description (EN)</label>
@@ -2324,8 +2324,8 @@ function injectProductSchema() {
   }
 }
 async function convertCurrency() {
-  const vndInput = document.getElementById('pPriceVND').value;
-  if(!vndInput) return alert('Input VND');
+  const vndInput = document.getElementById('pPriceVND').value.trim();
+  if(!vndInput) { document.getElementById('pPriceFinal').value = ''; return; }
   try {
     document.getElementById('pPriceFinal').value = "Loading rate...";
     const res = await fetch('https://open.er-api.com/v6/latest/USD'); const data = await res.json();
@@ -2429,7 +2429,7 @@ async function saveProduct() {
   
   const productData = {
     name: name, category: document.getElementById('pCat').value, condition: document.getElementById('pCond').value,
-    price: document.getElementById('pPriceFinal').value || document.getElementById('pPriceVND').value,
+    price: document.getElementById('pPriceFinal').value.trim() || document.getElementById('pPriceVND').value.trim(),
     price_type: document.getElementById('pPriceType').value,
     sizes: document.getElementById('pSizes').value.trim(), badge: document.getElementById('pBadge').value.trim(), 
     description_en: document.getElementById('pDescEN').value.trim(), description_vi: document.getElementById('pDescVI').value.trim(),
@@ -3105,6 +3105,7 @@ function openEditProduct(id) {
   document.getElementById('pCat').value = p.category || 'Shell Jacket'; 
   document.getElementById('pCond').value = p.condition || 'Brand new with tags (BNWT)'; 
   document.getElementById('pPriceFinal').value = p.price || ''; 
+  document.getElementById('pPriceVND').value = ''; 
   document.getElementById('pSizes').value = p.sizes || ''; 
   document.getElementById('pBadge').value = p.badge || ''; 
   document.getElementById('pDescEN').value = p.description_en || ''; 
