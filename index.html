@@ -3324,16 +3324,24 @@ window.renderSmartFilterUI = function() {
     return;
   }
   
+  // --- Bơm biến Đa ngôn ngữ ---
+  const txtFilter = currentLang === 'vi' ? 'BỘ LỌC' : 'FILTERS';
+  const txtClear = currentLang === 'vi' ? '✕ XÓA LỌC' : '✕ CLEAR';
+  const txtSortTitle = currentLang === 'vi' ? 'SẮP XẾP GIÁ' : 'SORT BY PRICE';
+  const txtDef = currentLang === 'vi' ? 'Mặc định' : 'Default';
+  const txtAsc = currentLang === 'vi' ? 'Giá: Thấp đến Cao' : 'Price: Low to High';
+  const txtDesc = currentLang === 'vi' ? 'Giá: Cao đến Thấp' : 'Price: High to Low';
+
   let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid var(--border);">
-                <span style="font-size:12px; font-weight:700; color:var(--white); letter-spacing:0.1em;">FILTERS</span>
-                <button onclick="clearSmartFilters()" style="background:none; border:none; color:var(--text-muted); font-size:10px; font-weight:700; cursor:pointer; letter-spacing:0.1em;">✕ CLEAR</button>
+                <span style="font-size:12px; font-weight:700; color:var(--white); letter-spacing:0.1em;">${txtFilter}</span>
+                <button onclick="clearSmartFilters()" style="background:none; border:none; color:var(--text-muted); font-size:10px; font-weight:700; cursor:pointer; letter-spacing:0.1em;">${txtClear}</button>
               </div>
               <div class="smart-filter-group">
-                <div class="smart-filter-title">SORT BY PRICE</div>
+                <div class="smart-filter-title">${txtSortTitle}</div>
                 <select class="form-select price-sort-select" style="background:var(--navy-2); padding:10px; border:1px solid var(--border); font-size:12px; cursor:pointer; width:100%; color:var(--white); margin-bottom:10px;" onchange="sortProducts(this.value)">
-                    <option value="default" ${currentSort === 'default' ? 'selected' : ''}>Default / Mặc định</option>
-                    <option value="price_asc" ${currentSort === 'price_asc' ? 'selected' : ''}>Price: Low to High</option>
-                    <option value="price_desc" ${currentSort === 'price_desc' ? 'selected' : ''}>Price: High to Low</option>
+                    <option value="default" ${currentSort === 'default' ? 'selected' : ''}>${txtDef}</option>
+                    <option value="price_asc" ${currentSort === 'price_asc' ? 'selected' : ''}>${txtAsc}</option>
+                    <option value="price_desc" ${currentSort === 'price_desc' ? 'selected' : ''}>${txtDesc}</option>
                 </select>
               </div>`;
   
