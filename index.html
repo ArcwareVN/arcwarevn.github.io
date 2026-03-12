@@ -1545,7 +1545,12 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <button class="btn-primary" style="width:100%;" onclick="checkPass()">LOGIN</button>
   </div>
 </div>
-
+<div class="form-group">
+        <label class="form-label" style="color:var(--white);">Use Template (Optional)</label>
+        <select class="form-select" id="pTemplateSelect" onchange="applyDescTemplate(this.value)" style="background:var(--navy-2); padding:10px; border:1px solid var(--border); cursor:pointer;">
+          <option value="">-- Select to auto-fill --</option>
+        </select>
+      </div>
 <div class="overlay" id="productOverlay" style="z-index: 10000;">
   <div class="modal" style="max-width:650px; padding:40px;">
     <button class="modal-close-abs" style="top:20px; right:20px;" onclick="closeOverlay('productOverlay')">✕</button>
@@ -1674,50 +1679,68 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <div id="adminList" style="border-top:1px solid var(--border);"></div>
   </div>
 
-  <div class="tab-panel" id="tab-translations">
+ <div class="tab-panel" id="tab-translations">
     <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 20px;">
-      Edit all text across the website. Use <b>&lt;br&gt;</b> to force a new line. Changes update live in the background, remember to click SAVE ALL.
+      Edit all text across the website. Use <b>&lt;br&gt;</b> to force a new line. Changes update live in the background, remember to click SAVE ALL TEXT CONTENT.
     </div>
     <div class="dict-container">
       <div class="dict-sidebar" id="dictSidebar"></div>
-      <div class="dict-editor" id="dictEditorContainer"></div>
-    </div>
-    <button class="btn-primary" style="margin-top:20px; width: 100%;" onclick="saveDictionary()">SAVE ALL CONTENT</button>
-<div style="background:var(--navy-3); padding:20px; border-radius:4px; margin-top:30px; border:1px solid var(--border);">
-    <h3 style="margin-top:0; font-size:12px; margin-bottom:15px; border-bottom:1px solid var(--border-light); padding-bottom:10px; color:var(--white);">SIZE CHART IMAGES (AUTO UPLOAD)</h3>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
-        <div>
-            <div style="font-weight:bold; margin-bottom:10px; color:var(--text-muted); font-size:11px;">ENGLISH (EN)</div>
-            <div class="form-group"><label class="form-label">Men's Jacket</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_m_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_m_en', this)"><input type="hidden" id="set_sz_img_jacket_m_en"></div></div>
-            <div class="form-group"><label class="form-label">Men's Pants</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_m_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_m_en', this)"><input type="hidden" id="set_sz_img_pants_m_en"></div></div>
-            <div class="form-group"><label class="form-label">Women's Jacket</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_w_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_w_en', this)"><input type="hidden" id="set_sz_img_jacket_w_en"></div></div>
-            <div class="form-group"><label class="form-label">Women's Pants</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_w_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_w_en', this)"><input type="hidden" id="set_sz_img_pants_w_en"></div></div>
+      <div class="dict-editor">
+        
+        <div id="dictEditorContainer"></div>
+        
+        <div id="sizeChartAdminPanel" style="display:none;">
+            <h3 style="margin-top:0; font-size:12px; margin-bottom:15px; border-bottom:1px solid var(--border-light); padding-bottom:10px; color:var(--white);">SIZE CHART IMAGES (AUTO UPLOAD)</h3>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <div>
+                    <div style="font-weight:bold; margin-bottom:10px; color:var(--text-muted); font-size:11px;">ENGLISH (EN)</div>
+                    <div class="form-group"><label class="form-label">Men's Jacket</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_m_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_m_en', this)"><input type="hidden" id="set_sz_img_jacket_m_en"></div></div>
+                    <div class="form-group"><label class="form-label">Men's Pants</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_m_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_m_en', this)"><input type="hidden" id="set_sz_img_pants_m_en"></div></div>
+                    <div class="form-group"><label class="form-label">Women's Jacket</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_w_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_w_en', this)"><input type="hidden" id="set_sz_img_jacket_w_en"></div></div>
+                    <div class="form-group"><label class="form-label">Women's Pants</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_w_en" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_w_en', this)"><input type="hidden" id="set_sz_img_pants_w_en"></div></div>
+                </div>
+                <div>
+                    <div style="font-weight:bold; margin-bottom:10px; color:var(--text-muted); font-size:11px;">TIẾNG VIỆT (VI)</div>
+                    <div class="form-group"><label class="form-label">Khoác Nam</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_m_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_m_vi', this)"><input type="hidden" id="set_sz_img_jacket_m_vi"></div></div>
+                    <div class="form-group"><label class="form-label">Quần Nam</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_m_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_m_vi', this)"><input type="hidden" id="set_sz_img_pants_m_vi"></div></div>
+                    <div class="form-group"><label class="form-label">Khoác Nữ</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_w_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_w_vi', this)"><input type="hidden" id="set_sz_img_jacket_w_vi"></div></div>
+                    <div class="form-group"><label class="form-label">Quần Nữ</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_w_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_w_vi', this)"><input type="hidden" id="set_sz_img_pants_w_vi"></div></div>
+                </div>
+            </div>
+            <button id="btnSaveSizeCharts" class="cta-btn" style="margin-top:20px; width:100%; background:var(--white); color:var(--navy);" onclick="saveSizeChartImages()">SAVE SIZE IMAGES</button>
         </div>
-        <div>
-            <div style="font-weight:bold; margin-bottom:10px; color:var(--text-muted); font-size:11px;">TIẾNG VIỆT (VI)</div>
-            <div class="form-group"><label class="form-label">Khoác Nam</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_m_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_m_vi', this)"><input type="hidden" id="set_sz_img_jacket_m_vi"></div></div>
-            <div class="form-group"><label class="form-label">Quần Nam</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_m_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_m_vi', this)"><input type="hidden" id="set_sz_img_pants_m_vi"></div></div>
-            <div class="form-group"><label class="form-label">Khoác Nữ</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_jacket_w_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_jacket_w_vi', this)"><input type="hidden" id="set_sz_img_jacket_w_vi"></div></div>
-            <div class="form-group"><label class="form-label">Quần Nữ</label><div style="display:flex; gap:10px; align-items:center;"><img id="preview_sz_img_pants_w_vi" style="width:40px; height:40px; object-fit:cover; border:1px solid var(--border); display:none; border-radius:2px;"><input type="file" accept="image/*" style="font-size:11px; color:var(--text-dim);" onchange="uploadSizeChartImage('sz_img_pants_w_vi', this)"><input type="hidden" id="set_sz_img_pants_w_vi"></div></div>
+
+        <div id="smartFilterAdminPanel" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--border-light); padding-bottom:15px;">
+                <div>
+                    <h3 style="margin:0; font-size:12px; color:var(--white); text-transform:uppercase;">SMART FILTER BUILDER</h3>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">Visual interface. Changes will be auto-converted to text.</div>
+                </div>
+                <button class="cta-btn" style="padding:8px 16px; min-height:0; width:auto; background:var(--white); color:var(--navy);" onclick="addFbParent()">+ ADD CATEGORY</button>
+            </div>
+            <div id="visualFilterBuilder"></div>
+            <textarea id="sSmartFilter" style="display:none;"></textarea>
+            <button class="cta-btn" style="margin-top:20px; width:100%; background:var(--white); color:var(--navy);" onclick="saveSmartFiltersOnly()">SAVE SMART FILTERS</button>
         </div>
+
+        <div id="descTemplateAdminPanel" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--border-light); padding-bottom:15px;">
+                <div>
+                    <h3 style="margin:0; font-size:12px; color:var(--white); text-transform:uppercase;">DESCRIPTION TEMPLATES</h3>
+                    <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">Create reusable descriptions for your products.</div>
+                </div>
+                <button class="cta-btn" style="padding:8px 16px; min-height:0; width:auto; background:var(--white); color:var(--navy);" onclick="addDescTemplate()">+ ADD TEMPLATE</button>
+            </div>
+            <div id="descTemplateBuilder"></div>
+            <button class="cta-btn" style="margin-top:20px; width:100%; background:var(--white); color:var(--navy);" onclick="saveTemplatesOnly()">SAVE TEMPLATES</button>
+        </div>
+      </div>
     </div>
-    <button id="btnSaveSizeCharts" class="cta-btn" style="margin-top:20px; width:100%; background:var(--white); color:var(--navy);" onclick="saveSizeChartImages()">SAVE SIZE IMAGES</button>
-</div>
+    <button id="saveAllContentBtn" class="btn-primary" style="margin-top:20px; width: 100%;" onclick="saveDictionary()">SAVE ALL TEXT CONTENT</button>
   </div>
 
  <div class="tab-panel" id="tab-settings">
-    <div class="form-group" style="padding:20px; background:var(--navy-3); border:1px solid var(--border); border-radius:4px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <div>
-            <label class="form-label" style="color:var(--white); margin-bottom:4px;">SMART FILTER BUILDER</label>
-            <div style="font-size:11px; color:var(--text-muted);">Visual interface. Changes will be auto-converted to text.</div>
-        </div>
-        <button class="cta-btn" style="padding:8px 16px; min-height:0; width:auto; background:var(--white); color:var(--navy);" onclick="addFbParent()">+ ADD CATEGORY</button>
-      </div>
-      <div id="visualFilterBuilder"></div>
-      <textarea id="sSmartFilter" style="display:none;"></textarea>
-    </div>
-    <div class="form-group"><label class="form-label">Instagram Handle</label><input type="text" class="form-input" id="sIg"></div>
+        <div class="form-group"><label class="form-label">Instagram Handle</label><input type="text" class="form-input" id="sIg"></div>
     <div class="form-group"><label class="form-label">WhatsApp Number</label><input type="text" class="form-input" id="sWa"></div>
     <div class="form-group"><label class="form-label">Zalo 1 (Sales)</label><input type="text" class="form-input" id="sZalo1"></div>
     <div class="form-group"><label class="form-label">Zalo 2 (Tech)</label><input type="text" class="form-input" id="sZalo2"></div>
@@ -1881,10 +1904,18 @@ function setLang(lang, el) {
 function buildDictionaryEditor() {
   const sidebar = document.getElementById('dictSidebar'); const container = document.getElementById('dictEditorContainer');
   if (!sidebar || !container) return;
-  sidebar.innerHTML = dictGroups.map((g, i) => `<button class="dict-menu-btn ${i===0?'active':''}" onclick="openDictGroup('${g.id}', this)">${g.name}</button>`).join('');
+  
+  let sidebarHtml = dictGroups.map((g, i) => `<button type="button" class="dict-menu-btn ${i===0?'active':''}" onclick="openDictGroup('${g.id}', this)">${g.name}</button>`).join('');
+  
+  // Gắn thêm 3 Tab mới vào Sidebar
+  sidebarHtml += `<button type="button" class="dict-menu-btn" onclick="openDictGroup('smart_filters', this)" style="border-top:1px solid var(--border); color:var(--white);">SMART FILTERS</button>`;
+  sidebarHtml += `<button type="button" class="dict-menu-btn" onclick="openDictGroup('desc_templates', this)" style="border-bottom:1px solid var(--border); color:var(--white);">DESC TEMPLATES</button>`;
+  sidebarHtml += `<button type="button" class="dict-menu-btn" onclick="openDictGroup('size_charts', this)" style="color:var(--white);">SIZE CHARTS (IMG)</button>`;
+  sidebar.innerHTML = sidebarHtml;
+
   let editorHtml = '';
   dictGroups.forEach((g, i) => {
-    editorHtml += `<div id="dict-grp-${g.id}" style="${i===0?'block':'none'}">`;
+    editorHtml += `<div id="dict-grp-${g.id}" style="display:${i===0?'block':'none'}">`;
     g.keys.forEach(k => { editorHtml += `<div class="dict-item"><span class="dict-key-title">${dictKeys[k]}</span><div class="dict-grid"><div><label class="dict-label">English (EN)</label><textarea class="form-textarea dict-textarea" id="dict_en_${k}">${customEN[k]||''}</textarea></div><div><label class="dict-label">Tiếng Việt (VI)</label><textarea class="form-textarea dict-textarea" id="dict_vi_${k}">${customVI[k]||''}</textarea></div></div></div>`; });
     editorHtml += `</div>`;
   });
@@ -1893,9 +1924,30 @@ function buildDictionaryEditor() {
 
 function openDictGroup(id, btn) {
   document.querySelectorAll('.dict-menu-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
-  dictGroups.forEach(g => { document.getElementById('dict-grp-'+g.id).style.display = (g.id === id) ? 'block' : 'none'; });
+  
+  dictGroups.forEach(g => { 
+    const el = document.getElementById('dict-grp-'+g.id);
+    if(el) el.style.display = (g.id === id) ? 'block' : 'none'; 
+  });
+  
+  const szPanel = document.getElementById('sizeChartAdminPanel');
+  const sfPanel = document.getElementById('smartFilterAdminPanel');
+  const dtPanel = document.getElementById('descTemplateAdminPanel');
+  const dictEditor = document.getElementById('dictEditorContainer');
+  const saveContentBtn = document.getElementById('saveAllContentBtn');
+  
+  if (szPanel) szPanel.style.display = (id === 'size_charts') ? 'block' : 'none';
+  if (sfPanel) sfPanel.style.display = (id === 'smart_filters') ? 'block' : 'none';
+  if (dtPanel) dtPanel.style.display = (id === 'desc_templates') ? 'block' : 'none';
+  
+  if (id === 'size_charts' || id === 'smart_filters' || id === 'desc_templates') {
+      if (dictEditor) dictEditor.style.display = 'none';
+      if (saveContentBtn) saveContentBtn.style.display = 'none';
+  } else {
+      if (dictEditor) dictEditor.style.display = 'block';
+      if (saveContentBtn) saveContentBtn.style.display = 'block';
+  }
 }
-
 async function saveDictionary() {
   if (dbMode !== 'supabase') return alert("Supabase not connected");
   dictGroups.forEach(g => { g.keys.forEach(k => { customEN[k] = document.getElementById('dict_en_'+k).value; customVI[k] = document.getElementById('dict_vi_'+k).value; }); });
@@ -2030,6 +2082,7 @@ async function logoutAdmin() {
 }
 
 let fbData = []; // Dữ liệu của Visual Builder
+let descTemplates = []; // Dữ liệu của Description Templates
 
 async function loadSettingsFromCloud() {
   try {
@@ -2060,6 +2113,11 @@ async function loadSettingsFromCloud() {
     if (map['content_vi']) { try { customVI = { ...defaultVI, ...JSON.parse(map['content_vi']) }; } catch(e){} }
     if (map['size_charts']) { try { window.sizeChartSettings = JSON.parse(map['size_charts']); } catch(e){} }
     
+    // Nạp Description Templates
+    if (map['desc_templates']) { try { descTemplates = JSON.parse(map['desc_templates']); } catch(e){} }
+    renderDescTemplateUI();
+    updateTemplateDropdown();
+
     renderSizeCharts(); buildDictionaryEditor();
     setLang(currentLang, document.querySelector(`.lang-btn[onclick*="${currentLang}"]`));
   } catch(e) { console.error("Load Settings Error:", e); }
@@ -2074,6 +2132,7 @@ async function saveSettings() {
   
   const bulkData = keys.map(k => ({ key: k, value: settings[k] }));
   bulkData.push({ key: 'smart_filter', value: settings.smartFilter });
+  bulkData.push({ key: 'desc_templates', value: JSON.stringify(descTemplates) }); // Lưu Templates
 
   const btn = document.querySelector('#tab-settings .btn-primary');
   const origText = btn.textContent; btn.textContent = "SAVING ALL..."; btn.disabled = true;
@@ -2118,6 +2177,69 @@ function syncFb() {
     document.getElementById('sSmartFilter').value = out.trim();
 }
 function addFbParent() { fbData.push({ parent: '', children: [] }); renderFbUI(); }
+window.saveSmartFiltersOnly = async function() {
+    const btn = document.querySelector('#smartFilterAdminPanel .cta-btn:last-child');
+    const origText = btn.textContent; btn.textContent = "SAVING..."; btn.disabled = true;
+    try {
+        const sf = document.getElementById('sSmartFilter').value;
+        settings.smartFilter = sf;
+        localStorage.setItem('aw_settings', JSON.stringify(settings));
+        await saveToCloud('smart_filter', sf);
+        renderSmartFilterUI();
+        showToast("FILTERS SAVED ✓");
+    } catch(e) { alert("Error: " + e.message); }
+    finally { btn.textContent = origText; btn.disabled = false; }
+};
+
+window.saveTemplatesOnly = async function() {
+    const btn = document.querySelector('#descTemplateAdminPanel .cta-btn:last-child');
+    const origText = btn.textContent; btn.textContent = "SAVING..."; btn.disabled = true;
+    try {
+        await saveToCloud('desc_templates', JSON.stringify(descTemplates));
+        showToast("TEMPLATES SAVED ✓");
+    } catch(e) { alert("Error: " + e.message); }
+    finally { btn.textContent = origText; btn.disabled = false; }
+};
+// ════ DESCRIPTION TEMPLATES LOGIC ════
+function renderDescTemplateUI() {
+    const container = document.getElementById('descTemplateBuilder');
+    if (!container) return;
+    if (descTemplates.length === 0) { container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">No templates yet. Click + ADD TEMPLATE.</div>'; return; }
+    container.innerHTML = descTemplates.map((t, idx) => `
+        <div style="background:var(--navy); border:1px solid var(--border); border-radius:4px; margin-bottom:12px; padding:15px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <input type="text" value="${t.name || ''}" placeholder="Template Name (e.g. Beta AR Jacket)" style="background:transparent; border:none; border-bottom:1px solid var(--border-light); color:var(--white); font-weight:700; font-size:13px; outline:none; width:70%; padding:5px 0;" oninput="descTemplates[${idx}].name=this.value; updateTemplateDropdown();">
+                <button style="background:none; border:none; color:var(--red); cursor:pointer; font-size:12px; font-weight:700; letter-spacing:0.1em;" onclick="removeDescTemplate(${idx})">✕ DELETE</button>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                <div>
+                    <div style="font-size:10px; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase;">Description (EN)</div>
+                    <textarea style="width:100%; background:var(--navy-2); border:1px solid var(--border); padding:10px; color:var(--text); font-size:12px; min-height:80px; resize:vertical; outline:none;" placeholder="English description..." oninput="descTemplates[${idx}].en=this.value;">${t.en || ''}</textarea>
+                </div>
+                <div>
+                    <div style="font-size:10px; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase;">Description (VI)</div>
+                    <textarea style="width:100%; background:var(--navy-2); border:1px solid var(--border); padding:10px; color:var(--text); font-size:12px; min-height:80px; resize:vertical; outline:none;" placeholder="Mô tả tiếng Việt..." oninput="descTemplates[${idx}].vi=this.value;">${t.vi || ''}</textarea>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+function addDescTemplate() { descTemplates.push({ name: '', en: '', vi: '' }); renderDescTemplateUI(); updateTemplateDropdown(); }
+function removeDescTemplate(idx) { descTemplates.splice(idx, 1); renderDescTemplateUI(); updateTemplateDropdown(); }
+function updateTemplateDropdown() {
+    const sel = document.getElementById('pTemplateSelect');
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- Select to auto-fill --</option>' + descTemplates.map((t, idx) => `<option value="${idx}">${t.name || 'Unnamed Template'}</option>`).join('');
+}
+function applyDescTemplate(idx) {
+    if (idx === "") return;
+    const t = descTemplates[idx];
+    if (t) {
+        document.getElementById('pDescEN').value = t.en || '';
+        document.getElementById('pDescVI').value = t.vi || '';
+    }
+    document.getElementById('pTemplateSelect').value = ""; // Tự reset nút bấm sau khi điền
+}
 
 function toggleTheme() {
   const root = document.documentElement;
