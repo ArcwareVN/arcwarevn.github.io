@@ -1192,8 +1192,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
       <button class="filter-tab active" onclick="filterProducts('all',this)" data-i18n="fAll">ALL</button>
       <button class="filter-tab" onclick="filterProducts('Shell Jacket',this)" data-i18n="fShell">SHELL JACKET</button>
       <button class="filter-tab" onclick="filterProducts('Insulated Layer',this)" data-i18n="fInsul">INSULATED LAYER</button>
+      <button class="filter-tab" onclick="filterProducts('Pants',this)">PANTS</button>
       <button class="filter-tab" onclick="filterProducts('Footwear',this)" data-i18n="fFoot">FOOTWEAR</button>
       <button class="filter-tab" onclick="filterProducts('Backpack',this)" data-i18n="fPack">BACKPACK</button>
+      <button class="filter-tab" onclick="filterProducts('Beanies',this)">BEANIES</button>
       <button class="filter-tab" onclick="filterProducts('Others',this)" data-i18n="fOth">OTHERS</button>
     </div>
   </div>
@@ -1560,7 +1562,13 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         <div class="form-group">
           <label class="form-label">Category</label>
           <select class="form-select" id="pCat">
-            <option value="Shell Jacket">Shell Jacket</option><option value="Insulated Layer">Insulated Layer</option><option value="Footwear">Footwear</option><option value="Backpack">Backpack</option><option value="Others">Others</option>
+            <option value="Shell Jacket">Shell Jacket</option>
+            <option value="Insulated Layer">Insulated Layer</option>
+            <option value="Pants">Pants</option>
+            <option value="Footwear">Footwear</option>
+            <option value="Backpack">Backpack</option>
+            <option value="Beanies">Beanies</option>
+            <option value="Others">Others</option>
           </select>
         </div>
         <div class="form-group">
@@ -1614,7 +1622,9 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
       <div class="form-group">
         <label class="form-label">Badge (Optional)</label>
-        <input type="text" class="form-input" id="pBadge" placeholder="e.g. RARE / HOT / NEW" style="margin-bottom:10px;">
+        <input type="text" class="form-input" id="pBadge" placeholder="Manual Badge (e.g. RARE)" style="margin-bottom:15px;">
+<div id="adminSmartFilterContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:15px; background:var(--navy-3); border:1px solid var(--border); margin-bottom:20px;">
+  </div>
       </div>
 <div class="form-group">
         <label class="form-label" style="color:var(--white);">Use Template (Optional)</label>
@@ -1668,8 +1678,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
           <option value="all">ALL CATEGORIES</option>
           <option value="Shell Jacket">SHELL JACKET</option>
           <option value="Insulated Layer">INSULATED LAYER</option>
+          <option value="Pants">PANTS</option>
           <option value="Footwear">FOOTWEAR</option>
           <option value="Backpack">BACKPACK</option>
+          <option value="Beanies">BEANIES</option>
           <option value="Others">OTHERS</option>
         </select>
       </div>
@@ -1886,8 +1898,22 @@ let uploadedImagesArray = [];
 let uploadedHowItWearsArray = [];
 let adminInterval;
 let orderModified = false; // Tracks whether admin has reordered products without saving
+
+const catWeights = { 
+  'Shell Jacket': 1, 
+  'Insulated Layer': 2, 
+  'Pants': 3, 
+  'Backpack': 4, 
+  'Footwear': 5, 
+  'Beanies': 6, 
+  'Others': 7 
+};
 // --- BỘ NÃO DỊCH THUẬT & ADMIN CONTENT ---
-const _t = (key) => (currentLang === 'vi' ? customVI[key] : customEN[key]) || key;
+const _t = (key) => {
+  let val = currentLang === 'vi' ? customVI[key] : customEN[key];
+  if (val !== undefined) return val; // Tôn trọng tuyệt đối dữ liệu của Admin, kể cả khi nó là khoảng trắng ('')
+  return (currentLang === 'vi' ? defaultVI[key] : defaultEN[key]) || key;
+};
 
 function setLang(lang, el) {
   currentLang = lang; localStorage.setItem('aw_lang', lang);
@@ -2030,6 +2056,7 @@ async function initApp() {
     } catch (e) { dbMode = 'local'; console.error("Lỗi kết nối Supabase:", e); }
   } else { dbMode = 'local'; }
   await refreshProducts();
+initAutoCat();
 }
 
 function openPass() { 
@@ -2259,12 +2286,12 @@ async function refreshProducts() {
       if (error) throw error;
       
       let fetchedProducts = data || [];
-      const catOrder = { 'Shell Jacket': 1, 'Insulated Layer': 2, 'Footwear': 3, 'Backpack': 4, 'Others': 5 };
+      // Sắp xếp theo trọng số phân tầng ngay khi lấy dữ liệu về
       fetchedProducts.sort((a, b) => {
-        const weightA = catOrder[a.category] || 99;
-        const weightB = catOrder[b.category] || 99;
+        const weightA = catWeights[a.category] || 99;
+        const weightB = catWeights[b.category] || 99;
         if (weightA !== weightB) return weightA - weightB;
-        return 0; 
+        return (a.sort_order || 0) - (b.sort_order || 0); 
       });
       
       products = fetchedProducts;
@@ -2432,7 +2459,11 @@ async function saveProduct() {
     name: name, category: document.getElementById('pCat').value, condition: document.getElementById('pCond').value,
     price: document.getElementById('pPriceFinal').value.trim() || document.getElementById('pPriceVND').value.trim(),
     price_type: document.getElementById('pPriceType').value,
-    sizes: document.getElementById('pSizes').value.trim(), badge: document.getElementById('pBadge').value.trim(), 
+    sizes: document.getElementById('pSizes').value.trim(), badge: (function() {
+      let bParts = [document.getElementById('pBadge').value.trim()];
+      document.querySelectorAll('.admin-sf-check:checked').forEach(cb => bParts.push(cb.value));
+      return bParts.filter(b => b !== "").join(', ');
+    })(),
     description_en: document.getElementById('pDescEN').value.trim(), description_vi: document.getElementById('pDescVI').value.trim(),
     gallery: JSON.stringify(uploadedImagesArray), image: uploadedImagesArray[0] || '',
     how_it_wears: JSON.stringify(uploadedHowItWearsArray), video_link: document.getElementById('pVideoLink').value.trim() 
@@ -2462,13 +2493,18 @@ async function deleteProduct(id) {
   } catch(e) { alert("ERROR: " + e.message); }
 }
 
-function filterProducts(cat, el) { 
-  currentFilter = cat; 
-  currentPage = 1; 
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active')); 
-  el.classList.add('active'); 
-  renderProducts(); 
-}
+window.filterProducts = function(cat, el) {
+  currentFilter = cat;
+  currentPage = 1;
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+
+  // BẢN VÁ UX: Tự động xóa Smart Filter khi chuyển danh mục trên Thanh Ngang
+  selectedSmartFilters = [];
+  document.querySelectorAll('.sf-checkbox').forEach(cb => cb.checked = false);
+
+  renderProducts();
+};
 
 let currentLbGallery = [];
 let currentLbIndex = 0;
@@ -3010,56 +3046,73 @@ function searchAdminProducts(query) {
 function renderAdminList() {
   const list = document.getElementById('adminList');
   const saveBtn = document.getElementById('saveOrderBtn');
-  const countEl = document.getElementById('adminProductCount');
-  
   if (saveBtn) saveBtn.style.display = orderModified ? 'block' : 'none';
 
-  let displayProducts = products;
-  
-  if (adminCurrentFilter !== 'all') {
-      displayProducts = displayProducts.filter(p => p.category === adminCurrentFilter);
-  }
-  
-  if (adminSearchQuery) {
-      displayProducts = displayProducts.filter(p => p.name.toLowerCase().includes(adminSearchQuery));
+  if (!products.length) {
+    list.innerHTML = `<div style="padding:20px; text-align:center; font-size:12px; color:var(--text-muted);">EMPTY COLLECTION</div>`;
+    return;
   }
 
-  if (countEl) countEl.textContent = `TOTAL: ${displayProducts.length}`;
-  if(!displayProducts.length) { 
-      list.innerHTML = `<div style="padding:20px; text-align:center; font-size:12px; color:var(--text-muted); letter-spacing:0.1em;">EMPTY COLLECTION</div>`; 
-      return; 
-  }
-  
-  list.innerHTML = displayProducts.map((p, displayIdx) => {
-    const globalIdx = products.findIndex(x => x.id === p.id);
-    const disableUp = (displayIdx === 0);
-    const disableDown = (displayIdx === displayProducts.length - 1);
+  // Sắp xếp dữ liệu gốc theo trọng số trước khi chia khối
+  const sortedAdmin = [...products].sort((a, b) => (catWeights[a.category] || 99) - (catWeights[b.category] || 99) || (a.sort_order || 0) - (b.sort_order || 0));
 
-    return `
-    <div class="admin-item" data-id="${p.id}">
-      <img class="admin-thumb" src="${p.image||''}" onerror="this.style.display='none'">
-      <div style="flex:1; min-width:0;">
-        <div style="font-weight:600; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-        <div style="font-size:11px; color:var(--text-muted); margin-top:3px; text-transform:uppercase;">${p.category || 'N/A'} • ${p.price||''}</div>
-      </div>
-      <div class="admin-sort-col">
-        <button class="btn-sort" title="Move Up" onclick="moveProduct(${globalIdx}, -1)" ${disableUp ? 'disabled' : ''}>▲</button>
-        <button class="btn-sort" title="Move Down" onclick="moveProduct(${globalIdx}, 1)" ${disableDown ? 'disabled' : ''}>▼</button>
-      </div>
-      <div class="admin-item-actions">
-        <button class="btn-edit" onclick="openEditProduct('${p.id}')">EDIT</button>
-        <button class="btn-del" onclick="deleteProduct('${p.id}')">DEL</button>
-      </div>
-    </div>`;
-  }).join('');
+  let html = '';
+  const categories = Object.keys(catWeights);
+
+  categories.forEach(cat => {
+    let catProducts = sortedAdmin.filter(p => p.category === cat);
+    
+    // Logic Search Admin: Nếu đang search thì lọc tiếp trong nhóm này
+    if (adminSearchQuery) {
+      catProducts = catProducts.filter(p => p.name.toLowerCase().includes(adminSearchQuery));
+    }
+    if (adminCurrentFilter !== 'all' && adminCurrentFilter !== cat) {
+      catProducts = [];
+    }
+
+    if (catProducts.length > 0) {
+      html += `<div style="background:var(--navy-2); padding:10px 15px; font-size:11px; font-weight:800; color:var(--text-muted); border-bottom:1px solid var(--border); letter-spacing:0.1em; margin-top:20px;">${cat.toUpperCase()}</div>`;
+      
+      catProducts.forEach((p, idx) => {
+        const globalIdx = products.findIndex(x => x.id === p.id);
+        // CHỐNG VƯỢT RÀO: Khóa nút nếu ở đầu/cuối nhóm hoặc đang Search
+        const disableUp = (idx === 0) || adminSearchQuery !== '';
+        const disableDown = (idx === catProducts.length - 1) || adminSearchQuery !== '';
+
+        html += `
+        <div class="admin-item" data-id="${p.id}">
+          <img class="admin-thumb" src="${p.image||''}">
+          <div style="flex:1; min-width:0;">
+            <div style="font-weight:600; color:var(--white);">${p.name}</div>
+            <div style="font-size:11px; color:var(--text-muted);">${p.price||''}</div>
+          </div>
+          <div class="admin-sort-col">
+            <button class="btn-sort" onclick="moveProduct(${globalIdx}, -1)" ${disableUp ? 'disabled style="opacity:0.1"' : ''}>▲</button>
+            <button class="btn-sort" onclick="moveProduct(${globalIdx}, 1)" ${disableDown ? 'disabled style="opacity:0.1"' : ''}>▼</button>
+          </div>
+          <div class="admin-item-actions">
+            <button class="btn-edit" onclick="openEditProduct('${p.id}')">EDIT</button>
+            <button class="btn-del" onclick="deleteProduct('${p.id}')">DEL</button>
+          </div>
+        </div>`;
+      });
+    }
+  });
+  list.innerHTML = html;
 }
 
 function moveProduct(idx, direction) {
   const newIdx = idx + direction;
   if (newIdx < 0 || newIdx >= products.length) return;
+  
+  // 1. Đổi chỗ 2 sản phẩm trong mảng
   const temp = products[idx];
   products[idx] = products[newIdx];
   products[newIdx] = temp;
+  
+  // 2. BẢN VÁ: Ép máy tính ghi nhớ và cập nhật lại điểm thứ tự mới ngay lập tức
+  products.forEach((p, i) => { p.sort_order = i * 10; });
+  
   orderModified = true;
   renderAdminList();
   renderProducts(); 
@@ -3096,7 +3149,9 @@ function openAddProduct() {
   uploadedHowItWearsArray = []; document.getElementById('howItWearsPreviewGrid').innerHTML=''; 
   document.getElementById('productModalTitle').textContent = "ADD PRODUCT"; 
   ['pName','pPriceVND','pPriceFinal','pBadge','pDescEN','pDescVI','pSizes','pVideoLink'].forEach(id => document.getElementById(id).value = ''); 
-  document.getElementById('pPriceType').value = 'diff'; openOverlay('productOverlay'); 
+  document.getElementById('pPriceType').value = 'diff'; 
+renderAdminSmartFilters(""); // Dán dòng này vào đây
+openOverlay('productOverlay'); 
 }
 
 function openEditProduct(id) { 
@@ -3119,7 +3174,7 @@ function openEditProduct(id) {
 
   try { uploadedHowItWearsArray = JSON.parse(p.how_it_wears || '[]'); } catch(e) { uploadedHowItWearsArray = []; }
   renderGalleryManager('howItWearsPreviewGrid', uploadedHowItWearsArray);
-  
+  renderAdminSmartFilters(p.badge || "");
   openOverlay('productOverlay');
 }
 
@@ -3298,6 +3353,13 @@ window.toggleSmartFilter = function(filterKey) {
   document.querySelectorAll('.sf-checkbox').forEach(cb => {
       if (cb.getAttribute('data-key') === filterKey) cb.checked = (idx === -1);
   });
+
+  // BẢN VÁ UX: Tự động nhả Thanh Ngang về "ALL" để nhường sân khấu cho Smart Filter
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  const allTab = document.querySelector('.filter-tab[onclick*="all"]');
+  if (allTab) allTab.classList.add('active');
+
   currentPage = 1; renderProducts();
 };
 
@@ -3385,117 +3447,112 @@ function renderProducts() {
   
   let filtered = currentFilter === 'all' ? [...products] : products.filter(p => p.category === currentFilter);
 
-  // --- THUẬT TOÁN XẾP GIÁ ---
-  if (typeof currentSort !== 'undefined' && currentSort !== 'default') {
-      filtered.sort((a, b) => {
-          const getPrice = (str) => {
-              if (!str) return -1;
-              const match = str.replace(/[.,]/g, '').match(/\d+/);
-              return match ? parseInt(match[0]) : -1;
-          };
-          const pA = getPrice(a.price);
-          const pB = getPrice(b.price);
-          
-          // Luôn ép hàng "Contact for price" (-1) rớt xuống dưới cùng của danh sách
+  // --- LOGIC SẮP XẾP TỔNG HỢP ---
+  filtered.sort((a, b) => {
+      // 1. Nếu khách có chọn Sort Giá -> Ưu tiên Giá tuyệt đối
+      if (typeof currentSort !== 'undefined' && currentSort !== 'default') {
+          const getP = (s) => { if(!s) return -1; const m = s.replace(/[.,]/g, '').match(/\d+/); return m ? parseInt(m[0]) : -1; };
+          const pA = getP(a.price), pB = getP(b.price);
           if (pA === -1 && pB === -1) return 0;
-          if (pA === -1) return 1;
-          if (pB === -1) return -1;
-          
+          if (pA === -1) return 1; if (pB === -1) return -1;
           return currentSort === 'price_asc' ? pA - pB : pB - pA;
-      });
-  }
+      }
+      // 2. Mặc định: Theo phân tầng và sort_order
+      const wA = catWeights[a.category] || 99;
+      const wB = catWeights[b.category] || 99;
+      if (wA !== wB) return wA - wB;
+      return (a.sort_order || 0) - (b.sort_order || 0);
+  });
   
- if (selectedSmartFilters.length > 0) {
+// --- LOGIC LỌC THÔNG MINH (FACETED) - BẢN HOÀN THIỆN V3 (2-TIER ENGINE) ---
+  if (selectedSmartFilters.length > 0) {
     let filterGroups = {};
-
+    
+    // Thu thập nhóm Cha
+    selectedSmartFilters.forEach(key => {
+        let pName = key.includes('|') ? key.split('|')[0].toLowerCase().trim() : key.toLowerCase().trim();
+        if (!filterGroups[pName]) filterGroups[pName] = [];
+    });
+    
+    // Thu thập thẻ Con (nếu có)
     selectedSmartFilters.forEach(key => {
         if (key.includes('|')) {
             let parts = key.split('|');
-            let p = parts[0].toLowerCase().trim();
-            let c = parts[1].toLowerCase().trim();
-            if (!filterGroups[p]) filterGroups[p] = [];
-            filterGroups[p].push(c);
-        } else {
-            let p = key.toLowerCase().trim();
-            if (!filterGroups[p]) filterGroups[p] = [];
+            filterGroups[parts[0].toLowerCase().trim()].push(parts[1].toLowerCase().trim());
         }
     });
 
-    // BỘ TỪ ĐIỂN AI: Dạy máy tính phân biệt "Loại đồ" và "Tính năng"
-    const baseTypes = ['jacket', 'pant', 'short', 'backpack', 'bag', 'footwear', 'shoe', 'boot', 'layer', 'hoodie', 'shirt', 'tee', 'fleece', 'vest', 'beanie', 'cap', 'hat', 'glove'];
-    const abstractWords = ['màu', 'color', 'size', 'loại', 'type', 'dòng', 'collection', 'tính năng', 'khác', 'others'];
+    // Từ điển nhận diện Đâu là "Nhóm Loại đồ", đâu là "Nhóm Tính năng"
+    const catKeywords = ['jacket', 'pant', 'short', 'backpack', 'bag', 'footwear', 'shoe', 'boot', 'layer', 'hoodie', 'shirt', 'tee', 'fleece', 'vest', 'beanie', 'cap', 'hat', 'glove', 'others', 'khác', 'áo', 'quần', 'balo', 'giày', 'mũ', 'nón', 'insulated', 'shell', 'top', 'bottom'];
+
+    let catGroups = {};
+    let attrGroups = {};
+
+    for (let pName in filterGroups) {
+        let sTerm = pName.endsWith('s') ? pName.slice(0, -1) : pName;
+        if (catKeywords.some(k => pName.includes(k) || sTerm.includes(k))) {
+            catGroups[pName] = filterGroups[pName];
+        } else {
+            attrGroups[pName] = filterGroups[pName];
+        }
+    }
 
     filtered = filtered.filter(p => {
-        const searchStr = ((p.name||"") + " " + (p.category||"") + " " + (p.badge||"")).toLowerCase();
-        const pNameOnly = (p.name||"").toLowerCase();
-        
-        let selectedBases = {}; // Chứa các Bố là "Loại đồ" (OR)
-        let selectedMods = {};  // Chứa các Bố là "Tính năng" (AND)
+        // MÁY QUÉT 2 LỚP VÔ ĐỊCH:
+        // Lớp 1: Ranh giới Tuyệt đối (Chỉ quét Category để chống nhảy sai loại)
+        const explicitCategory = (p.category || "").toLowerCase();
+        // Lớp 2: Quét Bao dung (Quét cả Tên để sửa sai nếu Admin quên gắn thẻ Badge)
+        const fullSearchStr = ((p.name || "") + " " + (p.category || "") + " " + (p.badge || "")).toLowerCase();
 
-        for (let pName in filterGroups) {
-            if (baseTypes.some(bt => pName.includes(bt))) selectedBases[pName] = filterGroups[pName];
-            else selectedMods[pName] = filterGroups[pName];
-        }
+        const checkCatMatch = (term) => {
+            let sTerm = term.endsWith('s') ? term.slice(0, -1) : term;
+            return explicitCategory.includes(term) || explicitCategory.includes(sTerm);
+        };
 
-        // --- BƯỚC 1: QUÉT LOẠI ĐỒ (BASE TYPES) ---
-        let passedBaseName = null; // Trí nhớ: Sp này đã pass qua cổng Bố nào?
-        let hasBaseFilter = Object.keys(selectedBases).length > 0;
+        const checkFullMatch = (term) => {
+            let sTerm = term.endsWith('s') ? term.slice(0, -1) : term;
+            return fullSearchStr.includes(term) || fullSearchStr.includes(sTerm);
+        };
 
-        if (hasBaseFilter) {
-            let passBase = false;
-            for (let bp in selectedBases) {
-                let bpSingular = bp.endsWith('s') ? bp.slice(0, -1) : bp;
-                if (searchStr.includes(bp) || searchStr.includes(bpSingular)) {
-                    // Anti-collision: Quét xem có bị khai man Quần thành Áo không
-                    let collision = false;
-                    if (bp.includes('jacket') && (pNameOnly.includes('pant') || pNameOnly.includes('short'))) collision = true;
-                    if (bp.includes('pant') && pNameOnly.includes('jacket')) collision = true;
-                    
-                    if (!collision) {
-                        passedBaseName = bp; // Ghi nhớ nó là Jacket hay Pants
-                        passBase = true;
-                        break; // Trúng 1 loại là đủ qua ải (OR)
+        // 1. DUYỆT CÁC NHÓM LOẠI ĐỒ (Phép SUM / CỘNG)
+        let passCat = true;
+        if (Object.keys(catGroups).length > 0) {
+            passCat = false; 
+            for (let pName in catGroups) {
+                let children = catGroups[pName];
+                
+                // Lưới lọc 1: Sản phẩm phải thực sự thuộc Nhóm Category này
+                if (checkCatMatch(pName)) {
+                    if (children.length === 0) {
+                        passCat = true; // Chọn Cha mà ko chọn Con -> Lấy TẤT CẢ của nhóm Cha
+                        break;
+                    } else {
+                        // Lưới lọc 2: Phải chứa các thẻ Con tương ứng (Quét được cả Tên)
+                        if (children.some(c => checkFullMatch(c))) {
+                            passCat = true;
+                            break;
+                        }
                     }
                 }
             }
-            if (!passBase) return false; // Không giống Loại đồ nào khách tick -> Cút
         }
 
-        // --- BƯỚC 2: QUÉT THẺ CON CỦA LOẠI ĐỒ ĐÓ (CHỐNG LÂY NHIỄM CHÉO) ---
-        // Cực kỳ thông minh: Mày là Pants thì tao chỉ soi xem thẻ Pants có chọn con không, bỏ qua thẻ Jacket!
-        if (passedBaseName && selectedBases[passedBaseName].length > 0) {
-            let children = selectedBases[passedBaseName];
-            let matchAnyChild = children.some(c => {
-                let cSingular = c.endsWith('s') ? c.slice(0, -1) : c;
-                return searchStr.includes(c) || searchStr.includes(cSingular);
-            });
-            if (!matchAnyChild) return false;
-        }
-
-        // --- BƯỚC 3: QUÉT TÍNH NĂNG BỔ SUNG (MODIFIERS - PHÉP AND) ---
-        // VD: Chọn Đen + GoreTex -> Bắt buộc phải có cả 2
-        for (let mp in selectedMods) {
-            let children = selectedMods[mp];
-            let mpSingular = mp.endsWith('s') ? mp.slice(0, -1) : mp;
-            let isAbstract = abstractWords.some(ab => mp.includes(ab));
-
-            // Nếu Bố không trừu tượng (như chữ Gore-Tex), thì tên SP phải có chữ đó
-            if (!isAbstract && !searchStr.includes(mp) && !searchStr.includes(mpSingular)) return false;
-
-            // Kiểm tra Con của Tính năng
-            if (children.length > 0) {
-                let matchAnyChild = children.some(c => {
-                    let cSingular = c.endsWith('s') ? c.slice(0, -1) : c;
-                    return searchStr.includes(c) || searchStr.includes(cSingular);
-                });
-                if (!matchAnyChild) return false;
+        // 2. DUYỆT CÁC NHÓM TÍNH NĂNG (Phép AND - Bắt buộc phải thỏa mãn)
+        let passAttr = true;
+        if (Object.keys(attrGroups).length > 0) {
+            for (let pName in attrGroups) {
+                let children = attrGroups[pName];
+                if (children.length === 0) {
+                    if (!checkFullMatch(pName)) { passAttr = false; break; }
+                } else {
+                    if (!children.some(c => checkFullMatch(c))) { passAttr = false; break; }
+                }
             }
         }
 
-        return true;
+        return passCat && passAttr;
     });
   }
-
   if (!filtered.length) { 
     grid.innerHTML = `<div style="grid-column:1/-1; padding:60px; text-align:center; font-size:12px; letter-spacing:0.1em; color:var(--text-muted);">${_t('emptyCol')}</div>`; 
     if(document.getElementById('paginationWrap')) document.getElementById('paginationWrap').innerHTML = '';
@@ -3505,7 +3562,6 @@ function renderProducts() {
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   if (currentPage > totalPages) currentPage = totalPages;
   if (currentPage < 1) currentPage = 1;
-  
   const currentProducts = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   grid.innerHTML = currentProducts.map(p => `
@@ -3518,10 +3574,8 @@ function renderProducts() {
         <div class="card-fee">${_t('feeNt')}</div>
       </div>
     </div>`).join('');
-    
   renderPagination(totalPages);
 }
-
 // HÀM VẼ THANH CHUYỂN TRANG
 function renderPagination(totalPages) {
   let pagWrap = document.getElementById('paginationWrap');
@@ -3555,6 +3609,36 @@ window.changePage = function(p) {
     window.scrollTo({top: y, behavior: 'smooth'});
   }
 };
+function renderAdminSmartFilters(currentBadge = "") {
+  const container = document.getElementById('adminSmartFilterContainer');
+  if (!container) return;
+  const text = settings.smartFilter || '';
+  const badges = currentBadge.split(',').map(b => b.trim().toLowerCase());
+  let html = '';
+  text.split('\n').forEach(line => {
+    if (line.trim().startsWith('-')) {
+      const val = line.replace('-', '').trim();
+      const isChecked = badges.includes(val.toLowerCase()) ? 'checked' : '';
+      html += `<label style="display:flex; align-items:center; gap:8px; font-size:11px; color:var(--text-dim); cursor:pointer;"><input type="checkbox" class="admin-sf-check" value="${val}" ${isChecked}> ${val}</label>`;
+    }
+  });
+  container.innerHTML = html || '<div style="font-size:10px; color:var(--text-muted);">No Smart Filters defined.</div>';
+}
+
+// Hàm tự động chọn Category khi ông gõ tên
+function initAutoCat() {
+  const pNameInput = document.getElementById('pName');
+  if (!pNameInput) return;
+  pNameInput.addEventListener('input', function(e) {
+    const val = e.target.value.toLowerCase();
+    const catSelect = document.getElementById('pCat');
+    if (val.includes('jacket')) catSelect.value = 'Shell Jacket';
+    else if (val.includes('pant') || val.includes('short')) catSelect.value = 'Pants';
+    else if (val.includes('backpack') || val.includes('bag')) catSelect.value = 'Backpack';
+    else if (val.includes('shoe') || val.includes('boot') || val.includes('footwear')) catSelect.value = 'Footwear';
+    else if (val.includes('beanie') || val.includes('cap')) catSelect.value = 'Beanies';
+  });
+}
 </script>
 </body>
 </html>
