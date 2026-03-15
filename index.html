@@ -95,6 +95,10 @@ img { max-width: 100%; height: auto; }
   --logo-color: #ffffff;   /* Logo trắng trên nền đen */
   --btn-text: #000000;     /* Chữ màu đen trên nút bấm màu trắng */
 }
+svg.icon-moon { display: none !important; }
+html[data-theme="dark"] svg.icon-moon { display: block !important; }
+html[data-theme="dark"] svg.icon-sun { display: none !important; }
+
 body, header, .modal, .admin-panel, .product-card { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--navy);color:var(--text);font-family:var(--font-main);font-weight:400;overflow-x:hidden; -webkit-font-smoothing: antialiased;}
@@ -159,8 +163,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 
 /* ════ PRODUCTS ════ */
 #products { padding: 0 0 80px 0; }
-.section-header { padding: 80px 48px 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-.section-title { font-size: 20px; font-weight: 700; color: var(--white); text-transform: uppercase; letter-spacing: 0.1em; padding-bottom: 20px; }
+.section-header { padding: 60px 4vw 30px; border-bottom: 1px solid var(--border); margin-bottom: 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+.section-title { font-size: 16px; font-weight: 800; color: var(--white); text-transform: uppercase; letter-spacing: 0.15em; padding-bottom: 0; margin: 0; }
 .filter-tabs { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
 .filter-tab { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px 24px; border: 1px solid var(--border); border-radius: 40px; background: var(--navy-2); color: var(--text-muted); cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
 .filter-tab:hover { border-color: var(--text-dim); color: var(--white); transform: translateY(-2px); }
@@ -1057,6 +1061,93 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   .mobile-filter-bar { display: block !important; }
   #filterOverlay.open .modal { transform: translateX(0) !important; }
 }
+/* ====================================================
+       THE TRUE VEILANCE ENGINE (Cấu trúc & Lớp sơn)
+       ==================================================== */
+    body, html {
+      font-family: var(--font-main) !important; /* Đã gỡ bỏ ép font Helvetica, trả về font Inter hỗ trợ tiếng Việt */
+      -webkit-font-smoothing: antialiased !important;
+    }
+    * { border-radius: 0 !important; box-shadow: none !important; }
+
+    /* Mở toang không gian PC - Không có bất kỳ ranh giới nào */
+    .shop-layout {
+      display: flex !important;
+      max-width: 100% !important;
+      padding: 0 4vw !important;
+      margin-top: 0 !important;
+      gap: 40px !important;
+      align-items: flex-start !important;
+    }
+    .products-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+      column-gap: 2vw !important; /* Cột gần nhau */
+      row-gap: 80px !important;   /* Hàng cách xa nhau */
+      border: none !important;
+    }
+
+    /* THE VEILANCE CARD: Đóng viền siêu mỏng chuẩn Tech-wear */
+    .vl-card {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      background: transparent !important;
+      border: 1px solid var(--border) !important; /* Đóng khung xám mờ */
+      padding: 1px; /* Cách ảnh ra khỏi viền 1 chút xíu */
+    }
+    /* Khung ảnh tràn viền */
+    .vl-img-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      overflow: hidden;
+      background: var(--navy-2);
+      margin-bottom: 15px;
+    }
+    .vl-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(15%) contrast(1.1);
+      transition: filter 0.8s ease, transform 0.8s ease;
+    }
+    .vl-card:hover .vl-img-wrap img {
+      filter: grayscale(0%) contrast(1);
+      transform: scale(1.04);
+    }
+    /* Thông tin thẻ */
+    .vl-info { padding: 0 15px 20px 15px; flex: 1; display: flex; flex-direction: column; }
+    
+    .vl-cat {
+      font-size: 10px; color: var(--text-dim); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 8px;
+    }
+    .vl-name {
+      font-size: 14px; font-weight: 300; color: var(--text);
+      text-transform: uppercase; letter-spacing: 0.15em; line-height: 1.4;
+    }
+    /* Terminal Price Label */
+    .vl-price {
+      font-size: 13px !important;
+      font-family: 'Courier New', Courier, monospace !important;
+      color: var(--text) !important;
+      background: var(--navy-2) !important;
+      border: 1px solid var(--border-light) !important;
+      padding: 6px 12px !important;
+      margin-top: auto !important; /* Đẩy giá xuống đáy */
+      align-self: center !important; /* Căn giữa khung sản phẩm */
+      font-weight: 600 !important;
+      letter-spacing: 0.05em !important;
+    }
+    .vl-name {
+      font-size: 14px; font-weight: 300; color: var(--text);
+      text-transform: uppercase; letter-spacing: 0.15em; line-height: 1.4;
+      margin-bottom: 25px !important; /* Tạo khoảng trống 1 dòng với Giá */
+      text-align: center !important; /* Căn giữa tên luôn cho chuẩn Minimalism */
+    }
+    /* ==================================================== */
 </style>
 <script type="application/ld+json">
 {
@@ -1157,7 +1248,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter" style="margin-top:-2px;"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
         <span id="headerCartText">SHOPPING CART (0)</span>
     </button>
-    <button class="theme-btn" onclick="toggleTheme()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></button>
+    <button class="theme-btn" onclick="toggleTheme()">
+        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('en',this)">EN</button>
       <button class="lang-btn" onclick="setLang('vi',this)">VI</button>
@@ -1186,7 +1280,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 </section>
 
 <section id="products">
-  <div class="section-header" style="border-bottom:none; padding-bottom:10px;">
+  <div class="section-header" style="border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding-top:20px; padding-bottom:20px; margin-bottom:40px; align-items:center;">
     <div class="section-title" data-i18n="curCol">COLLECTION</div>
     <div class="filter-tabs">
       <button class="filter-tab active" onclick="filterProducts('all',this)" data-i18n="fAll">ALL</button>
@@ -1200,7 +1294,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     </div>
   </div>
   
-  <div class="shop-layout" style="display:flex; padding:0 48px; gap:40px; border-top:1px solid var(--border); padding-top:40px;">
+  <div class="shop-layout">
     
     <div class="filter-sidebar desktop-filter" id="desktopFilterContainer" style="width:200px; flex-shrink:0;"></div>
     
@@ -1551,149 +1645,157 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
 <div class="overlay" id="productOverlay" style="z-index: 10000;">
   <div class="modal" style="max-width:650px; padding:40px;">
     <button class="modal-close-abs" style="top:20px; right:20px;" onclick="closeOverlay('productOverlay')">✕</button>
-    <h2 style="font-size:16px; font-weight:600; letter-spacing:0.1em; color:var(--white); margin-bottom:30px; text-transform:uppercase;" id="productModalTitle">Add / Edit Product</h2>
+    <h2 style="font-size:16px; font-weight:600; letter-spacing:0.1em; color:var(--white); margin-bottom:30px; text-transform:uppercase;" id="productModalTitle">THÊM / SỬA SẢN PHẨM</h2>
     
       <div class="form-group">
-        <label class="form-label">Product Name *</label>
-        <input type="text" class="form-input" id="pName">
+        <label class="form-label">Tên Sản Phẩm *</label>
+        <input type="text" class="form-input" id="pName" placeholder="Nhập tên áo/quần...">
       </div>
       
       <div class="form-two-col" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
         <div class="form-group">
-          <label class="form-label">Category</label>
+          <label class="form-label">Danh Mục</label>
           <select class="form-select" id="pCat">
-            <option value="Shell Jacket">Shell Jacket</option>
-            <option value="Insulated Layer">Insulated Layer</option>
-            <option value="Pants">Pants</option>
-            <option value="Footwear">Footwear</option>
-            <option value="Backpack">Backpack</option>
-            <option value="Beanies">Beanies</option>
-            <option value="Others">Others</option>
+            <option value="Shell Jacket">Áo Khoác Gore-Tex (Shell)</option>
+            <option value="Insulated Layer">Áo Giữ Nhiệt (Insulated)</option>
+            <option value="Pants">Quần (Pants)</option>
+            <option value="Footwear">Giày Dép (Footwear)</option>
+            <option value="Backpack">Balo (Backpack)</option>
+            <option value="Beanies">Mũ / Nón (Beanies)</option>
+            <option value="Others">Phụ Kiện Khác (Others)</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Condition</label>
+          <label class="form-label">Tình Trạng</label>
           <select class="form-select" id="pCond">
-            <option value="Brand new with tags (BNWT)">Brand new with tags (BNWT)</option>
-            <option value="Brand new no tags">Brand new no tags</option>
-            <option value="Like new">Like new</option>
-            <option value="Excellent">Excellent</option>
+            <option value="Brand new with tags (BNWT)">Mới 100% Nguyên Tag (BNWT)</option>
+            <option value="Brand new no tags">Mới 100% Mất Tag (BNWOT)</option>
+            <option value="Like new">Như mới (Like New)</option>
+            <option value="Excellent">Xuất sắc (Excellent)</option>
           </select>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Price (VND)</label>
+        <label class="form-label">Giá Bán (VND)</label>
         <div style="display:flex; gap:10px; align-items:center;">
-          <input type="text" class="form-input" id="pPriceVND" placeholder="e.g. 8500000" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-          <button class="btn-primary" style="padding:12px 20px;" onclick="convertCurrency()">TO USD</button>
+          <input type="text" class="form-input" id="pPriceVND" placeholder="VD: 8500000" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+          <button class="btn-primary" style="padding:12px 20px;" onclick="convertCurrency()">ĐỔI SANG USD</button>
         </div>
-        <input type="text" class="form-input" id="pPriceFinal" placeholder="Auto-generated: 8,500,000 VND / ~$350" style="margin-top:10px; color:var(--text-dim);">
+        <input type="text" class="form-input" id="pPriceFinal" placeholder="Hệ thống tự tạo: 8,500,000 VND / ~$350" style="margin-top:10px; color:var(--text-dim);">
       </div>
 
       <div class="form-group">
-        <label class="form-label">Price Policy *</label>
-        <input type="text" class="form-input" id="pPriceType" list="priceOptions" placeholder="Type custom or select 'diff' / 'same'">
+        <label class="form-label">Chính Sách Giá *</label>
+        <input type="text" class="form-input" id="pPriceType" list="priceOptions" placeholder="Nhập tùy chỉnh hoặc chọn ở dưới">
         <datalist id="priceOptions">
-          <option value="diff" label="Default: Price might be different between sizes">
-          <option value="same" label="Default: Same price for all sizes">
+          <option value="diff" label="Mặc định: Giá có thể thay đổi tùy theo Size">
+          <option value="same" label="Mặc định: Đồng giá cho tất cả các Size">
         </datalist>
       </div>
 
       <div class="form-group">
-        <label class="form-label">Available Sizes</label>
-        <input type="text" class="form-input" id="pSizes" placeholder="e.g. S, M, L or US 9, US 10">
+        <label class="form-label">Size Sẵn Có</label>
+        <input type="text" class="form-input" id="pSizes" placeholder="VD: S, M, L hoặc US 9, US 10">
       </div>
 
       <div class="form-group">
-        <label class="form-label" style="color:var(--red);">Upload Images (To Supabase Storage)</label>
+        <label class="form-label" style="color:var(--red);">Tải Ảnh Sản Phẩm (Lên Supabase)</label>
         <input type="file" id="imgUpload" accept="image/*" multiple style="font-size:12px; color:var(--text-dim);" onchange="handleMultipleImages(this)">
         <div id="imgPreviewGrid" style="display:flex; gap:10px; margin-top:16px; overflow-x:auto;"></div>
       </div>
       
       <div class="form-group" style="padding: 20px; border: 1px dashed var(--border-light); background: var(--navy-2);">
-        <label class="form-label" style="color:var(--white);">Upload Lookbook / Feedback</label>
+        <label class="form-label" style="color:var(--white);">Tải Ảnh Lên Dáng (Lookbook / Fit pic)</label>
         <input type="file" id="imgHowItWears" accept="image/*" multiple style="font-size:12px; color:var(--text-dim);" onchange="handleHowItWearsImages(this)">
         <div id="howItWearsPreviewGrid" style="display:flex; gap:10px; margin-top:16px; overflow-x:auto;"></div>
         
-        <label class="form-label" style="color:var(--white); margin-top:20px;">Or Video Link (TikTok / YouTube)</label>
-        <input type="text" class="form-input" id="pVideoLink" placeholder="Paste link here..." style="background:var(--navy);">
+        <label class="form-label" style="color:var(--white); margin-top:20px;">Hoặc Gắn Link Video (TikTok / YouTube)</label>
+        <input type="text" class="form-input" id="pVideoLink" placeholder="Dán link video vào đây..." style="background:var(--navy);">
       </div>
 
       <div class="form-group">
-        <label class="form-label">Badge (Optional)</label>
-        <input type="text" class="form-input" id="pBadge" placeholder="Manual Badge (e.g. RARE)" style="margin-bottom:15px;">
-<div id="adminSmartFilterContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:15px; background:var(--navy-3); border:1px solid var(--border); margin-bottom:20px;">
-  </div>
+        <label class="form-label">Thẻ Phân Loại Nhanh (Smart Filter)</label>
+        <input type="text" class="form-input" id="pBadge" placeholder="Gõ tay thẻ phụ (VD: RARE, DEADSTOCK)" style="margin-bottom:15px;">
+        <div id="adminSmartFilterContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:15px; background:var(--navy-3); border:1px solid var(--border); margin-bottom:20px;"></div>
       </div>
-<div class="form-group">
-        <label class="form-label" style="color:var(--white);">Use Template (Optional)</label>
+
+      <div class="form-group">
+        <label class="form-label" style="color:var(--white);">Sử Dụng Mẫu Mô Tả Có Sẵn</label>
         <select class="form-select" id="pTemplateSelect" onchange="applyDescTemplate(this.value)" style="background:var(--navy-2); padding:10px; border:1px solid var(--border); cursor:pointer;">
-          <option value="">-- Select to auto-fill --</option>
+          <option value="">-- Chọn để điền nhanh --</option>
         </select>
       </div>
+
       <div class="form-group form-two-col" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
         <div>
-          <label class="form-label">Description (EN)</label>
+          <label class="form-label">Mô Tả (Tiếng Anh)</label>
           <textarea class="form-textarea" id="pDescEN" placeholder="English description..." rows="4"></textarea>
         </div>
         <div>
-          <label class="form-label">Description (VI)</label>
+          <label class="form-label">Mô Tả (Tiếng Việt)</label>
           <textarea class="form-textarea" id="pDescVI" placeholder="Mô tả tiếng Việt..." rows="4"></textarea>
         </div>
       </div>
 
-      <button class="btn-primary" style="width:100%;" onclick="saveProduct()" id="saveProductBtn">SAVE PRODUCT</button>
+      <button class="btn-primary" style="width:100%;" onclick="saveProduct()" id="saveProductBtn">LƯU SẢN PHẨM</button>
   </div>
 </div>
 
 <div class="admin-panel" id="adminPanel">
   <div class="admin-hd">
     <div style="display:flex; align-items:center; gap:20px;">
-      <div class="admin-hd-title">MANAGEMENT</div>
-      <div style="font-size:12px; color:var(--text-muted);">Session: <span id="adminTimer" style="color:var(--white); font-family:monospace;">60:00</span></div>
+      <div class="admin-hd-title">HỆ THỐNG QUẢN TRỊ</div>
+      <button class="theme-btn" onclick="toggleTheme()" style="margin-left:10px; border:1px solid var(--border); border-radius:4px; padding:4px 8px;" title="Chuyển Dark/Light Mode">
+          <svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <div style="font-size:12px; color:var(--text-muted);">Phiên đăng nhập: <span id="adminTimer" style="color:var(--white); font-family:monospace;">60:00</span></div>
     </div>
     <div style="display:flex; gap:12px;">
-      <button class="btn-primary" style="padding:8px 16px; background:#00ff88; border-color:#00ff88; color:#000; font-weight:700;" onclick="exportAllData(this)">⬇️ BACKUP DATA-MỖI THÁNG</button>
-      <button class="btn-primary" style="padding:8px 16px; background:transparent; border-color:var(--border); color:var(--white);" onclick="closeAdminPanelOnly()">BACK TO HOME</button>
-      <button class="btn-primary" style="padding:8px 16px; background:var(--red); border-color:var(--red); color:#fff;" onclick="logoutAdmin()">LOGOUT</button>
+      <button class="btn-primary" style="padding:8px 16px; background:#00ff88; border-color:#00ff88; color:#000; font-weight:700;" onclick="exportAllData(this)">⬇️XUẤT DATA-THÁNG/LẦN</button>
+      <button class="btn-primary" style="padding:8px 16px; background:transparent; border-color:var(--border); color:var(--white);" onclick="closeAdminPanelOnly()">VỀ TRANG CHỦ</button>
+      <button class="btn-primary" style="padding:8px 16px; background:var(--red); border-color:var(--red); color:#fff;" onclick="logoutAdmin()">ĐĂNG XUẤT</button>
     </div>
   </div>
   
   <div class="admin-tabs" style="overflow-x:auto; white-space:nowrap; padding-bottom:5px;">
-    <button class="admin-tab active" onclick="switchTab('products')">Products</button>
-    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('customers')">Customers (CRM)</button>
-    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('orders')">Orders</button>
-    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('finance')">Finance</button>
-    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('sourcing')">Sourcing</button>
-    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('tasks')">Tasks</button>
-    <button class="admin-tab" onclick="switchTab('translations')">Content & Text</button>
-    <button class="admin-tab" onclick="switchTab('settings')">Settings</button>
+    <button class="admin-tab active" onclick="switchTab('products')">SẢN PHẨM</button>
+    <button class="admin-tab" style="color: #00ff88; font-weight: 800;" onclick="switchTab('customers')">QUẢN LÝ (ERP) ▾</button>
+    <button class="admin-tab" onclick="switchTab('translations')">NỘI DUNG WEB</button>
+    <button class="admin-tab" onclick="switchTab('settings')">CÀI ĐẶT</button>
+  </div>
+  
+  <div id="erpSubNav" style="display:none; background:var(--navy-2); padding:10px 40px; gap:10px; border-bottom:1px solid var(--border); overflow-x:auto; white-space:nowrap;">
+    <button class="btn-primary admin-sub-tab" style="padding:6px 16px; min-height:0; font-size:10px;" onclick="switchTab('customers')">Hồ sơ KH (CRM)</button>
+    <button class="btn-primary admin-sub-tab" style="padding:6px 16px; min-height:0; font-size:10px;" onclick="switchTab('orders')">Đơn Hàng</button>
+    <button class="btn-primary admin-sub-tab" style="padding:6px 16px; min-height:0; font-size:10px;" onclick="switchTab('finance')">Kế Toán (Finance)</button>
+    <button class="btn-primary admin-sub-tab" style="padding:6px 16px; min-height:0; font-size:10px;" onclick="switchTab('sourcing')">TÌM HÀNG CHO KHÁCH</button>
+    <button class="btn-primary admin-sub-tab" style="padding:6px 16px; min-height:0; font-size:10px;" onclick="switchTab('tasks')">Tasks</button>
   </div>
   
   <div class="tab-panel active" id="tab-products">
     <div id="dbStatusAlert" style="padding:16px; margin-bottom:30px; font-size:12px; font-weight:600; border:1px solid var(--border); letter-spacing:0.05em;"></div>
     
    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
-      <button class="btn-primary" onclick="openAddProduct()">ADD NEW PRODUCT</button>
+      <button class="btn-primary" onclick="openAddProduct()">+ THÊM MỚI SẢN PHẨM</button>
       
       <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
-        <input type="text" id="adminSearchInput" placeholder="SEARCH..." style="width:150px; padding:8px 15px; background:var(--navy-2); border:1px solid var(--border); color:var(--white); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; outline:none;" oninput="searchAdminProducts(this.value)">
-        <div style="font-size:12px; font-weight:700; color:var(--text-muted); letter-spacing:0.1em;" id="adminProductCount">TOTAL: 0</div>
+        <input type="text" id="adminSearchInput" placeholder="TÌM TÊN ÁO..." style="width:150px; padding:8px 15px; background:var(--navy-2); border:1px solid var(--border); color:var(--white); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; outline:none;" oninput="searchAdminProducts(this.value)">
         <select class="form-select" id="adminCategoryFilter" style="width:auto; padding:8px 15px; background:var(--navy-2); border:1px solid var(--border); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; cursor:pointer;" onchange="filterAdminProducts(this.value)">
-          <option value="all">ALL CATEGORIES</option>
-          <option value="Shell Jacket">SHELL JACKET</option>
-          <option value="Insulated Layer">INSULATED LAYER</option>
-          <option value="Pants">PANTS</option>
-          <option value="Footwear">FOOTWEAR</option>
-          <option value="Backpack">BACKPACK</option>
-          <option value="Beanies">BEANIES</option>
-          <option value="Others">OTHERS</option>
+          <option value="all">TẤT CẢ DANH MỤC</option>
+          <option value="Shell Jacket">ÁO KHOÁC GORE-TEX</option>
+          <option value="Insulated Layer">ÁO GIỮ NHIỆT</option>
+          <option value="Pants">QUẦN (PANTS)</option>
+          <option value="Footwear">GIÀY DÉP (FOOTWEAR)</option>
+          <option value="Backpack">BALO (BACKPACK)</option>
+          <option value="Beanies">MŨ / NÓN (BEANIES)</option>
+          <option value="Others">PHỤ KIỆN KHÁC</option>
         </select>
       </div>
     </div>
     
-    <button id="saveOrderBtn" class="btn-primary" style="margin-bottom:24px; display:none; background:var(--red); border-color:var(--red); color:#fff; width:100%;" onclick="saveProductOrder()">SAVE NEW ORDER ✓</button>
+    <button id="saveOrderBtn" class="btn-primary" style="margin-bottom:24px; display:none; background:var(--red); border-color:var(--red); color:#fff; width:100%;" onclick="saveProductOrder()">LƯU THỨ TỰ MỚI ✓</button>
     <div id="adminList" style="border-top:1px solid var(--border);"></div>
   </div>
 
@@ -1758,85 +1860,15 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   </div>
 
  <div class="tab-panel" id="tab-settings">
-        <div class="form-group"><label class="form-label">Instagram Handle</label><input type="text" class="form-input" id="sIg"></div>
-    <div class="form-group"><label class="form-label">WhatsApp Number</label><input type="text" class="form-input" id="sWa"></div>
-    <div class="form-group"><label class="form-label">Zalo 1 (Sales)</label><input type="text" class="form-input" id="sZalo1"></div>
-    <div class="form-group"><label class="form-label">Zalo 2 (Tech)</label><input type="text" class="form-input" id="sZalo2"></div>
-    <div class="form-group"><label class="form-label">Phone 1</label><input type="text" class="form-input" id="sPhone1"></div>
-    <div class="form-group"><label class="form-label">Phone 2</label><input type="text" class="form-input" id="sPhone2"></div>
-    <button class="btn-primary" style="width:100%" onclick="saveSettings()">SAVE SETTINGS</button>
-  </div>
-<div class="tab-panel" id="tab-customers">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <h3 style="color:var(--white); font-size:16px; text-transform:uppercase;">HỒ SƠ KHÁCH HÀNG (CRM)</h3>
-      <div style="display:flex; gap:10px;">
-        <input type="text" id="searchCustomers" class="form-input" placeholder="🔍 Tìm SĐT, Tên khách..." style="width:250px;" onkeyup="renderErpCustomers()">
-        <button class="btn-primary" onclick="openAddCustomerOnly()">+ TẠO KHÁCH HÀNG</button>
-      </div>
-    </div>
-    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);">
-      <table class="erp-table">
-        <thead><tr><th>Khách Hàng</th><th>SĐT / Liên Hệ</th><th>Tổng Thực Thu</th><th>Công Nợ</th><th>Tình Trạng</th><th>Hành Động</th></tr></thead>
-        <tbody id="adminCustomersList"><tr><td colspan="6" style="text-align:center;">Đang tải...</td></tr></tbody>
-      </table>
-    </div>
+        <div class="form-group"><label class="form-label">Tên tài khoản Instagram (Bỏ dấu @)</label><input type="text" class="form-input" id="sIg" placeholder="VD: arcwarevn"></div>
+    <div class="form-group"><label class="form-label">Số điện thoại WhatsApp (Kèm mã quốc gia)</label><input type="text" class="form-input" id="sWa" placeholder="VD: 84901234567"></div>
+    <div class="form-group"><label class="form-label">Tài khoản Zalo 1 (Tư vấn Bán Hàng)</label><input type="text" class="form-input" id="sZalo1" placeholder="VD: 84901234567"></div>
+    <div class="form-group"><label class="form-label">Tài khoản Zalo 2 (Hỗ trợ Kỹ Thuật)</label><input type="text" class="form-input" id="sZalo2" placeholder="VD: 84911111111"></div>
+    <div class="form-group"><label class="form-label">Đường dây nóng 1 (Hotline gọi trực tiếp)</label><input type="text" class="form-input" id="sPhone1"></div>
+    <div class="form-group"><label class="form-label">Đường dây nóng 2</label><input type="text" class="form-input" id="sPhone2"></div>
+    <button class="btn-primary" style="width:100%" onclick="saveSettings()">LƯU TẤT CẢ CÀI ĐẶT</button>
   </div>
 
-  <div class="tab-panel" id="tab-orders">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <div>
-        <h3 style="color:var(--white); font-size:16px; text-transform:uppercase; margin-bottom:5px;">INBOX (ĐƠN HÀNG MỚI RAW)</h3>
-        <div style="font-size:11px; color:var(--text-muted);">Chỉ hiển thị đơn từ Website. Chốt cọc xong -> Xử lý đơn để chuyển vào Hồ sơ khách.</div>
-      </div>
-    </div>
-    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--red);">
-      <table class="erp-table">
-        <thead><tr><th>Ngày</th><th>Khách Báo Tên</th><th>Thông Tin Nhận Diện</th><th>Sản Phẩm (Giỏ Hàng)</th><th>Tổng Tiền</th><th>Hành Động</th></tr></thead>
-        <tbody id="adminInboxList"><tr><td colspan="6" style="text-align:center;">Đang tải...</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="tab-panel" id="tab-finance">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <h3 style="color:var(--white); font-size:16px; text-transform:uppercase;">FINANCE DASHBOARD</h3>
-      <input type="text" id="searchFinance" class="form-input" placeholder="🔍 Tìm giao dịch..." style="max-width:200px;" onkeyup="renderErpFinance()">
-    </div>
-    
-    <div style="background:var(--navy-2); padding:15px; margin-bottom:15px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-        <div style="flex:1;"><div style="font-size:11px; color:var(--text-muted);">TỒN QUỸ (GỒM VỐN)</div><div id="finCashOnHand" style="font-size:22px; font-weight:700; color:var(--white);">0 ₫</div></div>
-        <div style="flex:1; text-align:center; border-left:1px solid var(--border); border-right:1px solid var(--border); padding:0 10px;"><div style="font-size:11px; color:var(--text-muted);">LÃI RÒNG (ĐÃ THU)</div><div id="finNetProfit" style="font-size:18px; font-weight:700; color:#00ff88;">0 ₫</div></div>
-        <div style="flex:1; text-align:center; border-right:1px solid var(--border); padding:0 10px;"><div style="font-size:11px; color:orange; font-weight:700;">LÃI DỰ TÍNH (+ NỢ)</div><div id="finEstProfit" style="font-size:22px; font-weight:700; color:orange;">0 ₫</div></div>
-        <div style="flex:1; text-align:right;"><div style="font-size:11px; color:var(--text-muted);">NỢ CHỜ THU</div><div id="finTotalPendingDebt" style="font-size:18px; font-weight:700; color:var(--red);">0 ₫</div></div>
-    </div>
-
-    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:20px;">
-      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);">1. THU TIỀN HÀNG (Auto)</div><div id="finAutoIn" style="font-size:16px; font-weight:700; color:#00ff88;">0 ₫</div></div>
-      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);">2. THU TIỀN NGOÀI (Manual)</div><div id="finManIn" style="font-size:16px; font-weight:700; color:#00ff88;">0 ₫</div></div>
-      <div style="background:rgba(51,153,255,0.1); border:1px solid rgba(51,153,255,0.5); padding:15px;"><div style="font-size:10px; color:#3399ff; font-weight:700;">ADMIN GÓP VỐN</div><div id="finCapIn" style="font-size:16px; font-weight:700; color:#3399ff;">0 ₫</div></div>
-      
-      <div style="background:rgba(255,51,102,0.05); border:1px solid rgba(255,51,102,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);">4. CHI TIỀN HÀNG (Auto COGS)</div><div id="finAutoOut" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div>
-      <div style="background:rgba(255,51,102,0.05); border:1px solid rgba(255,51,102,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);">5. CHI PHÍ KHÁC (Manual)</div><div id="finManOut" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div>
-      <div style="background:var(--red); border:1px solid var(--red); padding:15px;"><div style="font-size:10px; color:#fff; font-weight:700;">TỔNG CHI (4+5)</div><div id="finExpTotal" style="font-size:18px; font-weight:700; color:#fff;">0 ₫</div></div>
-    </div>
-
-    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
-        <div style="flex:1; min-width:300px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h4 style="color:#00ff88;">⬇️ DÒNG TIỀN VÀO (THU / VỐN)</h4> <button onclick="openAddFinanceModal('INCOME')" style="background:transparent; border:1px solid #00ff88; color:#00ff88; cursor:pointer;">+ THU / GÓP VỐN</button></div>
-            <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th></tr></thead><tbody id="finIncomeList"></tbody></table></div>
-        </div>
-        <div style="flex:1; min-width:300px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h4 style="color:var(--red);">⬆️ DÒNG TIỀN RA (CHI TIÊU)</h4> <button onclick="openAddFinanceModal('OPEX')" style="background:transparent; border:1px solid var(--red); color:var(--red); cursor:pointer;">- CHI PHÍ</button></div>
-            <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th></tr></thead><tbody id="finExpenseList"></tbody></table></div>
-        </div>
-    </div>
-    
-    <div style="margin-bottom:10px;"><h4 style="color:orange;">⚠️ SỔ CÔNG NỢ (CHỜ THU)</h4></div>
-    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:300px;"><table class="erp-table"><thead><tr><th>Khách Hàng</th><th>Đơn Nợ</th><th>Số Tiền Nợ</th><th>Thao tác</th></tr></thead><tbody id="finDebtList"></tbody></table></div>
-  </div>
-
-  <div class="tab-panel" id="tab-sourcing"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 style="color:var(--white); font-size:16px;">SOURCING BOARD</h3><button class="btn-primary" onclick="openAddSourcingModal()">+ TẠO YÊU CẦU</button></div><div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Khách Cần</th><th>Món Hàng</th><th>Ngân Sách</th><th>Tiến Độ</th><th>Trạng Thái</th><th>Hành Động</th></tr></thead><tbody id="adminSourcingList"><tr><td colspan="6">Đang tải...</td></tr></tbody></table></div></div>
-  <div class="tab-panel" id="tab-tasks"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 style="color:var(--white); font-size:16px;">TASK MANAGER</h3><button class="btn-primary" onclick="openAddTaskModal()">+ NEW TASK</button></div><div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Công Việc</th><th>Phân Loại</th><th>Người Làm</th><th>Ghi chú</th><th>Deadline</th><th>Trạng Thái</th><th>Hành Động</th></tr></thead><tbody id="adminTasksList"><tr><td colspan="7">Đang tải...</td></tr></tbody></table></div></div>
 
 <script>
 // =========================================================================
@@ -3193,8 +3225,8 @@ function renderAdminList() {
             <button class="btn-sort" onclick="moveProduct(${globalIdx}, 1)" ${disableDown ? 'disabled style="opacity:0.1"' : ''}>▼</button>
           </div>
           <div class="admin-item-actions">
-            <button class="btn-edit" onclick="openEditProduct('${p.id}')">EDIT</button>
-            <button class="btn-del" onclick="deleteProduct('${p.id}')">DEL</button>
+            <button class="btn-edit" onclick="openEditProduct('${p.id}')">SỬA</button>
+            <button class="btn-del" onclick="deleteProduct('${p.id}')">XÓA</button>
           </div>
         </div>`;
       });
@@ -3496,9 +3528,9 @@ window.renderSmartFilterUI = function() {
   const txtAsc = currentLang === 'vi' ? 'Giá: Thấp đến Cao' : 'Price: Low to High';
   const txtDesc = currentLang === 'vi' ? 'Giá: Cao đến Thấp' : 'Price: High to Low';
 
-  let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid var(--border);">
-                <span style="font-size:12px; font-weight:700; color:var(--white); letter-spacing:0.1em;">${txtFilter}</span>
-                <button onclick="clearSmartFilters()" style="background:none; border:none; color:var(--text-muted); font-size:10px; font-weight:700; cursor:pointer; letter-spacing:0.1em;">${txtClear}</button>
+  let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+                <span style="font-size:11px; font-weight:800; color:var(--white); letter-spacing:0.15em;">${txtFilter}</span>
+                <button onclick="clearSmartFilters()" style="background:none; border:none; color:var(--text-muted); font-size:10px; font-weight:700; cursor:pointer; letter-spacing:0.1em; transition:0.2s;" onmousedown="this.style.color='var(--white)'; this.style.transform='scale(0.95)';" onmouseup="this.style.color='var(--text-muted)'; this.style.transform='scale(1)';">${txtClear}</button>
               </div>
               <div class="smart-filter-group">
                 <div class="smart-filter-title">${txtSortTitle}</div>
@@ -3667,16 +3699,17 @@ function renderProducts() {
   const currentProducts = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   grid.innerHTML = currentProducts.map(p => `
-    <div class="product-card" onclick="openInterest('${p.id}')">
-      <div class="card-img"><img src="${p.image||''}" loading="lazy" onerror="this.style.display='none'">${p.badge ? `<div class="card-badge">${p.badge}</div>` : ''}</div>
-      <div class="card-body">
-        <div class="card-cat">${p.gender ? p.gender.toUpperCase() + ' · ' : ''}${_t(p.category)||p.category} · ${_t(p.condition)||p.condition||'N/A'}</div>
-        <div class="card-name">${p.name}</div>
-        <div class="card-foot"><div class="card-price">${p.price||_t('noPr')}</div></div>
-        <div class="card-fee">${_t('feeNt')}</div>
+    <div class="vl-card" onclick="openInterest('${p.id}')">
+      <div class="vl-img-wrap">
+        <img src="${p.image||''}" loading="lazy" onerror="this.style.display='none'">
+      </div>
+      <div class="vl-info">
+        <div class="vl-cat">${p.gender ? p.gender.toUpperCase() + ' · ' : ''}${_t(p.category)||p.category}</div>
+        <div class="vl-name">${p.name}</div>
+        <div class="vl-price">${p.price||_t('noPr')}</div>
       </div>
     </div>`).join('');
-  renderPagination(totalPages);
+renderPagination(totalPages);
 }
 // HÀM VẼ THANH CHUYỂN TRANG
 function renderPagination(totalPages) {
@@ -3774,43 +3807,105 @@ function initAutoCat() {
   </div>
 
   <div class="tab-panel" id="tab-finance">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <h3 style="color:var(--white); font-size:16px; text-transform:uppercase;">FINANCE DASHBOARD</h3>
-      <input type="text" id="searchFinance" class="form-input" placeholder="🔍 Tìm giao dịch..." style="max-width:200px;" onkeyup="renderErpFinance()">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; border-bottom:1px solid var(--border-light); padding-bottom:10px;">
+      <h3 style="color:var(--white); font-size:16px; font-weight:800; letter-spacing:1px;">FINANCE DASHBOARD</h3>
+      <input type="text" id="searchFinance" class="form-input" placeholder="🔍 TÌM GIAO DỊCH..." style="max-width:250px; background:transparent; border-color:var(--border); text-transform:uppercase; font-size:11px;" onkeyup="renderErpFinance()">
     </div>
     
-    <div style="background:var(--navy-2); padding:15px; margin-bottom:15px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
-        <div style="flex:1;"><div style="font-size:11px; color:var(--text-muted);">TỒN QUỸ (CASH ON HAND)</div><div id="finCashOnHand" style="font-size:22px; font-weight:700; color:var(--white);">0 ₫</div></div>
-        <div style="flex:1; text-align:center; border-left:1px solid var(--border); border-right:1px solid var(--border); padding:0 10px;"><div style="font-size:11px; color:var(--text-muted);">LÃI RÒNG (ĐÃ THU)</div><div id="finNetProfit" style="font-size:18px; font-weight:700; color:#00ff88;">0 ₫</div></div>
-        <div style="flex:1; text-align:center; border-right:1px solid var(--border); padding:0 10px;"><div style="font-size:11px; color:orange; font-weight:700;">LÃI DỰ TÍNH (+ NỢ)</div><div id="finEstProfit" style="font-size:22px; font-weight:700; color:orange;">0 ₫</div></div>
-        <div style="flex:1; text-align:right;"><div style="font-size:11px; color:var(--text-muted);">NỢ CHỜ THU</div><div id="finTotalPendingDebt" style="font-size:18px; font-weight:700; color:var(--red);">0 ₫</div></div>
-    </div>
-
-    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:20px;">
-      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);"> THU TIỀN HÀNG (Auto)</div><div id="finAutoIn" style="font-size:16px; font-weight:700; color:#00ff88;">0 ₫</div></div>
-      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);"> THU TIỀN NGOÀI (Manual)</div><div id="finManIn" style="font-size:16px; font-weight:700; color:#00ff88;">0 ₫</div></div>
-      <div style="background:rgba(51,153,255,0.1); border:1px solid rgba(51,153,255,0.5); padding:15px;"><div style="font-size:10px; color:#3399ff; font-weight:700;"> ADMIN GÓP VỐN</div><div id="finCapIn" style="font-size:16px; font-weight:700; color:#3399ff;">0 ₫</div></div>
-      <div style="background:rgba(255,51,102,0.05); border:1px solid rgba(255,51,102,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);"> CHI TIỀN HÀNG (Auto COGS)</div><div id="finAutoOut" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div>
-      <div style="background:rgba(255,51,102,0.05); border:1px solid rgba(255,51,102,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);"> CHI PHÍ KHÁC (Manual)</div><div id="finManOut" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div>
-      <div style="background:var(--red); border:1px solid var(--red); padding:15px;"><div style="font-size:10px; color:#fff; font-weight:700;">TỔNG CHI (4+5)</div><div id="finExpTotal" style="font-size:18px; font-weight:700; color:#fff;">0 ₫</div></div>
-    </div>
-
-    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
-        <div style="flex:1; min-width:300px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h4 style="color:#00ff88;">⬇️ DÒNG TIỀN VÀO (THU / VỐN)</h4> <button onclick="openAddFinanceModal('INCOME')" style="background:transparent; border:1px solid #00ff88; color:#00ff88; cursor:pointer;">+ THU / GÓP VỐN</button></div>
-            <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th></tr></thead><tbody id="finIncomeList"></tbody></table></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:20px; margin-bottom:20px;">
+        <div style="padding:20px; border:1px solid var(--border); background:var(--navy-2); display:flex; flex-direction:column; justify-content:center;">
+            <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">CASH ON HAND (TỒN QUỸ)</div>
+            <div id="finCashOnHand" style="font-size:28px; font-weight:300; font-family:monospace; color:var(--white);">0 ₫</div>
         </div>
-        <div style="flex:1; min-width:300px;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h4 style="color:var(--red);">⬆️ DÒNG TIỀN RA (CHI TIÊU)</h4> <button onclick="openAddFinanceModal('OPEX')" style="background:transparent; border:1px solid var(--red); color:var(--red); cursor:pointer;">- CHI PHÍ</button></div>
-            <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th></tr></thead><tbody id="finExpenseList"></tbody></table></div>
+        <div style="padding:20px; border:1px solid var(--border); background:var(--navy-2); display:flex; flex-direction:column; justify-content:center;">
+            <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">NET PROFIT (LÃI RÒNG)</div>
+            <div id="finNetProfit" style="font-size:24px; font-weight:300; font-family:monospace; color:#00ff88;">0 ₫</div>
+        </div>
+        <div style="padding:20px; border:1px solid var(--border); background:var(--navy-2); display:flex; flex-direction:column; justify-content:center;">
+            <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">EST. PROFIT (LÃI DỰ TÍNH)</div>
+            <div id="finEstProfit" style="font-size:24px; font-weight:300; font-family:monospace; color:orange;">0 ₫</div>
+        </div>
+        <div style="padding:20px; border:1px solid var(--border); background:var(--navy-2); display:flex; flex-direction:column; justify-content:center;">
+            <div style="font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">PENDING DEBT (NỢ CHỜ THU)</div>
+            <div id="finTotalPendingDebt" style="font-size:24px; font-weight:300; font-family:monospace; color:var(--red);">0 ₫</div>
         </div>
     </div>
-    <div style="margin-bottom:10px;"><h4 style="color:orange;">⚠️ SỔ CÔNG NỢ (CHỜ THU)</h4></div>
-    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:300px;"><table class="erp-table"><thead><tr><th>Khách Hàng</th><th>Đơn Nợ</th><th>Số Tiền Nợ</th><th>Thao tác</th></tr></thead><tbody id="finDebtList"></tbody></table></div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:15px; margin-bottom:30px;">
+      <div style="padding:15px; border:1px solid rgba(0,255,136,0.1); border-left:2px solid #00ff88; background:transparent;"><div style="font-size:10px; color:var(--text-dim); margin-bottom:5px;">1. THU HÀNG (AUTO)</div><div id="finAutoIn" style="font-size:16px; font-weight:700; font-family:monospace; color:var(--white);">0 ₫</div></div>
+      <div style="padding:15px; border:1px solid rgba(0,255,136,0.1); border-left:2px solid #00ff88; background:transparent;"><div style="font-size:10px; color:var(--text-dim); margin-bottom:5px;">2. THU NGOÀI (MANUAL)</div><div id="finManIn" style="font-size:16px; font-weight:700; font-family:monospace; color:var(--white);">0 ₫</div></div>
+      <div style="padding:15px; border:1px solid rgba(51,153,255,0.1); border-left:2px solid #3399ff; background:transparent;"><div style="font-size:10px; color:var(--text-dim); margin-bottom:5px;">3. GÓP VỐN (CAPITAL)</div><div id="finCapIn" style="font-size:16px; font-weight:700; font-family:monospace; color:var(--white);">0 ₫</div></div>
+      <div style="padding:15px; border:1px solid rgba(255,51,102,0.1); border-left:2px solid var(--red); background:transparent;"><div style="font-size:10px; color:var(--text-dim); margin-bottom:5px;">4. VỐN HÀNG (COGS)</div><div id="finAutoOut" style="font-size:16px; font-weight:700; font-family:monospace; color:var(--white);">0 ₫</div></div>
+      <div style="padding:15px; border:1px solid rgba(255,51,102,0.1); border-left:2px solid var(--red); background:transparent;"><div style="font-size:10px; color:var(--text-dim); margin-bottom:5px;">5. CHI PHÍ (OPEX)</div><div id="finManOut" style="font-size:16px; font-weight:700; font-family:monospace; color:var(--white);">0 ₫</div></div>
+      <div style="padding:15px; background:var(--navy-2); border:1px solid var(--red);"><div style="font-size:10px; color:var(--red); font-weight:700; margin-bottom:5px;">TỔNG CHI (4+5)</div><div id="finExpTotal" style="font-size:16px; font-weight:700; font-family:monospace; color:#fff;">0 ₫</div></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:25px; margin-bottom:30px;">
+        <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div style="font-size:12px; font-weight:700; color:#00ff88; letter-spacing:1px;">INFLOW (THU / VỐN)</div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <select class="form-select" style="padding:4px 8px; font-size:10px; background:var(--navy-2); border:1px solid var(--border); color:var(--white); cursor:pointer;" onchange="filterFinInflow(this.value)">
+                        <option value="ALL">TẤT CẢ (ALL)</option>
+                        <option value="AUTO">AUTO (ĐƠN HÀNG)</option>
+                        <option value="MANUAL">MANUAL (THU NGOÀI/VỐN)</option>
+                    </select>
+                    <button onclick="openAddFinanceModal('INCOME')" style="background:transparent; border:1px solid #00ff88; color:#00ff88; font-size:9px; padding:4px 10px; cursor:pointer;">+ THU / VỐN</button>
+                </div>
+            </div>
+            <div style="overflow-x:auto; border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th><th style="text-align:right;">Thao tác</th></tr></thead><tbody id="finIncomeList"></tbody></table></div>
+        </div>
+        <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div style="font-size:12px; font-weight:700; color:var(--red); letter-spacing:1px;">OUTFLOW (CHI PHÍ)</div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <select class="form-select" style="padding:4px 8px; font-size:10px; background:var(--navy-2); border:1px solid var(--border); color:var(--white); cursor:pointer;" onchange="filterFinOutflow(this.value)">
+                        <option value="ALL">TẤT CẢ (ALL)</option>
+                        <option value="AUTO">AUTO (GIÁ VỐN)</option>
+                        <option value="MANUAL">MANUAL (CHI NGOÀI/KHO)</option>
+                    </select>
+                    <button onclick="openAddFinanceModal('OPEX')" style="background:transparent; border:1px solid var(--red); color:var(--red); font-size:9px; padding:4px 10px; cursor:pointer;">- CHI PHÍ</button>
+                </div>
+            </div>
+            <div style="overflow-x:auto; border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th><th style="text-align:right;">Thao tác</th></tr></thead><tbody id="finExpenseList"></tbody></table></div>
+        </div>
+    </div>
+    
+    <div style="font-size:12px; font-weight:700; color:orange; letter-spacing:1px; margin-bottom:10px;">PENDING DEBT (CÔNG NỢ)</div>
+    <div style="overflow-x:auto; border:1px solid var(--border); max-height:300px; margin-bottom:30px;"><table class="erp-table"><thead><tr><th>Khách Hàng</th><th>Đơn Nợ</th><th>Số Tiền Nợ</th><th style="text-align:right;">Thao tác</th></tr></thead><tbody id="finDebtList"></tbody></table></div>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div style="font-size:12px; font-weight:700; color:#3399ff; letter-spacing:1px;">INVENTORY (HÀNG TỒN KHO/NHẬP SẴN)</div>
+        <button onclick="openAddFinanceModal('INVENTORY')" style="background:transparent; border:1px solid #3399ff; color:#3399ff; font-size:9px; padding:4px 10px; cursor:pointer;">+ NHẬP HÀNG TỒN</button>
+    </div>
+    <div style="overflow-x:auto; border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày Nhập</th><th>Sản Phẩm</th><th>Tổng Vốn (Chi Phí)</th><th style="text-align:right;">Thao tác</th></tr></thead><tbody id="finInventoryList"></tbody></table></div>
   </div>
 
-  <div class="tab-panel" id="tab-sourcing"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 style="color:var(--white); font-size:16px;">SOURCING BOARD</h3><button class="btn-primary" onclick="openAddSourcingModal()">+ TẠO YÊU CẦU</button></div><div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Khách Cần</th><th>Món Hàng</th><th>Ngân Sách</th><th>Tiến Độ</th><th>Trạng Thái</th><th>Hành Động</th></tr></thead><tbody id="adminSourcingList"><tr><td colspan="6">Đang tải...</td></tr></tbody></table></div></div>
-  <div class="tab-panel" id="tab-tasks"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 style="color:var(--white); font-size:16px;">TASK MANAGER</h3><button class="btn-primary" onclick="openAddTaskModal()">+ NEW TASK</button></div><div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Công Việc</th><th>Phân Loại</th><th>Người Làm</th><th>Ghi chú</th><th>Deadline</th><th>Trạng Thái</th><th>Hành Động</th></tr></thead><tbody id="adminTasksList"><tr><td colspan="7">Đang tải...</td></tr></tbody></table></div></div>
+  <div class="tab-panel" id="tab-sourcing">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; border-bottom:1px solid var(--border-light); padding-bottom:10px;">
+        <h3 style="color:var(--white); font-size:16px; font-weight:800; letter-spacing:1px;">SOURCING BOARD</h3>
+        <button class="btn-primary" onclick="openAddSourcingModal()">+ TẠO YÊU CẦU</button>
+    </div>
+    <div style="overflow-x:auto; border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Khách Cần</th><th>Món Hàng</th><th>Ngân Sách</th><th>Tiến Độ</th><th>Trạng Thái</th><th style="text-align:right;">Thao tác</th></tr></thead><tbody id="adminSourcingList"><tr><td colspan="6">Đang tải...</td></tr></tbody></table></div>
+  </div>
+
+  <div class="tab-panel" id="tab-tasks">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; border-bottom:1px solid var(--border-light); padding-bottom:10px;">
+        <h3 style="color:var(--white); font-size:16px; font-weight:800; letter-spacing:1px;">TASK MANAGER</h3>
+        <button class="btn-primary" onclick="openAddTaskModal()">+ NEW TASK</button>
+    </div>
+    
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(450px, 1fr)); gap:30px;">
+        <div>
+            <div style="font-size:12px; font-weight:700; color:#3399ff; letter-spacing:1px; margin-bottom:10px;">MAIN TASKS (DỰ ÁN)</div>
+            <div style="overflow-x:auto; border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Công Việc</th><th>Người Làm</th><th>Ghi chú</th><th>Deadline</th><th>Status</th><th style="text-align:right;">Thao tác</th></tr></thead><tbody id="adminTasksMain"><tr><td colspan="6">Đang tải...</td></tr></tbody></table></div>
+        </div>
+        <div>
+            <div style="font-size:12px; font-weight:700; color:#00ff88; letter-spacing:1px; margin-bottom:10px;">DAILY TASKS (HÀNG NGÀY)</div>
+            <div style="overflow-x:auto; border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Công Việc</th><th>Người Làm</th><th>Ghi chú</th><th>Deadline</th><th>Status</th><th style="text-align:right;">Thao tác</th></tr></thead><tbody id="adminTasksDaily"><tr><td colspan="6">Đang tải...</td></tr></tbody></table></div>
+        </div>
+    </div>
+  </div>
 
 <style>
   #erpModalsWrapper { position: relative; z-index: 2147483600 !important; }
@@ -3818,7 +3913,7 @@ function initAutoCat() {
   #erpOrderModal { z-index: 2147483646 !important; }
   #erpDebtModal { z-index: 2147483646 !important; }
   .erp-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; white-space: nowrap; }
-  .erp-table th { background: var(--navy); color: var(--text-muted); padding: 12px; border-bottom: 1px solid var(--border); font-weight: 700; text-transform: uppercase; }
+  .erp-table th { background: var(--navy); color: var(--text-muted); padding: 12px; border-bottom: 1px solid var(--border); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
   .erp-table td { padding: 12px; border-bottom: 1px solid var(--border-light); color: var(--white); }
   .erp-table tr:hover { background: rgba(255,255,255,0.03); }
   .badge { display:inline-block; padding: 2px 6px; border-radius: 10px; background: var(--border); color: var(--white); font-size: 10px; margin-left:5px; }
@@ -3849,23 +3944,7 @@ function initAutoCat() {
         if (!document.getElementById('erpModalsWrapper')) {
             const wrapper = document.createElement('div'); wrapper.id = "erpModalsWrapper";
             wrapper.innerHTML = `
-            <div class="overlay" id="erpOrderModal"><div class="modal" style="max-width:700px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpOrderModal')">✕</button><h3 style="color:#fff; margin-bottom:20px;">XỬ LÝ ĐƠN HÀNG</h3><input type="hidden" id="erpOrderId"><input type="hidden" id="erpCustId">
-                <div id="orderCustomerInfoBlock" style="background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:15px;">
-                    <div id="autoMatchAlert" style="display:none; background:rgba(255,165,0,0.1); border:1px solid orange; color:orange; padding:10px; border-radius:4px; margin-bottom:15px; font-weight:bold; font-size:11px; text-align:center;"></div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:10px; color:var(--text-muted); font-weight:700;">1. NHẬN DIỆN KHÁCH</span><span id="lblCustFound" style="color:#00ff88; font-size:10px; display:none; padding:2px 6px; border:1px solid #00ff88; border-radius:4px;">Đã Khóa Data Cũ ✓</span></div>
-                    <div style="display:flex; gap:15px; margin-bottom:10px;"><div style="flex:1; position:relative;"><label class="form-label" style="color:#00ff88;">SĐT Khách (Gõ tìm)*</label><input type="text" id="erpCustPhone" class="form-input" placeholder="090..." onkeyup="searchOrderPhone(this.value)" autocomplete="off"><div id="orderPhoneDropdown" class="live-search-drop"></div></div><div style="flex:1;"><label class="form-label">Tên Khách Hàng *</label><input type="text" id="erpCustName" class="form-input" placeholder="..."></div></div>
-                    <div style="display:flex; gap:15px;"><div style="flex:2;"><label class="form-label">Địa Chỉ</label><input type="text" id="erpCustAddress" class="form-input" placeholder="..."></div><div style="flex:1;"><label class="form-label">Social</label><input type="text" id="erpCustSocial" class="form-input" placeholder="..."></div></div>
-                </div>
-                <div style="background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:15px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><label class="form-label" style="margin:0;">CHI TIẾT MÓN HÀNG</label><button onclick="addOrderItemRow()" style="background:none; border:none; color:var(--white); font-size:11px; cursor:pointer; border-bottom:1px solid var(--white);">+ THÊM SẢN PHẨM</button></div>
-                    <div id="orderItemsContainer"></div>
-                    <div style="display:flex; gap:15px; margin-top:15px; padding-top:15px; border-top:1px dashed var(--border-light);"><div style="flex:1;"><label class="form-label">Ngày Đặt</label><input type="date" id="erpOrderDate" class="form-input"></div><div style="flex:1;"><label class="form-label">Trạng Thái Đơn</label><select id="erpStatus" class="form-select"><option value="NEW">RAW (Chưa xử lý)</option><option value="CONFIRMED" selected>CONFIRMED (Đã chốt)</option><option value="SOURCING">SOURCING</option><option value="IN TRANSIT">IN TRANSIT</option><option value="DELIVERING">DELIVERING</option><option value="COMPLETED">COMPLETED</option><option value="CANCELLED">CANCELLED</option></select></div><div style="flex:1.5;"><label class="form-label">Ghi chú Đơn</label><input type="text" id="erpOrderNotes" class="form-input" placeholder="..."></div></div>
-                </div>
-                <div style="background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:20px;">
-                    <div style="display:flex; gap:15px; align-items:center;"><div style="flex:1; text-align:center;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:5px;">TỔNG TIỀN ĐƠN</div><div id="lblTotalSold" style="font-size:16px; font-weight:700; color:var(--white);">0 ₫</div><input type="hidden" id="erpPriceSold"><input type="hidden" id="erpPriceCogs"></div><div style="flex:1;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:5px; text-align:center;">KHÁCH ĐÃ TRẢ</div><input type="number" id="erpAmountPaid" class="form-input" style="text-align:center; font-weight:700; color:#00ff88;" placeholder="VND" oninput="calcOrderTotals()"></div><div style="flex:1; text-align:center;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:5px;">CÒN LẠI (NỢ)</div><div id="lblTotalDebt" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div></div>
-                </div>
-                <button class="btn-primary" style="width:100%;" onclick="saveErpOrder()" id="btnSaveOrder">LƯU ĐƠN HÀNG</button>
-            </div></div>
+            <div class="overlay" id="erpOrderModal"><div class="modal" style="max-width:700px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpOrderModal')">✕</button><h3 style="color:#fff; margin-bottom:20px;">XỬ LÝ ĐƠN HÀNG</h3><input type="hidden" id="erpOrderId"><input type="hidden" id="erpCustId"><div id="orderCustomerInfoBlock" style="background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:15px;"><div id="autoMatchAlert" style="display:none; background:rgba(255,165,0,0.1); border:1px solid orange; color:orange; padding:10px; border-radius:4px; margin-bottom:15px; font-weight:bold; font-size:11px; text-align:center;"></div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:10px; color:var(--text-muted); font-weight:700;">1. NHẬN DIỆN KHÁCH</span><span id="lblCustFound" style="color:#00ff88; font-size:10px; display:none; padding:2px 6px; border:1px solid #00ff88; border-radius:4px;">Đã Khóa Data Cũ ✓</span></div><div style="display:flex; gap:15px; margin-bottom:10px;"><div style="flex:1; position:relative;"><label class="form-label" style="color:#00ff88;">SĐT Khách (Gõ tìm)*</label><input type="text" id="erpCustPhone" class="form-input" placeholder="090..." onkeyup="searchOrderPhone(this.value)" autocomplete="off"><div id="orderPhoneDropdown" class="live-search-drop"></div></div><div style="flex:1;"><label class="form-label">Tên Khách Hàng *</label><input type="text" id="erpCustName" class="form-input" placeholder="..."></div></div><div style="display:flex; gap:15px;"><div style="flex:2;"><label class="form-label">Địa Chỉ</label><input type="text" id="erpCustAddress" class="form-input" placeholder="..."></div><div style="flex:1;"><label class="form-label">Social</label><input type="text" id="erpCustSocial" class="form-input" placeholder="..."></div></div></div><div style="background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:15px;"><div style="display:flex; justify-content:space-between; margin-bottom:10px;"><label class="form-label" style="margin:0;">CHI TIẾT MÓN HÀNG</label><button onclick="addOrderItemRow()" style="background:none; border:none; color:var(--white); font-size:11px; cursor:pointer; border-bottom:1px solid var(--white);">+ THÊM SẢN PHẨM</button></div><div id="orderItemsContainer"></div><div style="display:flex; gap:15px; margin-top:15px; padding-top:15px; border-top:1px dashed var(--border-light);"><div style="flex:1;"><label class="form-label">Ngày Đặt</label><input type="date" id="erpOrderDate" class="form-input"></div><div style="flex:1;"><label class="form-label">Trạng Thái Đơn</label><select id="erpStatus" class="form-select"><option value="NEW">RAW (Chưa xử lý)</option><option value="CONFIRMED" selected>CONFIRMED (Đã chốt)</option><option value="SOURCING">SOURCING</option><option value="IN TRANSIT">IN TRANSIT</option><option value="DELIVERING">DELIVERING</option><option value="COMPLETED">COMPLETED</option><option value="CANCELLED">CANCELLED</option></select></div><div style="flex:1.5;"><label class="form-label">Ghi chú Đơn</label><input type="text" id="erpOrderNotes" class="form-input" placeholder="..."></div></div></div><div style="background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:20px;"><div style="display:flex; gap:15px; align-items:center;"><div style="flex:1; text-align:center;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:5px;">TỔNG TIỀN ĐƠN</div><div id="lblTotalSold" style="font-size:16px; font-weight:700; color:var(--white);">0 ₫</div><input type="hidden" id="erpPriceSold"><input type="hidden" id="erpPriceCogs"></div><div style="flex:1;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:5px; text-align:center;">KHÁCH ĐÃ TRẢ</div><input type="number" id="erpAmountPaid" class="form-input" style="text-align:center; font-weight:700; color:#00ff88;" placeholder="VND" oninput="calcOrderTotals()"></div><div style="flex:1; text-align:center;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:5px;">CÒN LẠI (NỢ)</div><div id="lblTotalDebt" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div></div></div><button class="btn-primary" style="width:100%;" onclick="saveErpOrder()" id="btnSaveOrder">LƯU ĐƠN HÀNG</button></div></div>
             <div class="overlay" id="erpCustomerModal"><div class="modal" style="max-width:600px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpCustomerModal')">✕</button><h3 id="crmModalTitle" style="color:#fff; margin-bottom:20px;">HỒ SƠ KHÁCH HÀNG</h3><input type="hidden" id="crmCustId"><div style="display:flex; gap:15px; margin-bottom:10px;"><div style="flex:1; position:relative;"><label class="form-label" style="color:#00ff88;">SĐT Khách (Gõ tìm)*</label><input type="text" id="crmCustPhone" class="form-input" placeholder="..." onkeyup="searchCrmPhone(this.value)" autocomplete="off"><div id="crmPhoneDropdown" class="live-search-drop"></div></div><div style="flex:1;"><label class="form-label">Tên Khách *</label><input type="text" id="crmCustName" class="form-input" placeholder="..."></div></div><div style="display:flex; gap:15px; margin-bottom:15px;"><div style="flex:2;"><label class="form-label">Địa Chỉ</label><input type="text" id="crmCustAddress" class="form-input" placeholder="..."></div><div style="flex:1;"><label class="form-label">Social</label><input type="text" id="crmCustSocial" class="form-input" placeholder="..."></div></div><div id="crmStatsBox" style="display:flex; justify-content:space-between; background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:15px;"><div style="text-align:center;"><div style="font-size:10px; color:var(--text-muted);">TỔNG THỰC THU</div><div id="crmTotalSpent" style="font-weight:700; font-size:16px; color:#00ff88;">0 ₫</div></div><div style="text-align:center;"><div style="font-size:10px; color:var(--text-muted);">CÔNG NỢ</div><div id="crmTotalDebt" style="font-weight:700; font-size:16px; color:var(--red);">0 ₫</div></div></div><div id="crmActionBtns" style="display:flex; gap:10px; margin-bottom:20px;"><button class="btn-primary" style="flex:1; background:var(--navy); color:var(--white); border-color:var(--border);" onclick="openOrderForCustomer()">+ TẠO ĐƠN MỚI</button><button class="btn-primary" style="flex:1; background:transparent; color:#00ff88; border-color:#00ff88;" onclick="openDebtModal()">+ THU TIỀN NỢ</button></div><div id="crmHistoryBox" style="margin-bottom:20px;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">LỊCH SỬ ĐƠN HÀNG</div><div id="crmHistory" style="max-height:200px; overflow-y:auto; background:var(--navy-2); border:1px solid var(--border); padding:10px;"></div></div><div style="display:flex; gap:10px;"><button class="btn-primary" style="flex:2;" onclick="saveCustomerProfile()">LƯU HỒ SƠ</button><button class="btn-primary" style="flex:1; background:var(--red); color:#fff; border-color:var(--red);" id="btnDeleteCustomerAlert" onclick="deleteCustomerSingle()">XÓA</button></div></div></div>
             <div class="overlay" id="erpFinanceModal"><div class="modal" style="max-width:400px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpFinanceModal')">✕</button><h3 id="finModalTitle" style="color:#fff; margin-bottom:20px;">GIAO DỊCH TÀI CHÍNH</h3><div class="form-group"><label class="form-label">Loại Giao Dịch</label><select id="finType" class="form-select"></select></div><div class="form-group"><label class="form-label">Ngày Phát Sinh</label><input type="date" id="finDate" class="form-input"></div><div class="form-group"><label class="form-label">Số Tiền *</label><input type="number" id="finAmount" class="form-input" placeholder="VND"></div><div class="form-group"><label class="form-label">Nội dung *</label><input type="text" id="finDesc" class="form-input"></div><button class="btn-primary" style="width:100%;" onclick="saveErpFinance()">LƯU GIAO DỊCH</button></div></div>
             <div class="overlay" id="erpDebtModal"><div class="modal" style="max-width:400px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpDebtModal')">✕</button><h3 style="color:#fff; margin-bottom:20px;">GHI NHẬN THANH TOÁN</h3><input type="hidden" id="debtCustId"><div class="form-group"><label class="form-label">Ngày Chuyển</label><input type="date" id="debtDate" class="form-input"></div><div class="form-group"><label class="form-label">Đơn Hàng Nợ</label><select id="debtOrderSelect" class="form-select"></select></div><div class="form-group"><label class="form-label">Số Tiền (VND) *</label><input type="number" id="debtAmount" class="form-input"></div><button class="btn-primary" style="width:100%;" onclick="saveDebtPayment()">XÁC NHẬN THU</button></div></div>
@@ -3883,28 +3962,110 @@ function initAutoCat() {
         window.getTodayStr = function() { return new Date().toISOString().split('T')[0]; };
         
         window.switchTab = function(t) {
-            document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active')); document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active')); document.querySelectorAll(`.admin-tab[onclick*="'${t}'"]`).forEach(btn => btn.classList.add('active')); const panel = document.getElementById('tab-' + t); if (panel) panel.classList.add('active');
-            if (['customers', 'orders', 'finance', 'sourcing', 'tasks'].includes(t)) { if(window.fetchErpData) window.fetchErpData(); }
+            const erpTabs = ['customers', 'orders', 'finance', 'sourcing', 'tasks'];
+            document.querySelectorAll('.admin-tab, .admin-sub-tab').forEach(el => el.classList.remove('active')); 
+            document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active')); 
+            
+            const panel = document.getElementById('tab-' + t); 
+            if (panel) panel.classList.add('active');
+
+            const subNav = document.getElementById('erpSubNav');
+            if (subNav) {
+                if (erpTabs.includes(t)) {
+                    subNav.style.display = 'flex';
+                    document.querySelector('.admin-tab[onclick*="customers"]').classList.add('active');
+                    document.querySelector(`.admin-sub-tab[onclick*="'${t}'"]`).classList.add('active');
+                } else {
+                    subNav.style.display = 'none';
+                    document.querySelector(`.admin-tab[onclick*="'${t}'"]`).classList.add('active');
+                }
+            } else {
+                document.querySelector(`.admin-tab[onclick*="'${t}'"]`).classList.add('active');
+            }
+
+            if (erpTabs.includes(t)) { if(window.fetchErpData) window.fetchErpData(); }
         };
 
         window.fetchErpData = async function() {
             if (typeof sbClient === 'undefined') return;
             try {
-                const [c, o, f, s, t] = await Promise.all([
+                // Đổi thành allSettled, bảng nào chưa có/sai cột cũng không làm sập toàn bộ
+                const results = await Promise.allSettled([
                     sbClient.from('customers').select('*').order('created_at', {ascending: false}),
                     sbClient.from('orders').select('*, customers(name, phone)').order('created_at', {ascending: false}),
                     sbClient.from('finance').select('*').order('transaction_date', {ascending: false}),
                     sbClient.from('sourcing').select('*').order('created_at', {ascending: false}),
                     sbClient.from('tasks').select('*').order('created_at', {ascending: false})
                 ]);
-                window.erpState.customers = c.data || []; window.erpState.orders = o.data || []; window.erpState.finance = f.data || []; window.erpState.sourcing = s.data || []; window.erpState.tasks = t.data || [];
+                window.erpState.customers = results[0].status === 'fulfilled' ? (results[0].value.data || []) : [];
+                window.erpState.orders = results[1].status === 'fulfilled' ? (results[1].value.data || []) : [];
+                window.erpState.finance = results[2].status === 'fulfilled' ? (results[2].value.data || []) : [];
+                window.erpState.sourcing = results[3].status === 'fulfilled' ? (results[3].value.data || []) : [];
+                window.erpState.tasks = results[4].status === 'fulfilled' ? (results[4].value.data || []) : [];
                 window.erpState.realCustomers = window.erpState.customers.filter(cust => {
                     const custOrders = window.erpState.orders.filter(ord => ord.customer_id === cust.id);
                     if (custOrders.length === 0) return true; 
                     return custOrders.some(ord => ord.status !== 'NEW');
                 });
-                if(window.renderErpCustomers) window.renderErpCustomers(); if(window.renderErpInbox) window.renderErpInbox(); if(window.renderErpFinance) window.renderErpFinance(); if(window.renderErpSourcing) window.renderErpSourcing(); if(window.renderErpTasks) window.renderErpTasks();
-            } catch(e) { console.error("Lỗi tải ERP:", e); }
+                if(window.renderErpCustomers) window.renderErpCustomers();
+                if(window.renderErpInbox) window.renderErpInbox(); // Đã fix tên hàm để Load bảng Đơn Hàng
+                if(window.renderErpFinance) window.renderErpFinance();
+                if(window.renderErpSourcing) window.renderErpSourcing();
+                if(window.renderErpTasks) window.renderErpTasks();
+                    
+                // Gọi hàm check cảnh báo mỗi khi tải dữ liệu
+                if(window.updateTabWarnings) window.updateTabWarnings();
+            } catch(err) { console.error("fetchErpData ERR:", err); }
+        };
+
+        // --- HỆ THỐNG CẢNH BÁO TAB (WARNING DOT) ---
+        window.updateTabWarnings = function() {
+            if (!window.erpState) return;
+            
+            // 1. Kiểm tra Inbox (Chỉ báo đỏ nếu có đơn hàng NEW chưa xử lý)
+            const pendingInbox = window.erpState.orders.some(o => o.status === 'NEW');
+            
+            // 2. Kiểm tra Khách hàng (Báo đỏ nếu khách có CHỜ ĐƠN hoặc NỢ TIỀN)
+            let pendingCustomers = false;
+            window.erpState.realCustomers?.forEach(c => {
+                const cOrders = window.erpState.orders.filter(o => o.customer_id === c.id);
+                // Check chờ đơn
+                if (cOrders.some(o => ['CONFIRMED', 'SOURCING', 'IN TRANSIT', 'DELIVERING'].includes(o.status))) pendingCustomers = true;
+                // Check nợ
+                const debt = cOrders.filter(o => o.status !== 'CANCELLED' && o.status !== 'NEW').reduce((sum, o) => sum + (Number(o.price_sold) - Number(o.amount_paid)), 0);
+                if (debt > 0) pendingCustomers = true;
+            });
+            
+            // 3. Kiểm tra Sourcing
+            const pendingSourcing = window.erpState.sourcing.some(s => !['FOUND', 'COMPLETED', 'CANCELLED', 'DONE', 'CLOSED'].includes((s.status||'').toUpperCase()));
+            
+            // 4. Kiểm tra Tasks
+            const pendingTasks = window.erpState.tasks.some(t => !['COMPLETED', 'DONE', 'CANCELLED'].includes((t.status||'').toUpperCase()));
+
+            // Hàm gắn dấu chấm đỏ vào Tab con
+            const setBadge = (tabCode, isWarn) => {
+                document.querySelectorAll(`.admin-sub-tab[onclick*="'${tabCode}'"]`).forEach(btn => {
+                    const existing = btn.querySelector('.tab-warn');
+                    if (existing) existing.remove(); // Xóa chấm cũ (nếu có)
+                    if (isWarn) btn.insertAdjacentHTML('beforeend', '<span class="tab-warn" style="font-size:10px; margin-left:6px;" title="Cần xử lý">🔴</span>');
+                });
+            };
+
+            setBadge('orders', pendingInbox);
+            setBadge('customers', pendingCustomers);
+            setBadge('sourcing', pendingSourcing);
+            setBadge('tasks', pendingTasks);
+            setBadge('finance', false); // Tắt chấm đỏ ở Finance theo yêu cầu
+
+            // Cảnh báo ở Tab Mẹ (QUẢN LÝ ERP)
+            const mainBtn = document.querySelector(`.admin-tab[onclick*="customers"]`);
+            if (mainBtn) {
+                const existing = mainBtn.querySelector('.tab-warn');
+                if (existing) existing.remove();
+                if (pendingInbox || pendingCustomers || pendingSourcing || pendingTasks) {
+                    mainBtn.insertAdjacentHTML('beforeend', '<span class="tab-warn" style="font-size:12px; margin-left:6px;">🔴</span>');
+                }
+            }
         };
 
         // --- 1. CRM ---
@@ -3918,8 +4079,8 @@ function initAutoCat() {
                 const totalDebt = cOrders.filter(o => o.status !== 'CANCELLED' && o.status !== 'NEW').reduce((sum, o) => sum + (Number(o.price_sold) - Number(o.amount_paid)), 0);
                 const hasPending = cOrders.some(o => ['CONFIRMED', 'SOURCING', 'IN TRANSIT', 'DELIVERING'].includes(o.status));
                 const pendingBadge = hasPending ? `<span class="badge" style="background:orange; color:#000; font-weight:700;">⏳ CHỜ ĐƠN</span>` : `<span class="badge" style="background:green; color:#fff;">✓ XONG</span>`;
-                return `<tr><td style="font-weight:700;">${c.name}</td><td style="color:var(--text-dim);">${c.phone||'-'} <br><div style="max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${c.address||''}">${c.address||''}</div></td><td style="color:#00ff88; font-weight:700;">${window.fVND(totalSpent)}</td><td style="color:var(--red); font-weight:700;">${totalDebt > 0 ? window.fVND(totalDebt) : '-'}</td><td>${pendingBadge}</td><td><button onclick="viewCustomer('${c.id}')" style="background:var(--navy); border:1px solid var(--border); color:var(--white); padding:4px 8px; cursor:pointer;">SỬA / XEM HỒ SƠ</button></td></tr>`;
-            }).join('') || '<tr><td colspan="6" style="text-align:center;">Chưa có khách hàng nào.</td></tr>';
+                return `<tr><td style="font-weight:700;">${c.name}</td><td style="color:var(--text-dim);">${c.phone||'-'} <br><div style="max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${c.address||''}">${c.address||''}</div></td><td style="color:#00ff88; font-weight:700; font-family:monospace;">${window.fVND(totalSpent)}</td><td style="color:var(--red); font-weight:700; font-family:monospace;">${totalDebt > 0 ? window.fVND(totalDebt) : '-'}</td><td>${pendingBadge}</td><td style="text-align:right;"><button onclick="viewCustomer('${c.id}')" style="background:var(--navy); border:1px solid var(--border); color:var(--white); padding:4px 10px; cursor:pointer; font-size:10px;">SỬA / XEM HỒ SƠ</button></td></tr>`;
+            }).join('') || '<tr><td colspan="6" style="text-align:center; padding:20px;">CHƯA CÓ DỮ LIỆU.</td></tr>';
         };
 
         window.openAddCustomerOnly = function() {
@@ -3968,7 +4129,7 @@ function initAutoCat() {
             try { await sbClient.from('customers').delete().eq('id', id); closeOverlay('erpCustomerModal'); await window.fetchErpData(); } catch(e) { alert(e.message); }
         };
 
-        // --- 2. ĐƠN HÀNG VÀ AUTO-MATCH MA THUẬT ---
+        // --- 2. ĐƠN HÀNG VÀ AUTO-MATCH ---
         window.openOrderForCustomer = function() {
             document.getElementById('erpOrderId').value = ''; document.getElementById('erpCustId').value = document.getElementById('crmCustId').value;
             document.getElementById('orderCustomerInfoBlock').style.display = 'none'; 
@@ -4010,12 +4171,11 @@ function initAutoCat() {
                 const c = window.erpState.customers.find(x => x.id === o.customer_id); 
                 document.getElementById('erpCustPhone').value = c?.phone || c?.contact_info || ''; document.getElementById('erpCustName').value = c?.name || ''; document.getElementById('erpCustAddress').value = c?.address || ''; document.getElementById('erpCustSocial').value = c?.social || ''; 
                 
-                // === THUẬT TOÁN TỰ ĐỘNG ĐIỀN KHÁCH QUEN BẰNG 1 CLICK ===
                 if(c && c.phone && o.status === 'NEW') {
                     const cleanP = window.cleanPhone(c.phone);
                     const matchRealCust = window.erpState.realCustomers.find(cx => window.cleanPhone(cx.phone) === cleanP);
                     if (matchRealCust) {
-                        window.selectOrderCustomer(matchRealCust.id); // Tự động khóa data cũ
+                        window.selectOrderCustomer(matchRealCust.id); 
                         if(alertDiv) {
                             alertDiv.style.display = 'block';
                             alertDiv.innerHTML = `🌟 ĐÃ TỰ ĐỘNG GỘP HỒ SƠ KHÁCH QUEN: <b>${matchRealCust.name}</b>`;
@@ -4064,6 +4224,8 @@ function initAutoCat() {
         };
 
         window.addOrderItemRow = function(name='', size='', price='', cogs='') {
+            if (price === 0 || price === '0') price = ''; 
+            if (cogs === 0 || cogs === '0') cogs = ''; 
             const container = document.getElementById('orderItemsContainer'); const row = document.createElement('div'); row.className = 'order-item-row'; row.style.cssText = "display:flex; gap:10px; margin-bottom:10px; align-items:center; background:var(--navy); padding:10px; border:1px solid var(--border-light);";
             row.innerHTML = `<div style="flex:2;"><input type="text" class="form-input i-name" placeholder="Tên SP" value="${name}"></div><div style="flex:1;"><input type="text" class="form-input i-size" placeholder="Size" value="${size}"></div><div style="flex:1.5;"><input type="number" class="form-input i-price" placeholder="Giá Bán" value="${price}" oninput="calcOrderTotals()"></div><div style="flex:1.5;"><input type="number" class="form-input i-cogs" placeholder="Giá Vốn" value="${cogs}" oninput="calcOrderTotals()"></div><button onclick="this.parentElement.remove(); calcOrderTotals();" style="color:var(--red); background:none; border:none; font-size:16px; cursor:pointer;" title="Xóa">✕</button>`;
             container.appendChild(row); calcOrderTotals();
@@ -4083,27 +4245,35 @@ function initAutoCat() {
                 const cleanPhoneInbox = window.cleanPhone(rawPhone);
                 const isQuen = window.erpState.realCustomers.some(c => window.cleanPhone(c.phone) === cleanPhoneInbox);
                 const quenBadge = isQuen ? `<br><span style="background:orange; color:#000; font-size:9px; padding:2px 4px; border-radius:3px; font-weight:bold;">🌟 KHÁCH QUEN</span>` : `<br><span style="background:var(--navy-2); color:var(--text-dim); font-size:9px; padding:2px 4px; border-radius:3px; border:1px solid var(--border);">Khách Mới</span>`;
-                return `<tr><td style="color:var(--text-dim); font-size:11px;">${new Date(o.created_at).toLocaleDateString('vi-VN')}</td><td style="font-weight:700;">${cName} ${quenBadge}</td><td style="color:var(--text-dim);">${rawPhone}</td><td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">${o.product_name}</td><td style="color:#00ff88; font-weight:700;">${window.fVND(o.price_sold)}</td><td><button onclick="editErpOrder('${o.id}', false)" style="background:#00ff88; color:#000; border:none; padding:4px 8px; font-weight:700; cursor:pointer;">XỬ LÝ ĐƠN</button> <button onclick="deleteErpRecord('orders', '${o.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; margin-left:10px;">XÓA</button></td></tr>`;
-            }).join('') || '<tr><td colspan="6" style="text-align:center;">Hộp thư trống. Đang đợi đơn từ Web.</td></tr>';
+                return `<tr><td style="color:var(--text-dim); font-size:11px;">${new Date(o.created_at).toLocaleDateString('vi-VN')}</td><td style="font-weight:700;">${cName} ${quenBadge}</td><td style="color:var(--text-dim);">${rawPhone}</td><td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">${o.product_name}</td><td style="color:#00ff88; font-weight:700; font-family:monospace;">${window.fVND(o.price_sold)}</td><td style="text-align:right;"><button onclick="editErpOrder('${o.id}', false)" style="background:#00ff88; color:#000; border:none; padding:4px 8px; font-weight:700; cursor:pointer;">XỬ LÝ ĐƠN</button> <button onclick="deleteErpRecord('orders', '${o.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; margin-left:10px;">XÓA</button></td></tr>`;
+            }).join('') || '<tr><td colspan="6" style="text-align:center; padding:20px;">Hộp thư trống.</td></tr>';
         };
 
-        // --- 4. THU TIỀN VÀ FINANCE ---
+        // --- 4. THU TIỀN VÀ FINANCE UI ---
         window.openAddFinanceModal = function(type) { 
             const sel = document.getElementById('finType');
             if (type === 'INCOME') {
                 sel.innerHTML = '<option value="INCOME">THU TIỀN NGOÀI (Other Income)</option><option value="CAPITAL">GÓP VỐN ADMIN (Capital)</option>';
                 document.getElementById('finModalTitle').textContent = "GHI NHẬN THU / VỐN";
+            } else if (type === 'INVENTORY') {
+                sel.innerHTML = '<option value="OTHER_EXP">NHẬP HÀNG TỒN KHO</option>';
+                document.getElementById('finModalTitle').textContent = "NHẬP HÀNG TỒN (TRỪ QUỸ)";
             } else {
                 sel.innerHTML = '<option value="OPEX">CHI PHÍ SHOP (Vận hành)</option><option value="OTHER_EXP">CHI PHÍ NGOÀI PHÁT SINH</option>';
                 document.getElementById('finModalTitle').textContent = "GHI NHẬN CHI PHÍ";
             }
-            document.getElementById('finDate').value = window.getTodayStr(); document.getElementById('finAmount').value = ''; document.getElementById('finDesc').value = ''; openOverlay('erpFinanceModal'); 
+            document.getElementById('finDate').value = window.getTodayStr(); document.getElementById('finAmount').value = ''; document.getElementById('finDesc').value = type === 'INVENTORY' ? '[INVENTORY] Nhập: ' : ''; openOverlay('erpFinanceModal'); 
         };
 
         window.saveErpFinance = async function() { const amt = document.getElementById('finAmount').value; const desc = document.getElementById('finDesc').value; if(!amt||!desc) return; await sbClient.from('finance').insert([{ type: document.getElementById('finType').value, amount: amt, description: desc, transaction_date: document.getElementById('finDate').value || new Date().toISOString() }]); closeOverlay('erpFinanceModal'); await window.fetchErpData(); };
+
+window.finInflowFilter = 'ALL';
+        window.finOutflowFilter = 'ALL';
+        window.filterFinInflow = function(val) { window.finInflowFilter = val; window.renderErpFinance(); };
+        window.filterFinOutflow = function(val) { window.finOutflowFilter = val; window.renderErpFinance(); };
         
         window.renderErpFinance = function() {
-            let autoIn=0, manIn=0, capIn=0, autoOut=0, manOut=0, totalDebt=0; let incomes = []; let expenses = [];
+            let autoIn=0, manIn=0, capIn=0, autoOut=0, manOut=0, totalDebt=0; let incomes = []; let expenses = []; let inventoryRows = [];
 
             window.erpState.orders.forEach(o => {
                 if(o.status === 'NEW' || o.status === 'CANCELLED') return;
@@ -4118,7 +4288,17 @@ function initAutoCat() {
                 const amt = Number(f.amount); const dStr = f.transaction_date;
                 if(f.type === 'CAPITAL') { capIn += amt; incomes.push({ date: dStr, badge: 'GÓP VỐN', desc: f.description, amt: amt, isAuto: false, id: f.id }); } 
                 else if (f.type === 'INCOME') { manIn += amt; incomes.push({ date: dStr, badge: 'THU LẺ', desc: f.description, amt: amt, isAuto: false, id: f.id }); } 
-                else if (f.type === 'OPEX' || f.type === 'OTHER_EXP') { manOut += amt; expenses.push({ date: dStr, badge: (f.type==='OPEX'?'CHI SHOP':'CHI NGOÀI'), desc: f.description, amt: amt, isAuto: false, id: f.id }); }
+                else if (f.type === 'OPEX' || f.type === 'OTHER_EXP') { 
+                    manOut += amt; 
+                    if (f.description.includes('[INVENTORY]')) {
+                        // Đẩy vào bảng INVENTORY
+                        inventoryRows.push({ date: dStr, badge: 'HÀNG TỒN', desc: f.description.replace('[INVENTORY]','').trim(), amt: amt, isAuto: false, id: f.id });
+                        // ĐỒNG THỜI đẩy 1 bản sao vào bảng OUTFLOW CHI PHÍ để dễ đối soát
+                        expenses.push({ date: dStr, badge: 'NHẬP KHO', desc: f.description.replace('[INVENTORY]','').trim(), amt: amt, isAuto: false, id: f.id });
+                    } else {
+                        expenses.push({ date: dStr, badge: (f.type==='OPEX'?'CHI SHOP':'CHI NGOÀI'), desc: f.description, amt: amt, isAuto: false, id: f.id }); 
+                    }
+                }
             });
 
             const debtRows = window.erpState.realCustomers.map(c => {
@@ -4126,7 +4306,7 @@ function initAutoCat() {
                 if(debtOrders.length === 0) return '';
                 const cDebt = debtOrders.reduce((sum, o) => sum + (Number(o.price_sold) - Number(o.amount_paid)), 0); totalDebt += cDebt;
                 const orderNames = debtOrders.map(o => `<div style="font-size:10px; color:var(--text-dim);">- ${o.product_name} (${window.fVND(Number(o.price_sold) - Number(o.amount_paid))})</div>`).join('');
-                return `<tr><td style="font-weight:700;">${c.name} <br><span style="font-size:10px;color:var(--text-dim)">${c.phone||''}</span></td><td>${orderNames}</td><td style="color:var(--red); font-weight:700;">${window.fVND(cDebt)}</td><td><button onclick="viewCustomer('${c.id}')" style="background:var(--navy); color:var(--white); border:1px solid var(--border); cursor:pointer;">THU NỢ</button></td></tr>`;
+                return `<tr><td style="font-weight:700;">${c.name} <br><span style="font-size:10px;color:var(--text-dim)">${c.phone||''}</span></td><td>${orderNames}</td><td style="color:var(--red); font-weight:700; font-family:monospace;">${window.fVND(cDebt)}</td><td style="text-align:right;"><button onclick="viewCustomer('${c.id}')" style="background:var(--navy); color:var(--white); border:1px solid var(--border); padding:4px 10px; font-size:10px; cursor:pointer;">THU NỢ</button></td></tr>`;
             }).join('');
 
             if(document.getElementById('finAutoIn')) document.getElementById('finAutoIn').innerText = window.fVND(autoIn); if(document.getElementById('finManIn')) document.getElementById('finManIn').innerText = window.fVND(manIn); if(document.getElementById('finCapIn')) document.getElementById('finCapIn').innerText = window.fVND(capIn); if(document.getElementById('finAutoOut')) document.getElementById('finAutoOut').innerText = window.fVND(autoOut); if(document.getElementById('finManOut')) document.getElementById('finManOut').innerText = window.fVND(manOut); if(document.getElementById('finExpTotal')) document.getElementById('finExpTotal').innerText = window.fVND(autoOut + manOut);
@@ -4140,12 +4320,36 @@ function initAutoCat() {
             const buildRow = (l, color) => {
                 let actionBtn = ''; let bgWarning = l.isDeleted ? `background:rgba(255,0,0,0.1); border-left:3px solid var(--red);` : ''; let alertText = l.isDeleted ? `<br><strong style="color:var(--red); font-size:10px;">⚠️ KHÁCH BỊ XÓA</strong>` : '';
                 if (l.isDeleted) { actionBtn = `<button onclick="deleteErpRecord('orders', '${l.id}')" style="background:var(--red); border:none; color:#fff; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">XÓA RÁC</button>`; } else if (l.isAuto) { actionBtn = `<span style="font-size:10px;color:var(--text-dim)">(Auto)</span>`; } else { actionBtn = `<button onclick="deleteErpRecord('finance', '${l.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">✕ Xóa</button>`; }
-                return `<tr style="${bgWarning}"><td style="color:var(--text-dim);">${new Date(l.date).toLocaleDateString('vi-VN')}</td><td><span class="badge" style="background:var(--navy); border:1px solid ${color}; color:${color};">${l.badge}</span></td><td>${l.desc} ${alertText}</td><td style="color:${color}; font-weight:700;">${window.fVND(l.amt)}</td><td>${actionBtn}</td></tr>`;
+                return `<tr style="${bgWarning}"><td style="color:var(--text-dim);">${new Date(l.date).toLocaleDateString('vi-VN')}</td><td><span class="badge" style="background:var(--navy); border:1px solid ${color}; color:${color};">${l.badge}</span></td><td>${l.desc} ${alertText}</td><td style="color:${color}; font-weight:700; font-family:monospace;">${window.fVND(l.amt)}</td><td style="text-align:right;">${actionBtn}</td></tr>`;
             };
-            incomes.sort((a,b) => new Date(b.date) - new Date(a.date)); expenses.sort((a,b) => new Date(b.date) - new Date(a.date));
-            if(document.getElementById('finIncomeList')) document.getElementById('finIncomeList').innerHTML = incomes.map(l => buildRow(l, (l.badge==='GÓP VỐN'?'#3399ff':'#00ff88'))).join('') || '<tr><td colspan="5" style="text-align:center;">Trống</td></tr>';
-            if(document.getElementById('finExpenseList')) document.getElementById('finExpenseList').innerHTML = expenses.map(l => buildRow(l, 'var(--red)')).join('') || '<tr><td colspan="5" style="text-align:center;">Trống</td></tr>';
-            if(document.getElementById('finDebtList')) document.getElementById('finDebtList').innerHTML = debtRows || '<tr><td colspan="4" style="text-align:center; color:#00ff88;">Tuyệt vời! Không có ai nợ.</td></tr>';
+            
+            // Xử lý bộ lọc trước khi sort và in ra HTML
+            let filteredIncomes = incomes;
+            if (window.finInflowFilter === 'AUTO') filteredIncomes = incomes.filter(l => l.isAuto);
+            else if (window.finInflowFilter === 'MANUAL') filteredIncomes = incomes.filter(l => !l.isAuto);
+// Logic cho thanh TÌM KIẾM GIAO DỊCH
+            const searchTerm = (document.getElementById('searchFinance')?.value || '').toLowerCase();
+            if (searchTerm) {
+                filteredIncomes = filteredIncomes.filter(l => l.desc.toLowerCase().includes(searchTerm) || String(l.amt).includes(searchTerm) || l.badge.toLowerCase().includes(searchTerm));
+                filteredExpenses = filteredExpenses.filter(l => l.desc.toLowerCase().includes(searchTerm) || String(l.amt).includes(searchTerm) || l.badge.toLowerCase().includes(searchTerm));
+                inventoryRows = inventoryRows.filter(l => l.desc.toLowerCase().includes(searchTerm) || String(l.amt).includes(searchTerm));
+            }
+
+            let filteredExpenses = expenses;
+            if (window.finOutflowFilter === 'AUTO') filteredExpenses = expenses.filter(l => l.isAuto);
+            else if (window.finOutflowFilter === 'MANUAL') filteredExpenses = expenses.filter(l => !l.isAuto);
+
+            filteredIncomes.sort((a,b) => new Date(b.date) - new Date(a.date)); 
+            filteredExpenses.sort((a,b) => new Date(b.date) - new Date(a.date)); 
+            inventoryRows.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            if(document.getElementById('finIncomeList')) document.getElementById('finIncomeList').innerHTML = filteredIncomes.map(l => buildRow(l, (l.badge==='GÓP VỐN'?'#3399ff':'#00ff88'))).join('') || '<tr><td colspan=\"5\" style=\"text-align:center; padding:20px;\">Trống</td></tr>';
+            if(document.getElementById('finExpenseList')) document.getElementById('finExpenseList').innerHTML = filteredExpenses.map(l => buildRow(l, 'var(--red)')).join('') || '<tr><td colspan=\"5\" style=\"text-align:center; padding:20px;\">Trống</td></tr>';
+            
+            // XUẤT HÀNG TỒN RA BẢNG INVENTORY
+            if(document.getElementById('finInventoryList')) document.getElementById('finInventoryList').innerHTML = inventoryRows.map(l => buildRow(l, '#3399ff')).join('') || '<tr><td colspan=\"5\" style=\"text-align:center; padding:20px;\">Trống</td></tr>';
+            
+            if(document.getElementById('finDebtList')) document.getElementById('finDebtList').innerHTML = debtRows || '<tr><td colspan=\"4\" style=\"text-align:center; padding:20px; color:#00ff88;\">KHÔNG CÓ CÔNG NỢ</td></tr>';
             if(document.getElementById('finTotalPendingDebt')) document.getElementById('finTotalPendingDebt').innerText = window.fVND(totalDebt);
         };
 
@@ -4169,11 +4373,30 @@ function initAutoCat() {
         window.openAddSourcingModal = function() { document.getElementById('srcId').value = ''; ['srcCust', 'srcItem', 'srcBudget', 'srcProgress'].forEach(id => document.getElementById(id).value = ''); document.getElementById('srcDate').value = window.getTodayStr(); document.getElementById('srcStatus').value = 'LOOKING'; openOverlay('erpSourcingModal'); }; 
         window.editErpSourcing = function(id) { const s = window.erpState.sourcing.find(x => x.id === id); if(!s) return; document.getElementById('srcId').value = s.id; document.getElementById('srcDate').value = s.created_at.split('T')[0]; document.getElementById('srcCust').value = s.customer_name || ''; document.getElementById('srcItem').value = s.item_name; document.getElementById('srcBudget').value = s.max_budget || ''; document.getElementById('srcProgress').value = s.progress_log || ''; document.getElementById('srcStatus').value = s.status; openOverlay('erpSourcingModal'); }; 
         window.saveErpSourcing = async function() { const item = document.getElementById('srcItem').value.trim(); if(!item) return; const data = { customer_name: document.getElementById('srcCust').value, item_name: item, max_budget: document.getElementById('srcBudget').value || null, progress_log: document.getElementById('srcProgress').value, status: document.getElementById('srcStatus').value }; const id = document.getElementById('srcId').value; if(id) await sbClient.from('sourcing').update(data).eq('id', id); else await sbClient.from('sourcing').insert([data]); closeOverlay('erpSourcingModal'); await window.fetchErpData(); }; 
-        window.renderErpSourcing = function() { const list = document.getElementById('adminSourcingList'); if(!list) return; list.innerHTML = window.erpState.sourcing.map(s => { let color = s.status === 'FOUND' ? 'green' : (s.status === 'CANCELLED' ? 'var(--red)' : 'var(--white)'); return `<tr><td style="font-weight:700;">${s.customer_name||'Ẩn'}</td><td>${s.item_name}</td><td style="color:var(--text-dim);">${s.max_budget ? window.fVND(s.max_budget) : '-'}</td><td style="color:var(--text-dim); max-width:200px; overflow:hidden; text-overflow:ellipsis;">${s.progress_log||'-'}</td><td style="color:${color}; font-weight:700;">${s.status}</td><td><button onclick="editErpSourcing('${s.id}')" style="background:var(--navy); color:var(--white); border:1px solid var(--border); padding:4px 8px; cursor:pointer;">SỬA</button> <button onclick="deleteErpRecord('sourcing', '${s.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">✕</button></td></tr>`; }).join('') || '<tr><td colspan="6" style="text-align:center;">Trống.</td></tr>'; };
+        window.renderErpSourcing = function() { const list = document.getElementById('adminSourcingList'); if(!list) return; list.innerHTML = window.erpState.sourcing.map(s => { let color = s.status === 'FOUND' ? 'green' : (s.status === 'CANCELLED' ? 'var(--red)' : 'var(--white)'); return `<tr><td style="font-weight:700;">${s.customer_name||'Ẩn'}</td><td>${s.item_name}</td><td style="color:var(--text-dim); font-family:monospace;">${s.max_budget ? window.fVND(s.max_budget) : '-'}</td><td style="color:var(--text-dim); max-width:200px; overflow:hidden; text-overflow:ellipsis;">${s.progress_log||'-'}</td><td style="color:${color}; font-weight:700;">${s.status}</td><td style="text-align:right;"><button onclick="editErpSourcing('${s.id}')" style="background:var(--navy); color:var(--white); border:1px solid var(--border); padding:4px 10px; font-size:10px; cursor:pointer;">SỬA</button> <button onclick="deleteErpRecord('sourcing', '${s.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; margin-left:5px;">✕</button></td></tr>`; }).join('') || '<tr><td colspan=\"6\" style=\"text-align:center; padding:20px;\">Trống.</td></tr>'; };
+        
         window.openAddTaskModal = function() { document.getElementById('taskId').value=''; ['taskTitle','taskAssignee','taskNotes','taskDeadline'].forEach(id=>document.getElementById(id).value=''); openOverlay('erpTaskModal'); }; 
         window.editErpTask = function(id) { const t = window.erpState.tasks.find(x=>x.id===id); if(!t) return; document.getElementById('taskId').value=t.id; document.getElementById('taskTitle').value=t.title; document.getElementById('taskAssignee').value=t.assignee||''; document.getElementById('taskDeadline').value=t.deadline||''; document.getElementById('taskCat').value=t.category; document.getElementById('taskStatus').value=t.status; document.getElementById('taskNotes').value=t.progress_notes||''; openOverlay('erpTaskModal'); }; 
         window.saveErpTask = async function() { const title = document.getElementById('taskTitle').value; if(!title) return; const data = { title: title, assignee: document.getElementById('taskAssignee').value, deadline: document.getElementById('taskDeadline').value||null, category: document.getElementById('taskCat').value, status: document.getElementById('taskStatus').value, progress_notes: document.getElementById('taskNotes').value }; const id = document.getElementById('taskId').value; if(id) await sbClient.from('tasks').update(data).eq('id', id); else await sbClient.from('tasks').insert([data]); closeOverlay('erpTaskModal'); await window.fetchErpData(); }; 
-        window.renderErpTasks = function() { const list = document.getElementById('adminTasksList'); if(!list) return; list.innerHTML = window.erpState.tasks.map(t => { let statCol = t.status==='DONE'?'green':(t.status==='DOING'?'orange':'var(--text-muted)'); let isLate = false; if(t.deadline && t.status !== 'DONE' && new Date(t.deadline) < new Date()) isLate = true; return `<tr><td style="font-weight:700;">${t.title}</td><td><span class="badge">${t.category}</span></td><td>${t.assignee||'-'}</td><td style="color:var(--text-dim); max-width:200px; overflow:hidden; text-overflow:ellipsis;">${t.progress_notes||'-'}</td><td style="color:${isLate?'var(--red)':'var(--white)'}; font-weight:${isLate?'700':'400'};">${t.deadline ? new Date(t.deadline).toLocaleDateString('vi-VN') : '-'} ${isLate?'(Trễ)':''}</td><td style="color:${statCol}; font-weight:700;">${t.status}</td><td><button onclick="editErpTask('${t.id}')" style="background:var(--navy); color:var(--white); border:1px solid var(--border); padding:4px 8px; cursor:pointer;">SỬA</button> <button onclick="deleteErpRecord('tasks', '${t.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">✕</button></td></tr>`; }).join('') || '<tr><td colspan="7" style="text-align:center;">Trống.</td></tr>'; };
+        
+        window.renderErpTasks = function() { 
+            const listMain = document.getElementById('adminTasksMain'); 
+            const listDaily = document.getElementById('adminTasksDaily'); 
+            if(!listMain || !listDaily) return; 
+
+            const buildTaskRow = t => { 
+                let statCol = t.status==='DONE'?'green':(t.status==='DOING'?'orange':'var(--text-muted)'); 
+                let isLate = false; 
+                if(t.deadline && t.status !== 'DONE' && new Date(t.deadline) < new Date()) isLate = true; 
+                return `<tr><td style="font-weight:700;">${t.title}</td><td>${t.assignee||'-'}</td><td style="color:var(--text-dim); max-width:150px; overflow:hidden; text-overflow:ellipsis;" title="${t.progress_notes||''}">${t.progress_notes||'-'}</td><td style="color:${isLate?'var(--red)':'var(--white)'}; font-weight:${isLate?'700':'400'};">${t.deadline ? new Date(t.deadline).toLocaleDateString('vi-VN') : '-'} ${isLate?'(Trễ)':''}</td><td style="color:${statCol}; font-weight:700;">${t.status}</td><td style="text-align:right;"><button onclick="editErpTask('${t.id}')" style="background:var(--navy); color:var(--white); border:1px solid var(--border); padding:4px 10px; font-size:10px; cursor:pointer;">SỬA</button> <button onclick="deleteErpRecord('tasks', '${t.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; margin-left:5px;">✕</button></td></tr>`; 
+            }; 
+
+            const mainTasks = window.erpState.tasks.filter(t => t.category === 'MAIN');
+            const dailyTasks = window.erpState.tasks.filter(t => t.category === 'DAILY');
+
+            listMain.innerHTML = mainTasks.map(buildTaskRow).join('') || '<tr><td colspan=\"6\" style=\"text-align:center; padding:20px; color:var(--text-muted);\">Trống.</td></tr>'; 
+            listDaily.innerHTML = dailyTasks.map(buildTaskRow).join('') || '<tr><td colspan=\"6\" style=\"text-align:center; padding:20px; color:var(--text-muted);\">Trống.</td></tr>'; 
+        };
 
         window.deleteErpRecord = async function(table, id) { if(!confirm("XÓA DỮ LIỆU NÀY?")) return; await sbClient.from(table).delete().eq('id', id); await window.fetchErpData(); };
 
@@ -4187,38 +4410,20 @@ function initAutoCat() {
                 await sbClient.from('orders').insert([{ customer_id: rawId, order_date: new Date().toISOString(), product_name: productName, product_size: size, price_sold: price || 0, status: 'NEW', order_notes: 'Đơn từ Web' }]);
             } catch (err) { console.error("ERP Auto-log Failed:", err); }
         };
-// ====================================================================
-        // TÍNH NĂNG MỚI: EXPORT BÁO CÁO EXCEL CHUẨN (.XLSX) - 1 FILE CÓ 5 TABS 
-        // ====================================================================
+
         window.exportAllData = async function(btn) {
             if (!confirm("XUẤT BÁO CÁO EXCEL (TỒN QUỸ, DOANH THU, CÔNG NỢ) VỀ MÁY?")) return;
-            
-            const origText = btn.textContent;
-            btn.textContent = "⏳ ĐANG XUẤT EXCEL...";
-            btn.disabled = true;
-
+            const origText = btn.textContent; btn.textContent = "⏳ ĐANG XUẤT EXCEL..."; btn.disabled = true;
             try {
                 if (typeof window.fetchErpData === 'function') await window.fetchErpData();
-
-                // Tải thư viện xuất Excel chuẩn (SheetJS)
                 if (typeof XLSX === 'undefined') {
                     await new Promise((resolve, reject) => {
-                        const script = document.createElement('script');
-                        script.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
-                        script.onload = resolve;
-                        script.onerror = () => reject(new Error("Lỗi tải bộ công cụ Excel"));
-                        document.head.appendChild(script);
+                        const script = document.createElement('script'); script.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+                        script.onload = resolve; script.onerror = () => reject(new Error("Lỗi tải bộ công cụ Excel")); document.head.appendChild(script);
                     });
                 }
-
-                const today = window.getTodayStr();
-                const validCustomerIds = window.erpState.realCustomers.map(c => c.id);
-                const wb = XLSX.utils.book_new(); // Tạo File Excel
-
-                // --- TAB 1: BẢNG TỔNG QUAN TÀI CHÍNH (DASHBOARD) ---
-                let autoIn=0, manIn=0, capIn=0, autoOut=0, manOut=0, tDebt=0;
-                let fRows = [["Ngày", "Phân Loại", "Nguồn", "Diễn Giải", "Thu Vào (+)", "Chi Ra (-)"]];
-                
+                const today = window.getTodayStr(); const validCustomerIds = window.erpState.realCustomers.map(c => c.id); const wb = XLSX.utils.book_new(); 
+                let autoIn=0, manIn=0, capIn=0, autoOut=0, manOut=0, tDebt=0; let fRows = [["Ngày", "Phân Loại", "Nguồn", "Diễn Giải", "Thu Vào (+)", "Chi Ra (-)"]];
                 window.erpState.orders.forEach(o => {
                     if(o.status === 'NEW' || o.status === 'CANCELLED' || !validCustomerIds.includes(o.customer_id)) return;
                     const cName = o.customers ? o.customers.name : ''; const dStr = o.order_date || o.created_at;
@@ -4226,91 +4431,60 @@ function initAutoCat() {
                     if(Number(o.price_cogs) > 0) { autoOut += Number(o.price_cogs); fRows.push([dStr.split('T')[0], "GIÁ VỐN", "Auto", `Vốn đơn: ${o.product_name} (${cName})`, 0, Number(o.price_cogs)]); }
                     if((Number(o.price_sold) - Number(o.amount_paid)) > 0) tDebt += (Number(o.price_sold) - Number(o.amount_paid));
                 });
-
                 window.erpState.finance.forEach(f => {
                     const amt = Number(f.amount); const dStr = f.transaction_date;
                     if(f.type === 'CAPITAL') { capIn += amt; fRows.push([dStr.split('T')[0], "GÓP VỐN", "Manual", f.description, amt, 0]); }
                     else if (f.type === 'INCOME') { manIn += amt; fRows.push([dStr.split('T')[0], "THU NGOÀI", "Manual", f.description, amt, 0]); }
                     else if (f.type === 'OPEX' || f.type === 'OTHER_EXP') { manOut += amt; fRows.push([dStr.split('T')[0], (f.type==='OPEX'?'CHI SHOP':'CHI NGOÀI'), "Manual", f.description, 0, amt]); }
                 });
-
-                const netP = (autoIn + manIn) - (autoOut + manOut);
-                const cashH = netP + capIn;
-                const estP = netP + tDebt;
-
-                let dashRows = [
-                    ["ARC'WARE ERP - BÁO CÁO TỔNG QUAN TÀI CHÍNH", ""],
-                    ["Ngày xuất báo cáo:", today],
-                    ["", ""],
-                    ["CÁC CHỈ SỐ QUAN TRỌNG", "SỐ TIỀN (VNĐ)"],
-                    ["TỒN QUỸ THỰC TẾ (Đang Cầm):", cashH],
-                    ["LÃI RÒNG (Tiền Tươi):", netP],
-                    ["LÃI DỰ TÍNH (Tính cả Nợ):", estP],
-                    ["NỢ ĐANG CHỜ THU:", tDebt],
-                    ["", ""],
-                    ["CHI TIẾT 5 LUỒNG KẾ TOÁN", "SỐ TIỀN (VNĐ)"],
-                    ["1. Thu Tiền Hàng (Auto):", autoIn],
-                    ["2. Thu Tiền Ngoài (Manual):", manIn],
-                    ["3. Góp Vốn Của Chủ (Manual):", capIn],
-                    ["4. Chi Tiền Hàng/Giá Vốn (Auto):", autoOut],
-                    ["5. Chi Phí Shop & Phát Sinh (Manual):", manOut],
-                    ["-> TỔNG CHI PHÍ (4+5):", (autoOut + manOut)]
-                ];
-                let wsDash = XLSX.utils.aoa_to_sheet(dashRows);
-                wsDash['!cols'] = [{wch: 35}, {wch: 20}]; // Giãn cột
-                XLSX.utils.book_append_sheet(wb, wsDash, "1. TỔNG QUAN");
-
-                // --- TAB 2: DÒNG TIỀN CHI TIẾT ---
-                let wsFin = XLSX.utils.aoa_to_sheet(fRows);
-                wsFin['!cols'] = [{wch: 12}, {wch: 15}, {wch: 10}, {wch: 40}, {wch: 15}, {wch: 15}];
-                XLSX.utils.book_append_sheet(wb, wsFin, "2. DÒNG TIỀN");
-
-                // --- TAB 3: ĐƠN HÀNG ---
+                const netP = (autoIn + manIn) - (autoOut + manOut); const cashH = netP + capIn; const estP = netP + tDebt;
+                let dashRows = [ ["ARC'WARE ERP - BÁO CÁO TỔNG QUAN TÀI CHÍNH", ""], ["Ngày xuất báo cáo:", today], ["", ""], ["CÁC CHỈ SỐ QUAN TRỌNG", "SỐ TIỀN (VNĐ)"], ["TỒN QUỸ THỰC TẾ (Đang Cầm):", cashH], ["LÃI RÒNG (Tiền Tươi):", netP], ["LÃI DỰ TÍNH (Tính cả Nợ):", estP], ["NỢ ĐANG CHỜ THU:", tDebt], ["", ""], ["CHI TIẾT 5 LUỒNG KẾ TOÁN", "SỐ TIỀN (VNĐ)"], ["1. Thu Tiền Hàng (Auto):", autoIn], ["2. Thu Tiền Ngoài (Manual):", manIn], ["3. Góp Vốn Của Chủ (Manual):", capIn], ["4. Chi Tiền Hàng/Giá Vốn (Auto):", autoOut], ["5. Chi Phí Shop & Phát Sinh (Manual):", manOut], ["-> TỔNG CHI PHÍ (4+5):", (autoOut + manOut)] ];
+                let wsDash = XLSX.utils.aoa_to_sheet(dashRows); wsDash['!cols'] = [{wch: 35}, {wch: 20}]; XLSX.utils.book_append_sheet(wb, wsDash, "1. TỔNG QUAN");
+                let wsFin = XLSX.utils.aoa_to_sheet(fRows); wsFin['!cols'] = [{wch: 12}, {wch: 15}, {wch: 10}, {wch: 40}, {wch: 15}, {wch: 15}]; XLSX.utils.book_append_sheet(wb, wsFin, "2. DÒNG TIỀN");
                 let oRows = [["Mã Đơn", "Ngày Đặt", "Trạng Thái", "Khách Hàng", "SĐT", "Sản Phẩm", "Size", "Giá Bán", "Giá Vốn", "Đã Trả", "Nợ Tồn", "Ghi Chú"]];
                 window.erpState.orders.forEach(o => {
                     if(o.status === 'NEW' || !validCustomerIds.includes(o.customer_id)) return; 
-                    const c = o.customers || {name: '', phone: ''};
-                    const n = Number(o.price_sold) - Number(o.amount_paid);
+                    const c = o.customers || {name: '', phone: ''}; const n = Number(o.price_sold) - Number(o.amount_paid);
                     oRows.push([o.id.substring(0,8), (o.order_date||o.created_at).split('T')[0], o.status, c.name, c.phone, o.product_name, o.product_size, Number(o.price_sold), Number(o.price_cogs), Number(o.amount_paid), (n>0?n:0), (o.order_notes||"")]);
                 });
-                let wsOrd = XLSX.utils.aoa_to_sheet(oRows);
-                wsOrd['!cols'] = [{wch: 10}, {wch: 12}, {wch: 12}, {wch: 20}, {wch: 15}, {wch: 35}, {wch: 10}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 20}];
-                XLSX.utils.book_append_sheet(wb, wsOrd, "3. ĐƠN HÀNG");
-
-                // --- TAB 4: KHÁCH HÀNG (CRM) ---
+                let wsOrd = XLSX.utils.aoa_to_sheet(oRows); wsOrd['!cols'] = [{wch: 10}, {wch: 12}, {wch: 12}, {wch: 20}, {wch: 15}, {wch: 35}, {wch: 10}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 20}]; XLSX.utils.book_append_sheet(wb, wsOrd, "3. ĐƠN HÀNG");
                 let cRows = [["Tên Khách Hàng", "Số Điện Thoại", "Địa Chỉ", "Mạng Xã Hội", "Tổng Đã Tiêu", "Tổng Đang Nợ"]];
                 window.erpState.realCustomers.forEach(c => { 
-                    const cOrders = window.erpState.orders.filter(o => o.customer_id === c.id);
-                    const spent = cOrders.reduce((sum, o) => sum + Number(o.amount_paid || 0), 0);
-                    const debt = cOrders.filter(o => o.status !== 'CANCELLED' && o.status !== 'NEW').reduce((sum, o) => sum + (Number(o.price_sold) - Number(o.amount_paid)), 0);
+                    const cOrders = window.erpState.orders.filter(o => o.customer_id === c.id); const spent = cOrders.reduce((sum, o) => sum + Number(o.amount_paid || 0), 0); const debt = cOrders.filter(o => o.status !== 'CANCELLED' && o.status !== 'NEW').reduce((sum, o) => sum + (Number(o.price_sold) - Number(o.amount_paid)), 0);
                     cRows.push([c.name, c.phone, (c.address||""), (c.social||""), spent, debt]); 
                 });
-                let wsCust = XLSX.utils.aoa_to_sheet(cRows);
-                wsCust['!cols'] = [{wch: 20}, {wch: 15}, {wch: 30}, {wch: 20}, {wch: 15}, {wch: 15}];
-                XLSX.utils.book_append_sheet(wb, wsCust, "4. KHÁCH HÀNG");
-
-                // --- TAB 5: SOURCING & TASKS ---
+                let wsCust = XLSX.utils.aoa_to_sheet(cRows); wsCust['!cols'] = [{wch: 20}, {wch: 15}, {wch: 30}, {wch: 20}, {wch: 15}, {wch: 15}]; XLSX.utils.book_append_sheet(wb, wsCust, "4. KHÁCH HÀNG");
                 let mixRows = [["--- BẢNG SOURCING ---"], ["Ngày", "Khách Cần", "Món Hàng", "Ngân Sách", "Tiến Độ", "Trạng Thái"]];
                 window.erpState.sourcing.forEach(s => { mixRows.push([s.created_at.split('T')[0], s.customer_name, s.item_name, Number(s.max_budget||0), (s.progress_log||""), s.status]); });
                 mixRows.push([""]); mixRows.push(["--- BẢNG TASKS ---"]); mixRows.push(["Ngày Tạo", "Công Việc", "Phân Loại", "Người Làm", "Ghi Chú", "Deadline", "Trạng Thái"]);
                 window.erpState.tasks.forEach(t => { mixRows.push([t.created_at.split('T')[0], t.title, t.category, (t.assignee||""), (t.progress_notes||""), (t.deadline||""), t.status]); });
-                let wsMix = XLSX.utils.aoa_to_sheet(mixRows);
-                wsMix['!cols'] = [{wch: 12}, {wch: 20}, {wch: 30}, {wch: 12}, {wch: 30}, {wch: 15}];
-                XLSX.utils.book_append_sheet(wb, wsMix, "5. SOURCING_TASKS");
-
-                // TẢI FILE EXCEL VỀ MÁY
+                let wsMix = XLSX.utils.aoa_to_sheet(mixRows); wsMix['!cols'] = [{wch: 12}, {wch: 20}, {wch: 30}, {wch: 12}, {wch: 30}, {wch: 15}]; XLSX.utils.book_append_sheet(wb, wsMix, "5. SOURCING_TASKS");
                 XLSX.writeFile(wb, `ARCWARE_ERP_Report_${today}.xlsx`);
-
-            } catch (err) {
-                console.error(err); alert("❌ Lỗi xuất Excel: " + err.message);
-            } finally {
-                btn.textContent = origText; btn.disabled = false;
-            }
+            } catch (err) { console.error(err); alert("❌ Lỗi xuất Excel: " + err.message); } finally { btn.textContent = origText; btn.disabled = false; }
         };
-        // ====================================================================
-        console.log("🔥 ARC'WARE ERP V12.3 (UI/UX FIXED & AUTOMATCH) READY!");
+
+        console.log("🔥 ARC'WARE ERP V13 (PRO UI/UX - DESKTOP WIDE) READY!");
     } catch(err) { console.error("CRITICAL ERP ERROR:", err); }
 })();
+</script>
+<script>
+// --- ScrollSpy: Menu Header sáng lên khi cuộn ---
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('section');
+  const navLinks = document.querySelectorAll('.header-nav .nav-link');
+  let current = '';
+  sections.forEach(sec => {
+    const secTop = sec.offsetTop;
+    if (pageYOffset >= secTop - 200) { current = sec.getAttribute('id'); }
+  });
+  navLinks.forEach(link => {
+    link.style.color = 'var(--text-muted)';
+    if (link.getAttribute('href') === '#' + current) { 
+        link.style.color = 'var(--white)'; 
+        link.style.opacity = '1'; 
+    }
+  });
+});
 </script>
 </body>
 </html>
