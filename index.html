@@ -1654,13 +1654,19 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
       <div style="font-size:12px; color:var(--text-muted);">Session: <span id="adminTimer" style="color:var(--white); font-family:monospace;">60:00</span></div>
     </div>
     <div style="display:flex; gap:12px;">
+      <button class="btn-primary" style="padding:8px 16px; background:#00ff88; border-color:#00ff88; color:#000; font-weight:700;" onclick="exportAllData(this)">⬇️ BACKUP DATA-MỖI THÁNG</button>
       <button class="btn-primary" style="padding:8px 16px; background:transparent; border-color:var(--border); color:var(--white);" onclick="closeAdminPanelOnly()">BACK TO HOME</button>
       <button class="btn-primary" style="padding:8px 16px; background:var(--red); border-color:var(--red); color:#fff;" onclick="logoutAdmin()">LOGOUT</button>
     </div>
   </div>
   
-  <div class="admin-tabs">
+  <div class="admin-tabs" style="overflow-x:auto; white-space:nowrap; padding-bottom:5px;">
     <button class="admin-tab active" onclick="switchTab('products')">Products</button>
+    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('customers')">Customers (CRM)</button>
+    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('orders')">Orders</button>
+    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('finance')">Finance</button>
+    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('sourcing')">Sourcing</button>
+    <button class="admin-tab" style="color: var(--white); font-weight: 800;" onclick="switchTab('tasks')">Tasks</button>
     <button class="admin-tab" onclick="switchTab('translations')">Content & Text</button>
     <button class="admin-tab" onclick="switchTab('settings')">Settings</button>
   </div>
@@ -1760,7 +1766,77 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     <div class="form-group"><label class="form-label">Phone 2</label><input type="text" class="form-input" id="sPhone2"></div>
     <button class="btn-primary" style="width:100%" onclick="saveSettings()">SAVE SETTINGS</button>
   </div>
-</div>
+<div class="tab-panel" id="tab-customers">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 style="color:var(--white); font-size:16px; text-transform:uppercase;">HỒ SƠ KHÁCH HÀNG (CRM)</h3>
+      <div style="display:flex; gap:10px;">
+        <input type="text" id="searchCustomers" class="form-input" placeholder="🔍 Tìm SĐT, Tên khách..." style="width:250px;" onkeyup="renderErpCustomers()">
+        <button class="btn-primary" onclick="openAddCustomerOnly()">+ TẠO KHÁCH HÀNG</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);">
+      <table class="erp-table">
+        <thead><tr><th>Khách Hàng</th><th>SĐT / Liên Hệ</th><th>Tổng Thực Thu</th><th>Công Nợ</th><th>Tình Trạng</th><th>Hành Động</th></tr></thead>
+        <tbody id="adminCustomersList"><tr><td colspan="6" style="text-align:center;">Đang tải...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-orders">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <div>
+        <h3 style="color:var(--white); font-size:16px; text-transform:uppercase; margin-bottom:5px;">INBOX (ĐƠN HÀNG MỚI RAW)</h3>
+        <div style="font-size:11px; color:var(--text-muted);">Chỉ hiển thị đơn từ Website. Chốt cọc xong -> Xử lý đơn để chuyển vào Hồ sơ khách.</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--red);">
+      <table class="erp-table">
+        <thead><tr><th>Ngày</th><th>Khách Báo Tên</th><th>Thông Tin Nhận Diện</th><th>Sản Phẩm (Giỏ Hàng)</th><th>Tổng Tiền</th><th>Hành Động</th></tr></thead>
+        <tbody id="adminInboxList"><tr><td colspan="6" style="text-align:center;">Đang tải...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-finance">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 style="color:var(--white); font-size:16px; text-transform:uppercase;">FINANCE DASHBOARD</h3>
+      <input type="text" id="searchFinance" class="form-input" placeholder="🔍 Tìm giao dịch..." style="max-width:200px;" onkeyup="renderErpFinance()">
+    </div>
+    
+    <div style="background:var(--navy-2); padding:15px; margin-bottom:15px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <div style="flex:1;"><div style="font-size:11px; color:var(--text-muted);">TỒN QUỸ (GỒM VỐN)</div><div id="finCashOnHand" style="font-size:22px; font-weight:700; color:var(--white);">0 ₫</div></div>
+        <div style="flex:1; text-align:center; border-left:1px solid var(--border); border-right:1px solid var(--border); padding:0 10px;"><div style="font-size:11px; color:var(--text-muted);">LÃI RÒNG (ĐÃ THU)</div><div id="finNetProfit" style="font-size:18px; font-weight:700; color:#00ff88;">0 ₫</div></div>
+        <div style="flex:1; text-align:center; border-right:1px solid var(--border); padding:0 10px;"><div style="font-size:11px; color:orange; font-weight:700;">LÃI DỰ TÍNH (+ NỢ)</div><div id="finEstProfit" style="font-size:22px; font-weight:700; color:orange;">0 ₫</div></div>
+        <div style="flex:1; text-align:right;"><div style="font-size:11px; color:var(--text-muted);">NỢ CHỜ THU</div><div id="finTotalPendingDebt" style="font-size:18px; font-weight:700; color:var(--red);">0 ₫</div></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:20px;">
+      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);">1. THU TIỀN HÀNG (Auto)</div><div id="finAutoIn" style="font-size:16px; font-weight:700; color:#00ff88;">0 ₫</div></div>
+      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);">2. THU TIỀN NGOÀI (Manual)</div><div id="finManIn" style="font-size:16px; font-weight:700; color:#00ff88;">0 ₫</div></div>
+      <div style="background:rgba(51,153,255,0.1); border:1px solid rgba(51,153,255,0.5); padding:15px;"><div style="font-size:10px; color:#3399ff; font-weight:700;">ADMIN GÓP VỐN</div><div id="finCapIn" style="font-size:16px; font-weight:700; color:#3399ff;">0 ₫</div></div>
+      
+      <div style="background:rgba(255,51,102,0.05); border:1px solid rgba(255,51,102,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);">4. CHI TIỀN HÀNG (Auto COGS)</div><div id="finAutoOut" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div>
+      <div style="background:rgba(255,51,102,0.05); border:1px solid rgba(255,51,102,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);">5. CHI PHÍ KHÁC (Manual)</div><div id="finManOut" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div>
+      <div style="background:var(--red); border:1px solid var(--red); padding:15px;"><div style="font-size:10px; color:#fff; font-weight:700;">TỔNG CHI (4+5)</div><div id="finExpTotal" style="font-size:18px; font-weight:700; color:#fff;">0 ₫</div></div>
+    </div>
+
+    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+        <div style="flex:1; min-width:300px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h4 style="color:#00ff88;">⬇️ DÒNG TIỀN VÀO (THU / VỐN)</h4> <button onclick="openAddFinanceModal('INCOME')" style="background:transparent; border:1px solid #00ff88; color:#00ff88; cursor:pointer;">+ THU / GÓP VỐN</button></div>
+            <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th></tr></thead><tbody id="finIncomeList"></tbody></table></div>
+        </div>
+        <div style="flex:1; min-width:300px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h4 style="color:var(--red);">⬆️ DÒNG TIỀN RA (CHI TIÊU)</h4> <button onclick="openAddFinanceModal('OPEX')" style="background:transparent; border:1px solid var(--red); color:var(--red); cursor:pointer;">- CHI PHÍ</button></div>
+            <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th></tr></thead><tbody id="finExpenseList"></tbody></table></div>
+        </div>
+    </div>
+    
+    <div style="margin-bottom:10px;"><h4 style="color:orange;">⚠️ SỔ CÔNG NỢ (CHỜ THU)</h4></div>
+    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:300px;"><table class="erp-table"><thead><tr><th>Khách Hàng</th><th>Đơn Nợ</th><th>Số Tiền Nợ</th><th>Thao tác</th></tr></thead><tbody id="finDebtList"></tbody></table></div>
+  </div>
+
+  <div class="tab-panel" id="tab-sourcing"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 style="color:var(--white); font-size:16px;">SOURCING BOARD</h3><button class="btn-primary" onclick="openAddSourcingModal()">+ TẠO YÊU CẦU</button></div><div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Khách Cần</th><th>Món Hàng</th><th>Ngân Sách</th><th>Tiến Độ</th><th>Trạng Thái</th><th>Hành Động</th></tr></thead><tbody id="adminSourcingList"><tr><td colspan="6">Đang tải...</td></tr></tbody></table></div></div>
+  <div class="tab-panel" id="tab-tasks"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 style="color:var(--white); font-size:16px;">TASK MANAGER</h3><button class="btn-primary" onclick="openAddTaskModal()">+ NEW TASK</button></div><div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Công Việc</th><th>Phân Loại</th><th>Người Làm</th><th>Ghi chú</th><th>Deadline</th><th>Trạng Thái</th><th>Hành Động</th></tr></thead><tbody id="adminTasksList"><tr><td colspan="7">Đang tải...</td></tr></tbody></table></div></div>
 
 <script>
 // =========================================================================
@@ -2906,11 +2982,27 @@ window.submitCart = async function(method, btnEl, accessKey) {
 
     if(cart.length === 0) return alert(_t('errCart'));
 
+    // 1. KHIÊN CHỐNG SPAM (30 Giây)
     if (method === 'EMAIL') {
         const lastSent = localStorage.getItem('aw_last_order_time');
-        if (lastSent && Date.now() - parseInt(lastSent) < 180000) {
-            return alert(currentLang === 'vi' ? "Bạn thao tác quá nhanh. Vui lòng thử lại sau 3 phút." : "Please wait 3 minutes before sending another request.");
+        if (lastSent && Date.now() - parseInt(lastSent) < 30000) {
+            return alert(currentLang === 'vi' ? "Vui lòng đợi 30 giây trước khi đặt thêm đơn mới." : "Please wait 30 seconds before sending another request.");
         }
+    }
+
+    // 2. KHÓA CỨNG NÚT BẤM (CHỐNG ĐÚP ĐƠN)
+    if (btnEl.disabled) return; 
+    const origText = btnEl.textContent; 
+    btnEl.textContent = "SENDING..."; 
+    btnEl.disabled = true;
+
+    // 3. BẮN ĐƠN MÙ VÀO ERP (Chỉ chạy 1 lần duy nhất)
+    if (typeof window.logOrderToERP === 'function') {
+        const autoProdName = cart.map(i => `${i.qty}x ${i.name}`).join(' + ');
+        const autoProdSize = cart.map(i => i.size).join(', ');
+        const autoTotalPrice = cart.reduce((sum, i) => sum + ((i.price || 0) * i.qty), 0);
+        const autoContactInfo = `${code} ${phoneInput}` + (ig ? ` | IG: ${ig}` : '');
+        window.logOrderToERP(name, autoContactInfo, autoProdName, autoProdSize, autoTotalPrice);
     }
 
     let txt = _t('tplOrder'); 
@@ -2932,11 +3024,10 @@ window.submitCart = async function(method, btnEl, accessKey) {
         let cleanIg = ig.replace(/^@/, '').trim(); 
         txt += "\nInstagram: https://www.instagram.com/" + cleanIg;
     }
-    
     txt += "\n";
 
+    // 4. PHỤC HỒI EMAIL WEB3FORMS CỦA KHÁCH
     if (method === 'EMAIL') {
-        const origText = btnEl.textContent; btnEl.textContent = "SENDING..."; btnEl.disabled = true;
         try {
             const res = await fetch("https://api.web3forms.com/submit", {
                 method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
@@ -2948,7 +3039,7 @@ window.submitCart = async function(method, btnEl, accessKey) {
                 localStorage.setItem('aw_last_order_time', Date.now()); 
                 cart = []; updateCartButton(); closeOverlay('cartOverlay'); 
             } else { alert("Email failed. Please use Instagram or WhatsApp."); }
-        } catch(e) { alert("Email failed. Please use Instagram or WhatsApp."); } 
+        } catch(e) { alert("Email failed. Please check connection."); } 
         finally { btnEl.textContent = origText; btnEl.disabled = false; }
     } else {
         currentSocialPlatform = method;
@@ -2959,7 +3050,8 @@ window.submitCart = async function(method, btnEl, accessKey) {
             document.getElementById('copyGoBtn').textContent = method === 'IG' ? _t('igGo') : _t('waGo'); 
             closeOverlay('cartOverlay');
             setTimeout(() => openOverlay('copyOverlay'), 10);
-        }).catch(err => alert("Clipboard error. Please try Email."));
+            btnEl.textContent = origText; btnEl.disabled = false;
+        }).catch(err => { alert("Clipboard error."); btnEl.textContent = origText; btnEl.disabled = false; });
     }
 };
 
@@ -3012,7 +3104,17 @@ function _unlockBody() {
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.width = '';
+  
+  // 1. Tạm thời TẮT chế độ cuộn mượt của trình duyệt
+  document.documentElement.style.scrollBehavior = 'auto';
+  
+  // 2. Ép màn hình nhảy ngay lập tức về vị trí cũ (Không animation)
   window.scrollTo(0, _bodyScrollY);
+  
+  // 3. Đợi 10 mili-giây rồi BẬT LẠI cuộn mượt cho các chức năng khác của Web
+  setTimeout(() => {
+      document.documentElement.style.scrollBehavior = 'smooth';
+  }, 10);
 }
 function openOverlay(id) {
   document.getElementById(id).classList.add('open');
@@ -3639,6 +3741,576 @@ function initAutoCat() {
     else if (val.includes('beanie') || val.includes('cap')) catSelect.value = 'Beanies';
   });
 }
+</script>
+<div class="tab-panel" id="tab-customers">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 style="color:var(--white); font-size:16px; text-transform:uppercase;">HỒ SƠ KHÁCH HÀNG (CRM)</h3>
+      <div style="display:flex; gap:10px;">
+        <input type="text" id="searchCustomers" class="form-input" placeholder="🔍 Tìm SĐT, Tên khách..." style="width:250px;" onkeyup="renderErpCustomers()">
+        <button class="btn-primary" onclick="openAddCustomerOnly()">+ TẠO KHÁCH HÀNG</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);">
+      <table class="erp-table">
+        <thead><tr><th>Khách Hàng</th><th>SĐT / Liên Hệ</th><th>Tổng Thực Thu</th><th>Công Nợ</th><th>Tình Trạng</th><th>Hành Động</th></tr></thead>
+        <tbody id="adminCustomersList"><tr><td colspan="6" style="text-align:center;">Đang tải...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-orders">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <div>
+        <h3 style="color:var(--white); font-size:16px; text-transform:uppercase; margin-bottom:5px;">INBOX (ĐƠN HÀNG MỚI RAW)</h3>
+        <div style="font-size:11px; color:var(--text-muted);">Chỉ hiển thị đơn từ Website. Chốt cọc xong -> Xử lý đơn để chuyển vào Hồ sơ khách.</div>
+      </div>
+    </div>
+    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--red);">
+      <table class="erp-table">
+        <thead><tr><th>Ngày</th><th>Khách Báo Tên</th><th>Thông Tin Nhận Diện</th><th>Sản Phẩm (Giỏ Hàng)</th><th>Tổng Tiền</th><th>Hành Động</th></tr></thead>
+        <tbody id="adminInboxList"><tr><td colspan="6" style="text-align:center;">Đang tải...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="tab-finance">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+      <h3 style="color:var(--white); font-size:16px; text-transform:uppercase;">FINANCE DASHBOARD</h3>
+      <input type="text" id="searchFinance" class="form-input" placeholder="🔍 Tìm giao dịch..." style="max-width:200px;" onkeyup="renderErpFinance()">
+    </div>
+    
+    <div style="background:var(--navy-2); padding:15px; margin-bottom:15px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <div style="flex:1;"><div style="font-size:11px; color:var(--text-muted);">TỒN QUỸ (CASH ON HAND)</div><div id="finCashOnHand" style="font-size:22px; font-weight:700; color:var(--white);">0 ₫</div></div>
+        <div style="flex:1; text-align:center; border-left:1px solid var(--border); border-right:1px solid var(--border); padding:0 10px;"><div style="font-size:11px; color:var(--text-muted);">LÃI RÒNG (ĐÃ THU)</div><div id="finNetProfit" style="font-size:18px; font-weight:700; color:#00ff88;">0 ₫</div></div>
+        <div style="flex:1; text-align:center; border-right:1px solid var(--border); padding:0 10px;"><div style="font-size:11px; color:orange; font-weight:700;">LÃI DỰ TÍNH (+ NỢ)</div><div id="finEstProfit" style="font-size:22px; font-weight:700; color:orange;">0 ₫</div></div>
+        <div style="flex:1; text-align:right;"><div style="font-size:11px; color:var(--text-muted);">NỢ CHỜ THU</div><div id="finTotalPendingDebt" style="font-size:18px; font-weight:700; color:var(--red);">0 ₫</div></div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:20px;">
+      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);"> THU TIỀN HÀNG (Auto)</div><div id="finAutoIn" style="font-size:16px; font-weight:700; color:#00ff88;">0 ₫</div></div>
+      <div style="background:rgba(0,255,136,0.05); border:1px solid rgba(0,255,136,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);"> THU TIỀN NGOÀI (Manual)</div><div id="finManIn" style="font-size:16px; font-weight:700; color:#00ff88;">0 ₫</div></div>
+      <div style="background:rgba(51,153,255,0.1); border:1px solid rgba(51,153,255,0.5); padding:15px;"><div style="font-size:10px; color:#3399ff; font-weight:700;"> ADMIN GÓP VỐN</div><div id="finCapIn" style="font-size:16px; font-weight:700; color:#3399ff;">0 ₫</div></div>
+      <div style="background:rgba(255,51,102,0.05); border:1px solid rgba(255,51,102,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);"> CHI TIỀN HÀNG (Auto COGS)</div><div id="finAutoOut" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div>
+      <div style="background:rgba(255,51,102,0.05); border:1px solid rgba(255,51,102,0.3); padding:15px;"><div style="font-size:10px; color:var(--text-muted);"> CHI PHÍ KHÁC (Manual)</div><div id="finManOut" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div>
+      <div style="background:var(--red); border:1px solid var(--red); padding:15px;"><div style="font-size:10px; color:#fff; font-weight:700;">TỔNG CHI (4+5)</div><div id="finExpTotal" style="font-size:18px; font-weight:700; color:#fff;">0 ₫</div></div>
+    </div>
+
+    <div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:20px;">
+        <div style="flex:1; min-width:300px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h4 style="color:#00ff88;">⬇️ DÒNG TIỀN VÀO (THU / VỐN)</h4> <button onclick="openAddFinanceModal('INCOME')" style="background:transparent; border:1px solid #00ff88; color:#00ff88; cursor:pointer;">+ THU / GÓP VỐN</button></div>
+            <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th></tr></thead><tbody id="finIncomeList"></tbody></table></div>
+        </div>
+        <div style="flex:1; min-width:300px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><h4 style="color:var(--red);">⬆️ DÒNG TIỀN RA (CHI TIÊU)</h4> <button onclick="openAddFinanceModal('OPEX')" style="background:transparent; border:1px solid var(--red); color:var(--red); cursor:pointer;">- CHI PHÍ</button></div>
+            <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày</th><th>Phân Loại</th><th>Diễn Giải</th><th>Số Tiền</th></tr></thead><tbody id="finExpenseList"></tbody></table></div>
+        </div>
+    </div>
+    <div style="margin-bottom:10px;"><h4 style="color:orange;">⚠️ SỔ CÔNG NỢ (CHỜ THU)</h4></div>
+    <div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border); max-height:300px;"><table class="erp-table"><thead><tr><th>Khách Hàng</th><th>Đơn Nợ</th><th>Số Tiền Nợ</th><th>Thao tác</th></tr></thead><tbody id="finDebtList"></tbody></table></div>
+  </div>
+
+  <div class="tab-panel" id="tab-sourcing"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 style="color:var(--white); font-size:16px;">SOURCING BOARD</h3><button class="btn-primary" onclick="openAddSourcingModal()">+ TẠO YÊU CẦU</button></div><div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Khách Cần</th><th>Món Hàng</th><th>Ngân Sách</th><th>Tiến Độ</th><th>Trạng Thái</th><th>Hành Động</th></tr></thead><tbody id="adminSourcingList"><tr><td colspan="6">Đang tải...</td></tr></tbody></table></div></div>
+  <div class="tab-panel" id="tab-tasks"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><h3 style="color:var(--white); font-size:16px;">TASK MANAGER</h3><button class="btn-primary" onclick="openAddTaskModal()">+ NEW TASK</button></div><div style="overflow-x:auto; background:var(--navy-2); border:1px solid var(--border);"><table class="erp-table"><thead><tr><th>Công Việc</th><th>Phân Loại</th><th>Người Làm</th><th>Ghi chú</th><th>Deadline</th><th>Trạng Thái</th><th>Hành Động</th></tr></thead><tbody id="adminTasksList"><tr><td colspan="7">Đang tải...</td></tr></tbody></table></div></div>
+
+<style>
+  #erpModalsWrapper { position: relative; z-index: 2147483600 !important; }
+  #erpCustomerModal { z-index: 2147483645 !important; }
+  #erpOrderModal { z-index: 2147483646 !important; }
+  #erpDebtModal { z-index: 2147483646 !important; }
+  .erp-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: left; white-space: nowrap; }
+  .erp-table th { background: var(--navy); color: var(--text-muted); padding: 12px; border-bottom: 1px solid var(--border); font-weight: 700; text-transform: uppercase; }
+  .erp-table td { padding: 12px; border-bottom: 1px solid var(--border-light); color: var(--white); }
+  .erp-table tr:hover { background: rgba(255,255,255,0.03); }
+  .badge { display:inline-block; padding: 2px 6px; border-radius: 10px; background: var(--border); color: var(--white); font-size: 10px; margin-left:5px; }
+  .badge.bg-red { background: var(--red); color: white; }
+  .live-search-drop { display:none; position:absolute; top:100%; left:0; right:0; background:var(--navy); border:1px solid #00ff88; max-height:150px; overflow-y:auto; z-index:10000; box-shadow:0 5px 15px rgba(0,0,0,0.5); margin-top:2px; border-radius:4px; }
+  .live-search-item { padding:10px; border-bottom:1px solid var(--border-light); cursor:pointer; font-size:12px; color:var(--text-dim); }
+  .live-search-item:hover { background:rgba(0, 255, 136, 0.1); color:var(--white); }
+</style>
+
+<script id="arcware-erp-engine">
+(function() {
+    try {
+        window.cleanPhone = function(p) {
+            if (!p) return '';
+            let s = String(p).trim();
+            if (s.startsWith('+84') || s.startsWith('84') || s.startsWith('0084')) {
+                s = s.replace(/[\s\-\.\(\)]/g, ''); 
+                if (s.startsWith('+84')) s = s.slice(3);
+                if (s.startsWith('84')) s = s.slice(2);
+                if (s.startsWith('0084')) s = s.slice(4);
+                while(s.startsWith('0')) { s = s.slice(1); }
+                return '0' + s; 
+            }
+            if (s.startsWith('0') && !s.startsWith('00')) return s.replace(/[\s\-\.\(\)]/g, '');
+            return String(p).trim(); 
+        };
+
+        if (!document.getElementById('erpModalsWrapper')) {
+            const wrapper = document.createElement('div'); wrapper.id = "erpModalsWrapper";
+            wrapper.innerHTML = `
+            <div class="overlay" id="erpOrderModal"><div class="modal" style="max-width:700px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpOrderModal')">✕</button><h3 style="color:#fff; margin-bottom:20px;">XỬ LÝ ĐƠN HÀNG</h3><input type="hidden" id="erpOrderId"><input type="hidden" id="erpCustId">
+                <div id="orderCustomerInfoBlock" style="background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:15px;">
+                    <div id="autoMatchAlert" style="display:none; background:rgba(255,165,0,0.1); border:1px solid orange; color:orange; padding:10px; border-radius:4px; margin-bottom:15px; font-weight:bold; font-size:11px; text-align:center;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:10px; color:var(--text-muted); font-weight:700;">1. NHẬN DIỆN KHÁCH</span><span id="lblCustFound" style="color:#00ff88; font-size:10px; display:none; padding:2px 6px; border:1px solid #00ff88; border-radius:4px;">Đã Khóa Data Cũ ✓</span></div>
+                    <div style="display:flex; gap:15px; margin-bottom:10px;"><div style="flex:1; position:relative;"><label class="form-label" style="color:#00ff88;">SĐT Khách (Gõ tìm)*</label><input type="text" id="erpCustPhone" class="form-input" placeholder="090..." onkeyup="searchOrderPhone(this.value)" autocomplete="off"><div id="orderPhoneDropdown" class="live-search-drop"></div></div><div style="flex:1;"><label class="form-label">Tên Khách Hàng *</label><input type="text" id="erpCustName" class="form-input" placeholder="..."></div></div>
+                    <div style="display:flex; gap:15px;"><div style="flex:2;"><label class="form-label">Địa Chỉ</label><input type="text" id="erpCustAddress" class="form-input" placeholder="..."></div><div style="flex:1;"><label class="form-label">Social</label><input type="text" id="erpCustSocial" class="form-input" placeholder="..."></div></div>
+                </div>
+                <div style="background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><label class="form-label" style="margin:0;">CHI TIẾT MÓN HÀNG</label><button onclick="addOrderItemRow()" style="background:none; border:none; color:var(--white); font-size:11px; cursor:pointer; border-bottom:1px solid var(--white);">+ THÊM SẢN PHẨM</button></div>
+                    <div id="orderItemsContainer"></div>
+                    <div style="display:flex; gap:15px; margin-top:15px; padding-top:15px; border-top:1px dashed var(--border-light);"><div style="flex:1;"><label class="form-label">Ngày Đặt</label><input type="date" id="erpOrderDate" class="form-input"></div><div style="flex:1;"><label class="form-label">Trạng Thái Đơn</label><select id="erpStatus" class="form-select"><option value="NEW">RAW (Chưa xử lý)</option><option value="CONFIRMED" selected>CONFIRMED (Đã chốt)</option><option value="SOURCING">SOURCING</option><option value="IN TRANSIT">IN TRANSIT</option><option value="DELIVERING">DELIVERING</option><option value="COMPLETED">COMPLETED</option><option value="CANCELLED">CANCELLED</option></select></div><div style="flex:1.5;"><label class="form-label">Ghi chú Đơn</label><input type="text" id="erpOrderNotes" class="form-input" placeholder="..."></div></div>
+                </div>
+                <div style="background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:20px;">
+                    <div style="display:flex; gap:15px; align-items:center;"><div style="flex:1; text-align:center;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:5px;">TỔNG TIỀN ĐƠN</div><div id="lblTotalSold" style="font-size:16px; font-weight:700; color:var(--white);">0 ₫</div><input type="hidden" id="erpPriceSold"><input type="hidden" id="erpPriceCogs"></div><div style="flex:1;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:5px; text-align:center;">KHÁCH ĐÃ TRẢ</div><input type="number" id="erpAmountPaid" class="form-input" style="text-align:center; font-weight:700; color:#00ff88;" placeholder="VND" oninput="calcOrderTotals()"></div><div style="flex:1; text-align:center;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:5px;">CÒN LẠI (NỢ)</div><div id="lblTotalDebt" style="font-size:16px; font-weight:700; color:var(--red);">0 ₫</div></div></div>
+                </div>
+                <button class="btn-primary" style="width:100%;" onclick="saveErpOrder()" id="btnSaveOrder">LƯU ĐƠN HÀNG</button>
+            </div></div>
+            <div class="overlay" id="erpCustomerModal"><div class="modal" style="max-width:600px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpCustomerModal')">✕</button><h3 id="crmModalTitle" style="color:#fff; margin-bottom:20px;">HỒ SƠ KHÁCH HÀNG</h3><input type="hidden" id="crmCustId"><div style="display:flex; gap:15px; margin-bottom:10px;"><div style="flex:1; position:relative;"><label class="form-label" style="color:#00ff88;">SĐT Khách (Gõ tìm)*</label><input type="text" id="crmCustPhone" class="form-input" placeholder="..." onkeyup="searchCrmPhone(this.value)" autocomplete="off"><div id="crmPhoneDropdown" class="live-search-drop"></div></div><div style="flex:1;"><label class="form-label">Tên Khách *</label><input type="text" id="crmCustName" class="form-input" placeholder="..."></div></div><div style="display:flex; gap:15px; margin-bottom:15px;"><div style="flex:2;"><label class="form-label">Địa Chỉ</label><input type="text" id="crmCustAddress" class="form-input" placeholder="..."></div><div style="flex:1;"><label class="form-label">Social</label><input type="text" id="crmCustSocial" class="form-input" placeholder="..."></div></div><div id="crmStatsBox" style="display:flex; justify-content:space-between; background:var(--navy-2); padding:15px; border:1px solid var(--border); margin-bottom:15px;"><div style="text-align:center;"><div style="font-size:10px; color:var(--text-muted);">TỔNG THỰC THU</div><div id="crmTotalSpent" style="font-weight:700; font-size:16px; color:#00ff88;">0 ₫</div></div><div style="text-align:center;"><div style="font-size:10px; color:var(--text-muted);">CÔNG NỢ</div><div id="crmTotalDebt" style="font-weight:700; font-size:16px; color:var(--red);">0 ₫</div></div></div><div id="crmActionBtns" style="display:flex; gap:10px; margin-bottom:20px;"><button class="btn-primary" style="flex:1; background:var(--navy); color:var(--white); border-color:var(--border);" onclick="openOrderForCustomer()">+ TẠO ĐƠN MỚI</button><button class="btn-primary" style="flex:1; background:transparent; color:#00ff88; border-color:#00ff88;" onclick="openDebtModal()">+ THU TIỀN NỢ</button></div><div id="crmHistoryBox" style="margin-bottom:20px;"><div style="font-size:10px; color:var(--text-muted); margin-bottom:10px; border-bottom:1px solid var(--border); padding-bottom:5px;">LỊCH SỬ ĐƠN HÀNG</div><div id="crmHistory" style="max-height:200px; overflow-y:auto; background:var(--navy-2); border:1px solid var(--border); padding:10px;"></div></div><div style="display:flex; gap:10px;"><button class="btn-primary" style="flex:2;" onclick="saveCustomerProfile()">LƯU HỒ SƠ</button><button class="btn-primary" style="flex:1; background:var(--red); color:#fff; border-color:var(--red);" id="btnDeleteCustomerAlert" onclick="deleteCustomerSingle()">XÓA</button></div></div></div>
+            <div class="overlay" id="erpFinanceModal"><div class="modal" style="max-width:400px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpFinanceModal')">✕</button><h3 id="finModalTitle" style="color:#fff; margin-bottom:20px;">GIAO DỊCH TÀI CHÍNH</h3><div class="form-group"><label class="form-label">Loại Giao Dịch</label><select id="finType" class="form-select"></select></div><div class="form-group"><label class="form-label">Ngày Phát Sinh</label><input type="date" id="finDate" class="form-input"></div><div class="form-group"><label class="form-label">Số Tiền *</label><input type="number" id="finAmount" class="form-input" placeholder="VND"></div><div class="form-group"><label class="form-label">Nội dung *</label><input type="text" id="finDesc" class="form-input"></div><button class="btn-primary" style="width:100%;" onclick="saveErpFinance()">LƯU GIAO DỊCH</button></div></div>
+            <div class="overlay" id="erpDebtModal"><div class="modal" style="max-width:400px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpDebtModal')">✕</button><h3 style="color:#fff; margin-bottom:20px;">GHI NHẬN THANH TOÁN</h3><input type="hidden" id="debtCustId"><div class="form-group"><label class="form-label">Ngày Chuyển</label><input type="date" id="debtDate" class="form-input"></div><div class="form-group"><label class="form-label">Đơn Hàng Nợ</label><select id="debtOrderSelect" class="form-select"></select></div><div class="form-group"><label class="form-label">Số Tiền (VND) *</label><input type="number" id="debtAmount" class="form-input"></div><button class="btn-primary" style="width:100%;" onclick="saveDebtPayment()">XÁC NHẬN THU</button></div></div>
+            <div class="overlay" id="erpSourcingModal"><div class="modal" style="max-width:400px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpSourcingModal')">✕</button><h3 style="color:#fff; margin-bottom:20px;">SOURCING</h3><input type="hidden" id="srcId"><div class="form-group"><label class="form-label">Ngày</label><input type="date" id="srcDate" class="form-input"></div><div class="form-group"><label class="form-label">Khách</label><input type="text" id="srcCust" class="form-input"></div><div class="form-group"><label class="form-label">Món hàng</label><input type="text" id="srcItem" class="form-input"></div><div class="form-group"><label class="form-label">Ngân sách</label><input type="number" id="srcBudget" class="form-input"></div><div class="form-group"><label class="form-label">Tiến độ</label><textarea id="srcProgress" class="form-textarea" rows="3"></textarea></div><div class="form-group"><label class="form-label">Status</label><select id="srcStatus" class="form-select"><option value="LOOKING">ĐANG TÌM</option><option value="FOUND">ĐÃ CHỐT</option><option value="CANCELLED">HỦY</option></select></div><button class="btn-primary" style="width:100%;" onclick="saveErpSourcing()">LƯU</button></div></div>
+            <div class="overlay" id="erpTaskModal"><div class="modal" style="max-width:500px; padding:30px;"><button class="modal-close-abs" onclick="closeOverlay('erpTaskModal')">✕</button><h3 style="color:#fff; margin-bottom:20px;">TASK MANAGER</h3><input type="hidden" id="taskId"><div class="form-group"><label class="form-label">Công Việc *</label><input type="text" id="taskTitle" class="form-input"></div><div style="display:flex; gap:15px; margin-bottom:15px;"><div style="flex:1;"><label class="form-label">Người làm</label><input type="text" id="taskAssignee" class="form-input"></div><div style="flex:1;"><label class="form-label">Deadline</label><input type="date" id="taskDeadline" class="form-input"></div></div><div style="display:flex; gap:15px; margin-bottom:15px;"><div style="flex:1;"><label class="form-label">Phân loại</label><select id="taskCat" class="form-select"><option value="DAILY">DAILY</option><option value="MAIN">MAIN</option></select></div><div style="flex:1;"><label class="form-label">Trạng thái</label><select id="taskStatus" class="form-select"><option value="TODO">TODO</option><option value="DOING">DOING</option><option value="DONE">DONE</option></select></div></div><div class="form-group"><label class="form-label">Nhật ký</label><textarea id="taskNotes" class="form-textarea" rows="3"></textarea></div><button class="btn-primary" style="width:100%;" onclick="saveErpTask()">LƯU</button></div></div>`;
+            document.body.appendChild(wrapper);
+            document.addEventListener('click', function(e) {
+                if(!e.target.closest('#crmCustPhone') && !e.target.closest('#crmPhoneDropdown')) { document.getElementById('crmPhoneDropdown').style.display = 'none'; }
+                if(!e.target.closest('#erpCustPhone') && !e.target.closest('#orderPhoneDropdown')) { document.getElementById('orderPhoneDropdown').style.display = 'none'; }
+            });
+        }
+
+        window.erpState = { customers: [], realCustomers: [], orders: [], finance: [], sourcing: [], tasks: [] };
+        window.fVND = (num) => new Intl.NumberFormat('vi-VN').format(num || 0) + ' ₫';
+        window.getTodayStr = function() { return new Date().toISOString().split('T')[0]; };
+        
+        window.switchTab = function(t) {
+            document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active')); document.querySelectorAll('.tab-panel').forEach(el => el.classList.remove('active')); document.querySelectorAll(`.admin-tab[onclick*="'${t}'"]`).forEach(btn => btn.classList.add('active')); const panel = document.getElementById('tab-' + t); if (panel) panel.classList.add('active');
+            if (['customers', 'orders', 'finance', 'sourcing', 'tasks'].includes(t)) { if(window.fetchErpData) window.fetchErpData(); }
+        };
+
+        window.fetchErpData = async function() {
+            if (typeof sbClient === 'undefined') return;
+            try {
+                const [c, o, f, s, t] = await Promise.all([
+                    sbClient.from('customers').select('*').order('created_at', {ascending: false}),
+                    sbClient.from('orders').select('*, customers(name, phone)').order('created_at', {ascending: false}),
+                    sbClient.from('finance').select('*').order('transaction_date', {ascending: false}),
+                    sbClient.from('sourcing').select('*').order('created_at', {ascending: false}),
+                    sbClient.from('tasks').select('*').order('created_at', {ascending: false})
+                ]);
+                window.erpState.customers = c.data || []; window.erpState.orders = o.data || []; window.erpState.finance = f.data || []; window.erpState.sourcing = s.data || []; window.erpState.tasks = t.data || [];
+                window.erpState.realCustomers = window.erpState.customers.filter(cust => {
+                    const custOrders = window.erpState.orders.filter(ord => ord.customer_id === cust.id);
+                    if (custOrders.length === 0) return true; 
+                    return custOrders.some(ord => ord.status !== 'NEW');
+                });
+                if(window.renderErpCustomers) window.renderErpCustomers(); if(window.renderErpInbox) window.renderErpInbox(); if(window.renderErpFinance) window.renderErpFinance(); if(window.renderErpSourcing) window.renderErpSourcing(); if(window.renderErpTasks) window.renderErpTasks();
+            } catch(e) { console.error("Lỗi tải ERP:", e); }
+        };
+
+        // --- 1. CRM ---
+        window.renderErpCustomers = function() {
+            const list = document.getElementById('adminCustomersList'); const term = (document.getElementById('searchCustomers')?.value || '').toLowerCase(); if(!list) return;
+            let filtered = window.erpState.realCustomers;
+            if(term) filtered = filtered.filter(c => (c.name||'').toLowerCase().includes(term) || window.cleanPhone(c.phone).includes(window.cleanPhone(term)));
+            list.innerHTML = filtered.map(c => {
+                const cOrders = window.erpState.orders.filter(o => o.customer_id === c.id);
+                const totalSpent = cOrders.reduce((sum, o) => sum + Number(o.amount_paid || 0), 0);
+                const totalDebt = cOrders.filter(o => o.status !== 'CANCELLED' && o.status !== 'NEW').reduce((sum, o) => sum + (Number(o.price_sold) - Number(o.amount_paid)), 0);
+                const hasPending = cOrders.some(o => ['CONFIRMED', 'SOURCING', 'IN TRANSIT', 'DELIVERING'].includes(o.status));
+                const pendingBadge = hasPending ? `<span class="badge" style="background:orange; color:#000; font-weight:700;">⏳ CHỜ ĐƠN</span>` : `<span class="badge" style="background:green; color:#fff;">✓ XONG</span>`;
+                return `<tr><td style="font-weight:700;">${c.name}</td><td style="color:var(--text-dim);">${c.phone||'-'} <br><div style="max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${c.address||''}">${c.address||''}</div></td><td style="color:#00ff88; font-weight:700;">${window.fVND(totalSpent)}</td><td style="color:var(--red); font-weight:700;">${totalDebt > 0 ? window.fVND(totalDebt) : '-'}</td><td>${pendingBadge}</td><td><button onclick="viewCustomer('${c.id}')" style="background:var(--navy); border:1px solid var(--border); color:var(--white); padding:4px 8px; cursor:pointer;">SỬA / XEM HỒ SƠ</button></td></tr>`;
+            }).join('') || '<tr><td colspan="6" style="text-align:center;">Chưa có khách hàng nào.</td></tr>';
+        };
+
+        window.openAddCustomerOnly = function() {
+            document.getElementById('crmModalTitle').textContent = "TẠO KHÁCH HÀNG MỚI"; document.getElementById('crmCustId').value = ''; ['crmCustPhone', 'crmCustName', 'crmCustAddress', 'crmCustSocial'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('crmStatsBox').style.display = 'none'; document.getElementById('crmActionBtns').style.display = 'none'; document.getElementById('crmHistoryBox').style.display = 'none'; document.getElementById('btnDeleteCustomerAlert').style.display = 'none';
+            openOverlay('erpCustomerModal');
+        };
+
+        window.searchCrmPhone = function(val) {
+            const drop = document.getElementById('crmPhoneDropdown'); const cleanVal = window.cleanPhone(val);
+            if(document.getElementById('crmCustId').value || cleanVal.length < 3) { drop.style.display = 'none'; return; }
+            const matches = window.erpState.realCustomers.filter(c => window.cleanPhone(c.phone).includes(cleanVal));
+            if(matches.length === 0) { drop.style.display = 'none'; return; }
+            drop.innerHTML = matches.map(c => `<div class="live-search-item" onclick="viewCustomer('${c.id}')"><strong style="color:#00ff88;">${c.phone}</strong> - ${c.name}</div>`).join('');
+            drop.style.display = 'block';
+        };
+
+        window.viewCustomer = function(id) {
+            document.getElementById('crmPhoneDropdown').style.display = 'none';
+            const c = window.erpState.customers.find(x => x.id === id); if(!c) return;
+            document.getElementById('crmModalTitle').textContent = "HỒ SƠ KHÁCH HÀNG"; document.getElementById('crmCustId').value = c.id; document.getElementById('crmCustPhone').value = c.phone || ''; document.getElementById('crmCustName').value = c.name || ''; document.getElementById('crmCustAddress').value = c.address || ''; document.getElementById('crmCustSocial').value = c.social || c.contact_info || '';
+            document.getElementById('crmStatsBox').style.display = 'flex'; document.getElementById('crmActionBtns').style.display = 'flex'; document.getElementById('crmHistoryBox').style.display = 'block'; document.getElementById('btnDeleteCustomerAlert').style.display = 'block';
+            const cOrders = window.erpState.orders.filter(o => o.customer_id === c.id);
+            const totalSpent = cOrders.reduce((sum, o) => sum + Number(o.amount_paid || 0), 0);
+            const totalDebt = cOrders.filter(o => o.status !== 'CANCELLED' && o.status !== 'NEW').reduce((sum, o) => sum + (Number(o.price_sold) - Number(o.amount_paid)), 0);
+            document.getElementById('crmTotalSpent').innerText = window.fVND(totalSpent); document.getElementById('crmTotalDebt').innerText = window.fVND(totalDebt);
+            document.getElementById('crmHistory').innerHTML = cOrders.map(o => {
+                const debt = Number(o.price_sold) - Number(o.amount_paid);
+                let statHtml = o.status==='NEW' ? `<span style="color:var(--red)">NEW</span>` : `<span style="color:${o.status==='COMPLETED'?'green':'var(--white)'}">${o.status}</span>`;
+                return `<div style="border-bottom:1px solid var(--border); padding:10px 0; font-size:11px;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><div><strong style="color:var(--white);">${o.product_name}</strong></div><div>${statHtml}</div></div><div style="display:flex; justify-content:space-between; color:var(--text-dim);"><div>Ngày: ${new Date(o.created_at).toLocaleDateString('vi-VN')} | Nợ: <strong style="color:var(--red)">${debt>0?window.fVND(debt):'0'}</strong></div><button onclick="editErpOrder('${o.id}', true)" style="background:var(--navy); color:var(--white); border:1px solid var(--border); padding:2px 5px; cursor:pointer; font-size:9px;">SỬA ĐƠN</button></div></div>`;
+            }).join('') || '<div style="font-size:11px; color:var(--text-muted);">Khách chưa có đơn hàng.</div>';
+            openOverlay('erpCustomerModal');
+        };
+
+        window.saveCustomerProfile = async function() { 
+            const rawPhone = document.getElementById('crmCustPhone').value.trim(); const name = document.getElementById('crmCustName').value.trim();
+            if(!rawPhone || !name) return alert("SĐT và Tên là bắt buộc!");
+            const cleanedInput = window.cleanPhone(rawPhone); let id = document.getElementById('crmCustId').value;
+            if(!id && window.erpState.realCustomers.find(c => window.cleanPhone(c.phone) === cleanedInput)) return alert("⚠️ LỖI: SĐT này đã tồn tại.");
+            const cData = { name: name, phone: rawPhone, address: document.getElementById('crmCustAddress').value, social: document.getElementById('crmCustSocial').value }; 
+            try { if(id) await sbClient.from('customers').update(cData).eq('id', id); else await sbClient.from('customers').insert([cData]); closeOverlay('erpCustomerModal'); await window.fetchErpData(); alert("Đã lưu Hồ sơ!"); } catch (e) { alert("Lỗi: " + e.message); }
+        };
+
+        window.deleteCustomerSingle = async function() {
+            if(!confirm("⚠️ XÓA KHÁCH HÀNG NÀY?")) return; const id = document.getElementById('crmCustId').value;
+            try { await sbClient.from('customers').delete().eq('id', id); closeOverlay('erpCustomerModal'); await window.fetchErpData(); } catch(e) { alert(e.message); }
+        };
+
+        // --- 2. ĐƠN HÀNG VÀ AUTO-MATCH MA THUẬT ---
+        window.openOrderForCustomer = function() {
+            document.getElementById('erpOrderId').value = ''; document.getElementById('erpCustId').value = document.getElementById('crmCustId').value;
+            document.getElementById('orderCustomerInfoBlock').style.display = 'none'; 
+            document.getElementById('erpOrderDate').value = window.getTodayStr(); document.getElementById('erpStatus').value = 'CONFIRMED'; document.getElementById('erpOrderNotes').value = ''; document.getElementById('erpAmountPaid').value = '';
+            document.getElementById('orderItemsContainer').innerHTML = ''; addOrderItemRow(); openOverlay('erpOrderModal');
+        };
+
+        window.searchOrderPhone = function(val) {
+            const drop = document.getElementById('orderPhoneDropdown'); const cleanVal = window.cleanPhone(val);
+            if(cleanVal.length < 3) { drop.style.display = 'none'; return; }
+            const matches = window.erpState.realCustomers.filter(c => window.cleanPhone(c.phone).includes(cleanVal));
+            if(matches.length === 0) { drop.style.display = 'none'; return; }
+            drop.innerHTML = matches.map(c => `<div class="live-search-item" onclick="selectOrderCustomer('${c.id}')"><strong style="color:#00ff88;">${c.phone}</strong> - ${c.name}</div>`).join('');
+            drop.style.display = 'block';
+        };
+
+        window.selectOrderCustomer = function(id) {
+            const c = window.erpState.customers.find(x => x.id === id); if(!c) return;
+            document.getElementById('erpCustId').value = c.id; document.getElementById('erpCustPhone').value = c.phone || ''; document.getElementById('erpCustName').value = c.name || ''; document.getElementById('erpCustAddress').value = c.address || ''; document.getElementById('erpCustSocial').value = c.social || '';
+            document.getElementById('orderPhoneDropdown').style.display = 'none';
+            ['erpCustName', 'erpCustAddress', 'erpCustSocial'].forEach(fid => { document.getElementById(fid).setAttribute('readonly', 'true'); document.getElementById(fid).style.opacity = '0.5'; });
+            document.getElementById('lblCustFound').style.display = 'inline';
+        };
+
+        window.openAddOrderModal = function() { 
+            document.getElementById('orderCustomerInfoBlock').style.display = 'block'; ['erpCustName', 'erpCustAddress', 'erpCustSocial'].forEach(fid => { document.getElementById(fid).removeAttribute('readonly'); document.getElementById(fid).style.opacity = '1'; }); document.getElementById('lblCustFound').style.display = 'none';
+            const alertDiv = document.getElementById('autoMatchAlert'); if(alertDiv) alertDiv.style.display = 'none';
+            document.getElementById('erpOrderId').value = ''; document.getElementById('erpCustId').value = ''; ['erpCustPhone', 'erpCustName', 'erpCustAddress', 'erpCustSocial', 'erpOrderNotes', 'erpAmountPaid'].forEach(id => document.getElementById(id).value = ''); document.getElementById('erpOrderDate').value = window.getTodayStr(); document.getElementById('erpStatus').value = 'CONFIRMED'; document.getElementById('orderItemsContainer').innerHTML = ''; addOrderItemRow(); openOverlay('erpOrderModal'); 
+        };
+        
+        window.editErpOrder = function(id, fromCrm = false) { 
+            const o = window.erpState.orders.find(x => x.id === id); if(!o) return; 
+            document.getElementById('erpOrderId').value = o.id; document.getElementById('erpCustId').value = o.customer_id; 
+            const alertDiv = document.getElementById('autoMatchAlert'); if(alertDiv) alertDiv.style.display = 'none';
+
+            if(fromCrm) { document.getElementById('orderCustomerInfoBlock').style.display = 'none'; } 
+            else {
+                document.getElementById('orderCustomerInfoBlock').style.display = 'block'; ['erpCustName', 'erpCustAddress', 'erpCustSocial'].forEach(fid => { document.getElementById(fid).removeAttribute('readonly'); document.getElementById(fid).style.opacity = '1'; }); document.getElementById('lblCustFound').style.display = 'none';
+                const c = window.erpState.customers.find(x => x.id === o.customer_id); 
+                document.getElementById('erpCustPhone').value = c?.phone || c?.contact_info || ''; document.getElementById('erpCustName').value = c?.name || ''; document.getElementById('erpCustAddress').value = c?.address || ''; document.getElementById('erpCustSocial').value = c?.social || ''; 
+                
+                // === THUẬT TOÁN TỰ ĐỘNG ĐIỀN KHÁCH QUEN BẰNG 1 CLICK ===
+                if(c && c.phone && o.status === 'NEW') {
+                    const cleanP = window.cleanPhone(c.phone);
+                    const matchRealCust = window.erpState.realCustomers.find(cx => window.cleanPhone(cx.phone) === cleanP);
+                    if (matchRealCust) {
+                        window.selectOrderCustomer(matchRealCust.id); // Tự động khóa data cũ
+                        if(alertDiv) {
+                            alertDiv.style.display = 'block';
+                            alertDiv.innerHTML = `🌟 ĐÃ TỰ ĐỘNG GỘP HỒ SƠ KHÁCH QUEN: <b>${matchRealCust.name}</b>`;
+                        }
+                    }
+                }
+            }
+            document.getElementById('erpOrderDate').value = o.order_date ? o.order_date.split('T')[0] : (o.created_at ? o.created_at.split('T')[0] : window.getTodayStr()); 
+            document.getElementById('erpOrderNotes').value = o.order_notes || ''; document.getElementById('erpAmountPaid').value = o.amount_paid || ''; 
+            document.getElementById('erpStatus').value = o.status === 'NEW' ? 'CONFIRMED' : o.status; 
+            const container = document.getElementById('orderItemsContainer'); container.innerHTML = ''; 
+            if (o.items && Array.isArray(o.items) && o.items.length > 0) { o.items.forEach(i => addOrderItemRow(i.name, i.size, i.price, i.cogs)); } else { addOrderItemRow(o.product_name, o.product_size, o.price_sold, o.price_cogs); } 
+            openOverlay('erpOrderModal'); 
+        };
+        
+        window.saveErpOrder = async function() {
+            const btn = document.getElementById('btnSaveOrder'); btn.disabled = true;
+            try {
+                let custId = document.getElementById('erpCustId').value; const oId = document.getElementById('erpOrderId').value;
+                const isCleanFlow = document.getElementById('orderCustomerInfoBlock').style.display === 'none';
+                let oldRawCustId = oId ? (window.erpState.orders.find(x=>x.id===oId)?.customer_id || null) : null;
+                
+                if(!isCleanFlow) {
+                    const cPhone = document.getElementById('erpCustPhone').value.trim(); const cName = document.getElementById('erpCustName').value.trim(); 
+                    if(!cPhone || !cName) { btn.disabled = false; return alert("Bắt buộc phải có SĐT và Tên!"); }
+                    
+                    const cleanPhoneInput = window.cleanPhone(cPhone);
+                    if(!custId || (oldRawCustId === custId && window.erpState.realCustomers.find(c => window.cleanPhone(c.phone) === cleanPhoneInput && c.id !== custId))) {
+                        if(window.erpState.realCustomers.find(c => window.cleanPhone(c.phone) === cleanPhoneInput && c.id !== oldRawCustId)) { btn.disabled = false; return alert("⚠️ LỖI: SĐT đã tồn tại."); }
+                        await sbClient.from('customers').update({name: cName, phone: cPhone, address: document.getElementById('erpCustAddress').value, social: document.getElementById('erpCustSocial').value}).eq('id', oldRawCustId);
+                        custId = oldRawCustId;
+                    }
+                }
+                
+                if(!custId) { btn.disabled = false; return alert("Lỗi ID Khách!"); }
+                const items = []; document.querySelectorAll('.order-item-row').forEach(row => { const name = row.querySelector('.i-name').value.trim(); if(name) items.push({ name: name, size: row.querySelector('.i-size').value, price: Number(row.querySelector('.i-price').value || 0), cogs: Number(row.querySelector('.i-cogs').value || 0) }); });
+                if(items.length === 0) { btn.disabled = false; return alert("Cần có 1 sản phẩm!"); }
+                
+                const orderData = { customer_id: custId, order_date: document.getElementById('erpOrderDate').value || new Date().toISOString(), product_name: items.map(i => i.name).join(' + '), product_size: items.map(i => i.size).join(', '), items: items, price_sold: document.getElementById('erpPriceSold').value, price_cogs: document.getElementById('erpPriceCogs').value, amount_paid: document.getElementById('erpAmountPaid').value||0, status: document.getElementById('erpStatus').value, order_notes: document.getElementById('erpOrderNotes').value };
+                
+                if(oId) await sbClient.from('orders').update(orderData).eq('id', oId); else await sbClient.from('orders').insert([orderData]);
+                if(oldRawCustId && oldRawCustId !== custId) await sbClient.from('customers').delete().eq('id', oldRawCustId);
+
+                closeOverlay('erpOrderModal'); await window.fetchErpData(); if(isCleanFlow) viewCustomer(custId); alert("Đã lưu Đơn hàng!");
+            } catch(e) { alert("LỖI: " + e.message); } finally { btn.disabled = false; }
+        };
+
+        window.addOrderItemRow = function(name='', size='', price='', cogs='') {
+            const container = document.getElementById('orderItemsContainer'); const row = document.createElement('div'); row.className = 'order-item-row'; row.style.cssText = "display:flex; gap:10px; margin-bottom:10px; align-items:center; background:var(--navy); padding:10px; border:1px solid var(--border-light);";
+            row.innerHTML = `<div style="flex:2;"><input type="text" class="form-input i-name" placeholder="Tên SP" value="${name}"></div><div style="flex:1;"><input type="text" class="form-input i-size" placeholder="Size" value="${size}"></div><div style="flex:1.5;"><input type="number" class="form-input i-price" placeholder="Giá Bán" value="${price}" oninput="calcOrderTotals()"></div><div style="flex:1.5;"><input type="number" class="form-input i-cogs" placeholder="Giá Vốn" value="${cogs}" oninput="calcOrderTotals()"></div><button onclick="this.parentElement.remove(); calcOrderTotals();" style="color:var(--red); background:none; border:none; font-size:16px; cursor:pointer;" title="Xóa">✕</button>`;
+            container.appendChild(row); calcOrderTotals();
+        };
+        window.calcOrderTotals = function() {
+            let tSold = 0; let tCogs = 0; document.querySelectorAll('.order-item-row').forEach(row => { tSold += Number(row.querySelector('.i-price').value || 0); tCogs += Number(row.querySelector('.i-cogs').value || 0); });
+            document.getElementById('erpPriceSold').value = tSold; document.getElementById('erpPriceCogs').value = tCogs; document.getElementById('lblTotalSold').innerText = window.fVND(tSold);
+            const paid = Number(document.getElementById('erpAmountPaid').value || 0); const debt = tSold - paid;
+            document.getElementById('lblTotalDebt').innerText = window.fVND(debt); document.getElementById('lblTotalDebt').style.color = debt > 0 ? 'var(--red)' : '#00ff88';
+        };
+
+        window.renderErpInbox = function() {
+            const list = document.getElementById('adminInboxList'); if(!list) return;
+            const rawOrders = window.erpState.orders.filter(o => o.status === 'NEW');
+            list.innerHTML = rawOrders.map(o => {
+                const cName = o.customers?.name || 'Khách Web/Ẩn'; const rawPhone = o.customers?.phone || o.customers?.contact_info || '';
+                const cleanPhoneInbox = window.cleanPhone(rawPhone);
+                const isQuen = window.erpState.realCustomers.some(c => window.cleanPhone(c.phone) === cleanPhoneInbox);
+                const quenBadge = isQuen ? `<br><span style="background:orange; color:#000; font-size:9px; padding:2px 4px; border-radius:3px; font-weight:bold;">🌟 KHÁCH QUEN</span>` : `<br><span style="background:var(--navy-2); color:var(--text-dim); font-size:9px; padding:2px 4px; border-radius:3px; border:1px solid var(--border);">Khách Mới</span>`;
+                return `<tr><td style="color:var(--text-dim); font-size:11px;">${new Date(o.created_at).toLocaleDateString('vi-VN')}</td><td style="font-weight:700;">${cName} ${quenBadge}</td><td style="color:var(--text-dim);">${rawPhone}</td><td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">${o.product_name}</td><td style="color:#00ff88; font-weight:700;">${window.fVND(o.price_sold)}</td><td><button onclick="editErpOrder('${o.id}', false)" style="background:#00ff88; color:#000; border:none; padding:4px 8px; font-weight:700; cursor:pointer;">XỬ LÝ ĐƠN</button> <button onclick="deleteErpRecord('orders', '${o.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; margin-left:10px;">XÓA</button></td></tr>`;
+            }).join('') || '<tr><td colspan="6" style="text-align:center;">Hộp thư trống. Đang đợi đơn từ Web.</td></tr>';
+        };
+
+        // --- 4. THU TIỀN VÀ FINANCE ---
+        window.openAddFinanceModal = function(type) { 
+            const sel = document.getElementById('finType');
+            if (type === 'INCOME') {
+                sel.innerHTML = '<option value="INCOME">THU TIỀN NGOÀI (Other Income)</option><option value="CAPITAL">GÓP VỐN ADMIN (Capital)</option>';
+                document.getElementById('finModalTitle').textContent = "GHI NHẬN THU / VỐN";
+            } else {
+                sel.innerHTML = '<option value="OPEX">CHI PHÍ SHOP (Vận hành)</option><option value="OTHER_EXP">CHI PHÍ NGOÀI PHÁT SINH</option>';
+                document.getElementById('finModalTitle').textContent = "GHI NHẬN CHI PHÍ";
+            }
+            document.getElementById('finDate').value = window.getTodayStr(); document.getElementById('finAmount').value = ''; document.getElementById('finDesc').value = ''; openOverlay('erpFinanceModal'); 
+        };
+
+        window.saveErpFinance = async function() { const amt = document.getElementById('finAmount').value; const desc = document.getElementById('finDesc').value; if(!amt||!desc) return; await sbClient.from('finance').insert([{ type: document.getElementById('finType').value, amount: amt, description: desc, transaction_date: document.getElementById('finDate').value || new Date().toISOString() }]); closeOverlay('erpFinanceModal'); await window.fetchErpData(); };
+        
+        window.renderErpFinance = function() {
+            let autoIn=0, manIn=0, capIn=0, autoOut=0, manOut=0, totalDebt=0; let incomes = []; let expenses = [];
+
+            window.erpState.orders.forEach(o => {
+                if(o.status === 'NEW' || o.status === 'CANCELLED') return;
+                const isDeletedCustomer = !window.erpState.realCustomers.some(c => c.id === o.customer_id);
+                const cName = isDeletedCustomer ? 'KHÁCH ĐÃ BỊ XÓA' : (o.customers?.name || ''); const cPhone = isDeletedCustomer ? 'Mất thông tin' : (o.customers?.phone || ''); const dStr = o.order_date || o.created_at;
+                
+                if(Number(o.amount_paid) > 0) { autoIn += Number(o.amount_paid); incomes.push({ date: dStr, badge: 'ĐƠN HÀNG', desc: `Thu đơn: ${o.product_name} <br><span style="font-size:10px;color:var(--text-dim)">Khách: ${cName} - ${cPhone}</span>`, amt: Number(o.amount_paid), isAuto: true, id: o.id, isDeleted: isDeletedCustomer }); }
+                if(Number(o.price_cogs) > 0) { autoOut += Number(o.price_cogs); expenses.push({ date: dStr, badge: 'GIÁ VỐN', desc: `Vốn đơn: ${o.product_name} <br><span style="font-size:10px;color:var(--text-dim)">Khách: ${cName} - ${cPhone}</span>`, amt: Number(o.price_cogs), isAuto: true, id: o.id, isDeleted: isDeletedCustomer }); }
+            });
+
+            window.erpState.finance.forEach(f => {
+                const amt = Number(f.amount); const dStr = f.transaction_date;
+                if(f.type === 'CAPITAL') { capIn += amt; incomes.push({ date: dStr, badge: 'GÓP VỐN', desc: f.description, amt: amt, isAuto: false, id: f.id }); } 
+                else if (f.type === 'INCOME') { manIn += amt; incomes.push({ date: dStr, badge: 'THU LẺ', desc: f.description, amt: amt, isAuto: false, id: f.id }); } 
+                else if (f.type === 'OPEX' || f.type === 'OTHER_EXP') { manOut += amt; expenses.push({ date: dStr, badge: (f.type==='OPEX'?'CHI SHOP':'CHI NGOÀI'), desc: f.description, amt: amt, isAuto: false, id: f.id }); }
+            });
+
+            const debtRows = window.erpState.realCustomers.map(c => {
+                const cOrders = window.erpState.orders.filter(o => o.customer_id === c.id && o.status !== 'CANCELLED' && o.status !== 'NEW'); const debtOrders = cOrders.filter(o => (Number(o.price_sold) - Number(o.amount_paid)) > 0);
+                if(debtOrders.length === 0) return '';
+                const cDebt = debtOrders.reduce((sum, o) => sum + (Number(o.price_sold) - Number(o.amount_paid)), 0); totalDebt += cDebt;
+                const orderNames = debtOrders.map(o => `<div style="font-size:10px; color:var(--text-dim);">- ${o.product_name} (${window.fVND(Number(o.price_sold) - Number(o.amount_paid))})</div>`).join('');
+                return `<tr><td style="font-weight:700;">${c.name} <br><span style="font-size:10px;color:var(--text-dim)">${c.phone||''}</span></td><td>${orderNames}</td><td style="color:var(--red); font-weight:700;">${window.fVND(cDebt)}</td><td><button onclick="viewCustomer('${c.id}')" style="background:var(--navy); color:var(--white); border:1px solid var(--border); cursor:pointer;">THU NỢ</button></td></tr>`;
+            }).join('');
+
+            if(document.getElementById('finAutoIn')) document.getElementById('finAutoIn').innerText = window.fVND(autoIn); if(document.getElementById('finManIn')) document.getElementById('finManIn').innerText = window.fVND(manIn); if(document.getElementById('finCapIn')) document.getElementById('finCapIn').innerText = window.fVND(capIn); if(document.getElementById('finAutoOut')) document.getElementById('finAutoOut').innerText = window.fVND(autoOut); if(document.getElementById('finManOut')) document.getElementById('finManOut').innerText = window.fVND(manOut); if(document.getElementById('finExpTotal')) document.getElementById('finExpTotal').innerText = window.fVND(autoOut + manOut);
+            
+            const netProfit = (autoIn + manIn) - (autoOut + manOut); const cashOnHand = netProfit + capIn; const estProfit = netProfit + totalDebt; 
+            
+            if(document.getElementById('finCashOnHand')) document.getElementById('finCashOnHand').innerText = window.fVND(cashOnHand); 
+            if(document.getElementById('finNetProfit')) { document.getElementById('finNetProfit').innerText = window.fVND(netProfit); document.getElementById('finNetProfit').style.color = netProfit >= 0 ? '#00ff88' : 'var(--red)'; }
+            if(document.getElementById('finEstProfit')) { document.getElementById('finEstProfit').innerText = window.fVND(estProfit); document.getElementById('finEstProfit').style.color = estProfit >= 0 ? 'orange' : 'var(--red)'; }
+
+            const buildRow = (l, color) => {
+                let actionBtn = ''; let bgWarning = l.isDeleted ? `background:rgba(255,0,0,0.1); border-left:3px solid var(--red);` : ''; let alertText = l.isDeleted ? `<br><strong style="color:var(--red); font-size:10px;">⚠️ KHÁCH BỊ XÓA</strong>` : '';
+                if (l.isDeleted) { actionBtn = `<button onclick="deleteErpRecord('orders', '${l.id}')" style="background:var(--red); border:none; color:#fff; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">XÓA RÁC</button>`; } else if (l.isAuto) { actionBtn = `<span style="font-size:10px;color:var(--text-dim)">(Auto)</span>`; } else { actionBtn = `<button onclick="deleteErpRecord('finance', '${l.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">✕ Xóa</button>`; }
+                return `<tr style="${bgWarning}"><td style="color:var(--text-dim);">${new Date(l.date).toLocaleDateString('vi-VN')}</td><td><span class="badge" style="background:var(--navy); border:1px solid ${color}; color:${color};">${l.badge}</span></td><td>${l.desc} ${alertText}</td><td style="color:${color}; font-weight:700;">${window.fVND(l.amt)}</td><td>${actionBtn}</td></tr>`;
+            };
+            incomes.sort((a,b) => new Date(b.date) - new Date(a.date)); expenses.sort((a,b) => new Date(b.date) - new Date(a.date));
+            if(document.getElementById('finIncomeList')) document.getElementById('finIncomeList').innerHTML = incomes.map(l => buildRow(l, (l.badge==='GÓP VỐN'?'#3399ff':'#00ff88'))).join('') || '<tr><td colspan="5" style="text-align:center;">Trống</td></tr>';
+            if(document.getElementById('finExpenseList')) document.getElementById('finExpenseList').innerHTML = expenses.map(l => buildRow(l, 'var(--red)')).join('') || '<tr><td colspan="5" style="text-align:center;">Trống</td></tr>';
+            if(document.getElementById('finDebtList')) document.getElementById('finDebtList').innerHTML = debtRows || '<tr><td colspan="4" style="text-align:center; color:#00ff88;">Tuyệt vời! Không có ai nợ.</td></tr>';
+            if(document.getElementById('finTotalPendingDebt')) document.getElementById('finTotalPendingDebt').innerText = window.fVND(totalDebt);
+        };
+
+        window.openDebtModal = function() {
+            const custId = document.getElementById('crmCustId').value; const cOrders = window.erpState.orders.filter(o => o.customer_id === custId && o.status !== 'CANCELLED' && (Number(o.price_sold) - Number(o.amount_paid)) > 0);
+            if(cOrders.length === 0) return alert("Khách này không có nợ!");
+            document.getElementById('debtCustId').value = custId; document.getElementById('debtDate').value = window.getTodayStr();
+            document.getElementById('debtOrderSelect').innerHTML = cOrders.map(o => `<option value="${o.id}">[${new Date(o.order_date||o.created_at).toLocaleDateString('vi-VN')}] ${o.product_name} - Nợ: ${window.fVND(Number(o.price_sold)-Number(o.amount_paid))}</option>`).join('');
+            document.getElementById('debtAmount').value = ''; closeOverlay('erpCustomerModal'); openOverlay('erpDebtModal');
+        };
+        window.saveDebtPayment = async function() {
+            const oId = document.getElementById('debtOrderSelect').value; const amt = Number(document.getElementById('debtAmount').value);
+            if(!oId || !amt || amt <= 0) return alert("Nhập số tiền hợp lệ!");
+            const o = window.erpState.orders.find(x => x.id === oId); const debt = Number(o.price_sold) - Number(o.amount_paid);
+            if (amt > debt) return alert("Khách nợ " + window.fVND(debt) + ", không thể thu lố số này!");
+            const newPaid = Number(o.amount_paid) + amt; const btn = document.getElementById('erpDebtModal').querySelector('.btn-primary'); btn.disabled = true; btn.textContent = "ĐANG XỬ LÝ...";
+            try { await sbClient.from('orders').update({ amount_paid: newPaid }).eq('id', oId); await closeOverlay('erpDebtModal'); await window.fetchErpData(); viewCustomer(o.customer_id); alert("Đã ghi nhận thanh toán & trừ nợ!"); } catch(e) { alert(e.message); } finally { btn.disabled = false; btn.textContent = "XÁC NHẬN ĐÃ THU"; }
+        };
+
+        // --- 5. TASKS & SOURCING ---
+        window.openAddSourcingModal = function() { document.getElementById('srcId').value = ''; ['srcCust', 'srcItem', 'srcBudget', 'srcProgress'].forEach(id => document.getElementById(id).value = ''); document.getElementById('srcDate').value = window.getTodayStr(); document.getElementById('srcStatus').value = 'LOOKING'; openOverlay('erpSourcingModal'); }; 
+        window.editErpSourcing = function(id) { const s = window.erpState.sourcing.find(x => x.id === id); if(!s) return; document.getElementById('srcId').value = s.id; document.getElementById('srcDate').value = s.created_at.split('T')[0]; document.getElementById('srcCust').value = s.customer_name || ''; document.getElementById('srcItem').value = s.item_name; document.getElementById('srcBudget').value = s.max_budget || ''; document.getElementById('srcProgress').value = s.progress_log || ''; document.getElementById('srcStatus').value = s.status; openOverlay('erpSourcingModal'); }; 
+        window.saveErpSourcing = async function() { const item = document.getElementById('srcItem').value.trim(); if(!item) return; const data = { customer_name: document.getElementById('srcCust').value, item_name: item, max_budget: document.getElementById('srcBudget').value || null, progress_log: document.getElementById('srcProgress').value, status: document.getElementById('srcStatus').value }; const id = document.getElementById('srcId').value; if(id) await sbClient.from('sourcing').update(data).eq('id', id); else await sbClient.from('sourcing').insert([data]); closeOverlay('erpSourcingModal'); await window.fetchErpData(); }; 
+        window.renderErpSourcing = function() { const list = document.getElementById('adminSourcingList'); if(!list) return; list.innerHTML = window.erpState.sourcing.map(s => { let color = s.status === 'FOUND' ? 'green' : (s.status === 'CANCELLED' ? 'var(--red)' : 'var(--white)'); return `<tr><td style="font-weight:700;">${s.customer_name||'Ẩn'}</td><td>${s.item_name}</td><td style="color:var(--text-dim);">${s.max_budget ? window.fVND(s.max_budget) : '-'}</td><td style="color:var(--text-dim); max-width:200px; overflow:hidden; text-overflow:ellipsis;">${s.progress_log||'-'}</td><td style="color:${color}; font-weight:700;">${s.status}</td><td><button onclick="editErpSourcing('${s.id}')" style="background:var(--navy); color:var(--white); border:1px solid var(--border); padding:4px 8px; cursor:pointer;">SỬA</button> <button onclick="deleteErpRecord('sourcing', '${s.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">✕</button></td></tr>`; }).join('') || '<tr><td colspan="6" style="text-align:center;">Trống.</td></tr>'; };
+        window.openAddTaskModal = function() { document.getElementById('taskId').value=''; ['taskTitle','taskAssignee','taskNotes','taskDeadline'].forEach(id=>document.getElementById(id).value=''); openOverlay('erpTaskModal'); }; 
+        window.editErpTask = function(id) { const t = window.erpState.tasks.find(x=>x.id===id); if(!t) return; document.getElementById('taskId').value=t.id; document.getElementById('taskTitle').value=t.title; document.getElementById('taskAssignee').value=t.assignee||''; document.getElementById('taskDeadline').value=t.deadline||''; document.getElementById('taskCat').value=t.category; document.getElementById('taskStatus').value=t.status; document.getElementById('taskNotes').value=t.progress_notes||''; openOverlay('erpTaskModal'); }; 
+        window.saveErpTask = async function() { const title = document.getElementById('taskTitle').value; if(!title) return; const data = { title: title, assignee: document.getElementById('taskAssignee').value, deadline: document.getElementById('taskDeadline').value||null, category: document.getElementById('taskCat').value, status: document.getElementById('taskStatus').value, progress_notes: document.getElementById('taskNotes').value }; const id = document.getElementById('taskId').value; if(id) await sbClient.from('tasks').update(data).eq('id', id); else await sbClient.from('tasks').insert([data]); closeOverlay('erpTaskModal'); await window.fetchErpData(); }; 
+        window.renderErpTasks = function() { const list = document.getElementById('adminTasksList'); if(!list) return; list.innerHTML = window.erpState.tasks.map(t => { let statCol = t.status==='DONE'?'green':(t.status==='DOING'?'orange':'var(--text-muted)'); let isLate = false; if(t.deadline && t.status !== 'DONE' && new Date(t.deadline) < new Date()) isLate = true; return `<tr><td style="font-weight:700;">${t.title}</td><td><span class="badge">${t.category}</span></td><td>${t.assignee||'-'}</td><td style="color:var(--text-dim); max-width:200px; overflow:hidden; text-overflow:ellipsis;">${t.progress_notes||'-'}</td><td style="color:${isLate?'var(--red)':'var(--white)'}; font-weight:${isLate?'700':'400'};">${t.deadline ? new Date(t.deadline).toLocaleDateString('vi-VN') : '-'} ${isLate?'(Trễ)':''}</td><td style="color:${statCol}; font-weight:700;">${t.status}</td><td><button onclick="editErpTask('${t.id}')" style="background:var(--navy); color:var(--white); border:1px solid var(--border); padding:4px 8px; cursor:pointer;">SỬA</button> <button onclick="deleteErpRecord('tasks', '${t.id}')" style="background:none; border:none; color:var(--red); cursor:pointer;">✕</button></td></tr>`; }).join('') || '<tr><td colspan="7" style="text-align:center;">Trống.</td></tr>'; };
+
+        window.deleteErpRecord = async function(table, id) { if(!confirm("XÓA DỮ LIỆU NÀY?")) return; await sbClient.from(table).delete().eq('id', id); await window.fetchErpData(); };
+
+        // --- 6. API BẮN ĐƠN MÙ TỪ WEB (BLIND INSERT) ---
+        window.logOrderToERP = async function(customerName, contactInfo, productName, size, price) {
+            if (typeof sbClient === 'undefined') return;
+            try {
+                const phone = window.cleanPhone(contactInfo.split('|')[0].trim());
+                const rawId = crypto.randomUUID(); 
+                await sbClient.from('customers').insert([{ id: rawId, name: customerName, phone: phone, contact_info: contactInfo }]);
+                await sbClient.from('orders').insert([{ customer_id: rawId, order_date: new Date().toISOString(), product_name: productName, product_size: size, price_sold: price || 0, status: 'NEW', order_notes: 'Đơn từ Web' }]);
+            } catch (err) { console.error("ERP Auto-log Failed:", err); }
+        };
+// ====================================================================
+        // TÍNH NĂNG MỚI: EXPORT BÁO CÁO EXCEL CHUẨN (.XLSX) - 1 FILE CÓ 5 TABS 
+        // ====================================================================
+        window.exportAllData = async function(btn) {
+            if (!confirm("XUẤT BÁO CÁO EXCEL (TỒN QUỸ, DOANH THU, CÔNG NỢ) VỀ MÁY?")) return;
+            
+            const origText = btn.textContent;
+            btn.textContent = "⏳ ĐANG XUẤT EXCEL...";
+            btn.disabled = true;
+
+            try {
+                if (typeof window.fetchErpData === 'function') await window.fetchErpData();
+
+                // Tải thư viện xuất Excel chuẩn (SheetJS)
+                if (typeof XLSX === 'undefined') {
+                    await new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+                        script.onload = resolve;
+                        script.onerror = () => reject(new Error("Lỗi tải bộ công cụ Excel"));
+                        document.head.appendChild(script);
+                    });
+                }
+
+                const today = window.getTodayStr();
+                const validCustomerIds = window.erpState.realCustomers.map(c => c.id);
+                const wb = XLSX.utils.book_new(); // Tạo File Excel
+
+                // --- TAB 1: BẢNG TỔNG QUAN TÀI CHÍNH (DASHBOARD) ---
+                let autoIn=0, manIn=0, capIn=0, autoOut=0, manOut=0, tDebt=0;
+                let fRows = [["Ngày", "Phân Loại", "Nguồn", "Diễn Giải", "Thu Vào (+)", "Chi Ra (-)"]];
+                
+                window.erpState.orders.forEach(o => {
+                    if(o.status === 'NEW' || o.status === 'CANCELLED' || !validCustomerIds.includes(o.customer_id)) return;
+                    const cName = o.customers ? o.customers.name : ''; const dStr = o.order_date || o.created_at;
+                    if(Number(o.amount_paid) > 0) { autoIn += Number(o.amount_paid); fRows.push([dStr.split('T')[0], "ĐƠN HÀNG", "Auto", `Thu đơn: ${o.product_name} (${cName})`, Number(o.amount_paid), 0]); }
+                    if(Number(o.price_cogs) > 0) { autoOut += Number(o.price_cogs); fRows.push([dStr.split('T')[0], "GIÁ VỐN", "Auto", `Vốn đơn: ${o.product_name} (${cName})`, 0, Number(o.price_cogs)]); }
+                    if((Number(o.price_sold) - Number(o.amount_paid)) > 0) tDebt += (Number(o.price_sold) - Number(o.amount_paid));
+                });
+
+                window.erpState.finance.forEach(f => {
+                    const amt = Number(f.amount); const dStr = f.transaction_date;
+                    if(f.type === 'CAPITAL') { capIn += amt; fRows.push([dStr.split('T')[0], "GÓP VỐN", "Manual", f.description, amt, 0]); }
+                    else if (f.type === 'INCOME') { manIn += amt; fRows.push([dStr.split('T')[0], "THU NGOÀI", "Manual", f.description, amt, 0]); }
+                    else if (f.type === 'OPEX' || f.type === 'OTHER_EXP') { manOut += amt; fRows.push([dStr.split('T')[0], (f.type==='OPEX'?'CHI SHOP':'CHI NGOÀI'), "Manual", f.description, 0, amt]); }
+                });
+
+                const netP = (autoIn + manIn) - (autoOut + manOut);
+                const cashH = netP + capIn;
+                const estP = netP + tDebt;
+
+                let dashRows = [
+                    ["ARC'WARE ERP - BÁO CÁO TỔNG QUAN TÀI CHÍNH", ""],
+                    ["Ngày xuất báo cáo:", today],
+                    ["", ""],
+                    ["CÁC CHỈ SỐ QUAN TRỌNG", "SỐ TIỀN (VNĐ)"],
+                    ["TỒN QUỸ THỰC TẾ (Đang Cầm):", cashH],
+                    ["LÃI RÒNG (Tiền Tươi):", netP],
+                    ["LÃI DỰ TÍNH (Tính cả Nợ):", estP],
+                    ["NỢ ĐANG CHỜ THU:", tDebt],
+                    ["", ""],
+                    ["CHI TIẾT 5 LUỒNG KẾ TOÁN", "SỐ TIỀN (VNĐ)"],
+                    ["1. Thu Tiền Hàng (Auto):", autoIn],
+                    ["2. Thu Tiền Ngoài (Manual):", manIn],
+                    ["3. Góp Vốn Của Chủ (Manual):", capIn],
+                    ["4. Chi Tiền Hàng/Giá Vốn (Auto):", autoOut],
+                    ["5. Chi Phí Shop & Phát Sinh (Manual):", manOut],
+                    ["-> TỔNG CHI PHÍ (4+5):", (autoOut + manOut)]
+                ];
+                let wsDash = XLSX.utils.aoa_to_sheet(dashRows);
+                wsDash['!cols'] = [{wch: 35}, {wch: 20}]; // Giãn cột
+                XLSX.utils.book_append_sheet(wb, wsDash, "1. TỔNG QUAN");
+
+                // --- TAB 2: DÒNG TIỀN CHI TIẾT ---
+                let wsFin = XLSX.utils.aoa_to_sheet(fRows);
+                wsFin['!cols'] = [{wch: 12}, {wch: 15}, {wch: 10}, {wch: 40}, {wch: 15}, {wch: 15}];
+                XLSX.utils.book_append_sheet(wb, wsFin, "2. DÒNG TIỀN");
+
+                // --- TAB 3: ĐƠN HÀNG ---
+                let oRows = [["Mã Đơn", "Ngày Đặt", "Trạng Thái", "Khách Hàng", "SĐT", "Sản Phẩm", "Size", "Giá Bán", "Giá Vốn", "Đã Trả", "Nợ Tồn", "Ghi Chú"]];
+                window.erpState.orders.forEach(o => {
+                    if(o.status === 'NEW' || !validCustomerIds.includes(o.customer_id)) return; 
+                    const c = o.customers || {name: '', phone: ''};
+                    const n = Number(o.price_sold) - Number(o.amount_paid);
+                    oRows.push([o.id.substring(0,8), (o.order_date||o.created_at).split('T')[0], o.status, c.name, c.phone, o.product_name, o.product_size, Number(o.price_sold), Number(o.price_cogs), Number(o.amount_paid), (n>0?n:0), (o.order_notes||"")]);
+                });
+                let wsOrd = XLSX.utils.aoa_to_sheet(oRows);
+                wsOrd['!cols'] = [{wch: 10}, {wch: 12}, {wch: 12}, {wch: 20}, {wch: 15}, {wch: 35}, {wch: 10}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 12}, {wch: 20}];
+                XLSX.utils.book_append_sheet(wb, wsOrd, "3. ĐƠN HÀNG");
+
+                // --- TAB 4: KHÁCH HÀNG (CRM) ---
+                let cRows = [["Tên Khách Hàng", "Số Điện Thoại", "Địa Chỉ", "Mạng Xã Hội", "Tổng Đã Tiêu", "Tổng Đang Nợ"]];
+                window.erpState.realCustomers.forEach(c => { 
+                    const cOrders = window.erpState.orders.filter(o => o.customer_id === c.id);
+                    const spent = cOrders.reduce((sum, o) => sum + Number(o.amount_paid || 0), 0);
+                    const debt = cOrders.filter(o => o.status !== 'CANCELLED' && o.status !== 'NEW').reduce((sum, o) => sum + (Number(o.price_sold) - Number(o.amount_paid)), 0);
+                    cRows.push([c.name, c.phone, (c.address||""), (c.social||""), spent, debt]); 
+                });
+                let wsCust = XLSX.utils.aoa_to_sheet(cRows);
+                wsCust['!cols'] = [{wch: 20}, {wch: 15}, {wch: 30}, {wch: 20}, {wch: 15}, {wch: 15}];
+                XLSX.utils.book_append_sheet(wb, wsCust, "4. KHÁCH HÀNG");
+
+                // --- TAB 5: SOURCING & TASKS ---
+                let mixRows = [["--- BẢNG SOURCING ---"], ["Ngày", "Khách Cần", "Món Hàng", "Ngân Sách", "Tiến Độ", "Trạng Thái"]];
+                window.erpState.sourcing.forEach(s => { mixRows.push([s.created_at.split('T')[0], s.customer_name, s.item_name, Number(s.max_budget||0), (s.progress_log||""), s.status]); });
+                mixRows.push([""]); mixRows.push(["--- BẢNG TASKS ---"]); mixRows.push(["Ngày Tạo", "Công Việc", "Phân Loại", "Người Làm", "Ghi Chú", "Deadline", "Trạng Thái"]);
+                window.erpState.tasks.forEach(t => { mixRows.push([t.created_at.split('T')[0], t.title, t.category, (t.assignee||""), (t.progress_notes||""), (t.deadline||""), t.status]); });
+                let wsMix = XLSX.utils.aoa_to_sheet(mixRows);
+                wsMix['!cols'] = [{wch: 12}, {wch: 20}, {wch: 30}, {wch: 12}, {wch: 30}, {wch: 15}];
+                XLSX.utils.book_append_sheet(wb, wsMix, "5. SOURCING_TASKS");
+
+                // TẢI FILE EXCEL VỀ MÁY
+                XLSX.writeFile(wb, `ARCWARE_ERP_Report_${today}.xlsx`);
+
+            } catch (err) {
+                console.error(err); alert("❌ Lỗi xuất Excel: " + err.message);
+            } finally {
+                btn.textContent = origText; btn.disabled = false;
+            }
+        };
+        // ====================================================================
+        console.log("🔥 ARC'WARE ERP V12.3 (UI/UX FIXED & AUTOMATCH) READY!");
+    } catch(err) { console.error("CRITICAL ERP ERROR:", err); }
+})();
 </script>
 </body>
 </html>
