@@ -43,6 +43,7 @@
 <meta name="twitter:description" content="Cửa hàng Arc'teryx uy tín tại Việt Nam. Authentic products, competitive prices.">
 <meta name="twitter:image" content="https://arcware.store/logo.jpg">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -2179,10 +2180,17 @@ function openPass() {
   setTimeout(()=>document.getElementById('passInput').focus(), 100); 
 }
 
+let loginAttempts = 0;
+let loginLocked = false;
+
 async function checkPass() {
   if (dbMode !== 'supabase') return alert("Supabase chưa kết nối!");
+  if (loginLocked) return alert("Quá nhiều lần thử. Vui lòng đợi 30 giây.");
+
   const pass = document.getElementById('passInput').value;
   const btn = document.querySelector('#passOverlay .btn-primary');
+  const errEl = document.getElementById('passError');
+
   btn.textContent = "VERIFYING..."; btn.disabled = true;
 
   const { data, error } = await sbClient.auth.signInWithPassword({ 
@@ -2192,10 +2200,25 @@ async function checkPass() {
 
   btn.textContent = "LOGIN"; btn.disabled = false;
 
-  if (error) { 
-    document.getElementById('passError').style.display='block'; 
-    document.getElementById('passError').textContent = "Sai mật khẩu!";
+  if (error) {
+    loginAttempts++;
+    errEl.style.display = 'block';
+    errEl.textContent = "Sai mật khẩu! (" + loginAttempts + " lần thử)";
+    if (loginAttempts >= 5) {
+      loginLocked = true;
+      btn.disabled = true;
+      btn.textContent = "ĐỢI 15 GIÂY...";
+      setTimeout(() => {
+        loginAttempts = 0;
+        loginLocked = false;
+        btn.disabled = false;
+        btn.textContent = "LOGIN";
+        errEl.style.display = 'none';
+      }, 15000);
+    }
   } else { 
+    loginAttempts = 0;
+    loginLocked = false;
     localStorage.setItem('aw_admin_session', Date.now());
     closeOverlay('passOverlay'); 
     _openAdminPanel();
