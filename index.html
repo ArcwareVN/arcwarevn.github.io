@@ -4324,20 +4324,22 @@ window.finInflowFilter = 'ALL';
             };
             
             // Xử lý bộ lọc trước khi sort và in ra HTML
+            // Xử lý bộ lọc trước khi sort và in ra HTML
             let filteredIncomes = incomes;
             if (window.finInflowFilter === 'AUTO') filteredIncomes = incomes.filter(l => l.isAuto);
             else if (window.finInflowFilter === 'MANUAL') filteredIncomes = incomes.filter(l => !l.isAuto);
-// Logic cho thanh TÌM KIẾM GIAO DỊCH
+
+            let filteredExpenses = expenses;
+            if (window.finOutflowFilter === 'AUTO') filteredExpenses = expenses.filter(l => l.isAuto);
+            else if (window.finOutflowFilter === 'MANUAL') filteredExpenses = expenses.filter(l => !l.isAuto);
+
+            // Logic cho thanh TÌM KIẾM GIAO DỊCH (Đã chuyển xuống dưới để không bị lỗi biến)
             const searchTerm = (document.getElementById('searchFinance')?.value || '').toLowerCase();
             if (searchTerm) {
                 filteredIncomes = filteredIncomes.filter(l => l.desc.toLowerCase().includes(searchTerm) || String(l.amt).includes(searchTerm) || l.badge.toLowerCase().includes(searchTerm));
                 filteredExpenses = filteredExpenses.filter(l => l.desc.toLowerCase().includes(searchTerm) || String(l.amt).includes(searchTerm) || l.badge.toLowerCase().includes(searchTerm));
                 inventoryRows = inventoryRows.filter(l => l.desc.toLowerCase().includes(searchTerm) || String(l.amt).includes(searchTerm));
             }
-
-            let filteredExpenses = expenses;
-            if (window.finOutflowFilter === 'AUTO') filteredExpenses = expenses.filter(l => l.isAuto);
-            else if (window.finOutflowFilter === 'MANUAL') filteredExpenses = expenses.filter(l => !l.isAuto);
 
             filteredIncomes.sort((a,b) => new Date(b.date) - new Date(a.date)); 
             filteredExpenses.sort((a,b) => new Date(b.date) - new Date(a.date)); 
