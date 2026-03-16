@@ -3901,7 +3901,7 @@ function initAutoCat() {
         <div style="font-size:12px; font-weight:700; color:#3399ff; letter-spacing:1px;">INVENTORY (HÀNG TỒN KHO/NHẬP SẴN)</div>
         <button onclick="openAddFinanceModal('INVENTORY')" style="background:transparent; border:1px solid #3399ff; color:#3399ff; font-size:9px; padding:4px 10px; cursor:pointer;">+ NHẬP HÀNG TỒN</button>
     </div>
-    <div style="overflow-x:auto; border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày Nhập</th><th>Sản Phẩm</th><th>Tổng Vốn (Chi Phí)</th><th style="text-align:right;">Thao tác</th></tr></thead><tbody id="finInventoryList"></tbody></table></div>
+    <div style="overflow-x:auto; border:1px solid var(--border); max-height:400px;"><table class="erp-table"><thead><tr><th>Ngày Nhập</th><th>Phân Loại</th><th>Sản Phẩm / Ghi Chú</th><th>Tổng Vốn (Chi Phí)</th><th style="text-align:right;">Thao tác</th></tr></thead><tbody id="finInventoryList"></tbody></table></div>
   </div>
 
   <div class="tab-panel" id="tab-sourcing">
@@ -4285,10 +4285,32 @@ function initAutoCat() {
                 sel.innerHTML = '<option value="OPEX">CHI PHÍ SHOP (Vận hành)</option><option value="OTHER_EXP">CHI PHÍ NGOÀI PHÁT SINH</option>';
                 document.getElementById('finModalTitle').textContent = "GHI NHẬN CHI PHÍ";
             }
-            document.getElementById('finDate').value = window.getTodayStr(); document.getElementById('finAmount').value = ''; document.getElementById('finDesc').value = type === 'INVENTORY' ? '[INVENTORY] Nhập: ' : ''; openOverlay('erpFinanceModal'); 
+            document.getElementById('finDate').value = window.getTodayStr(); 
+            document.getElementById('finAmount').value = ''; 
+            document.getElementById('finDesc').value = ''; 
+            openOverlay('erpFinanceModal'); 
         };
 
-        window.saveErpFinance = async function() { const amt = document.getElementById('finAmount').value; const desc = document.getElementById('finDesc').value; if(!amt||!desc) return; await sbClient.from('finance').insert([{ type: document.getElementById('finType').value, amount: amt, description: desc, transaction_date: document.getElementById('finDate').value || new Date().toISOString() }]); closeOverlay('erpFinanceModal'); await window.fetchErpData(); };
+        window.saveErpFinance = async function() { 
+            const amt = document.getElementById('finAmount').value; 
+            let desc = document.getElementById('finDesc').value; 
+            if(!amt || !desc) return; 
+            
+            // Tự động gài tag ẩn nếu Admin đang lưu Hàng Tồn (Chống xóa nhầm)
+            const sel = document.getElementById('finType');
+            if (sel.options[sel.selectedIndex].text === 'NHẬP HÀNG TỒN KHO' && !desc.includes('[INVENTORY]')) {
+                desc = '[INVENTORY] ' + desc;
+            }
+
+            await sbClient.from('finance').insert([{ 
+                type: sel.value, 
+                amount: amt, 
+                description: desc, 
+                transaction_date: document.getElementById('finDate').value || new Date().toISOString() 
+            }]); 
+            closeOverlay('erpFinanceModal'); 
+            await window.fetchErpData(); 
+        };
 
 window.finInflowFilter = 'ALL';
         window.finOutflowFilter = 'ALL';
