@@ -1716,9 +1716,8 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
       </div>
 
       <div class="form-group">
-        <label class="form-label">Thẻ Phân Loại Nhanh (Smart Filter)</label>
-        <input type="text" class="form-input" id="pBadge" placeholder="Gõ tay thẻ phụ (VD: RARE, DEADSTOCK)" style="margin-bottom:15px;">
-        <div id="adminSmartFilterContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:15px; background:var(--navy-3); border:1px solid var(--border); margin-bottom:20px;"></div>
+        <label class="form-label">Thẻ Phụ (Hiển thị góc phải ảnh)</label>
+        <input type="text" class="form-input" id="pBadge" placeholder="VD: RARE, DEADSTOCK, NEW...">
       </div>
 
       <div class="form-group">
@@ -2598,11 +2597,8 @@ async function saveProduct() {
     name: name, category: document.getElementById('pCat').value, condition: document.getElementById('pCond').value,
     price: document.getElementById('pPriceFinal').value.trim() || document.getElementById('pPriceVND').value.trim(),
     price_type: document.getElementById('pPriceType').value,
-    sizes: document.getElementById('pSizes').value.trim(), badge: (function() {
-      let bParts = [document.getElementById('pBadge').value.trim()];
-      document.querySelectorAll('.admin-sf-check:checked').forEach(cb => bParts.push(cb.value));
-      return bParts.filter(b => b !== "").join(', ');
-    })(),
+    sizes: document.getElementById('pSizes').value.trim(), 
+    badge: document.getElementById('pBadge').value.trim(),
     description_en: document.getElementById('pDescEN').value.trim(), description_vi: document.getElementById('pDescVI').value.trim(),
     gallery: JSON.stringify(uploadedImagesArray), image: uploadedImagesArray[0] || '',
     how_it_wears: JSON.stringify(uploadedHowItWearsArray), video_link: document.getElementById('pVideoLink').value.trim() 
@@ -2720,7 +2716,7 @@ window.openInterest = function(id) {
   let sizeOptions = '';
   if (p.sizes) {
       p.sizes.split(',').forEach(s => { sizeOptions += `<option value="${s.trim()}">${s.trim()}</option>`; });
-  } else { sizeOptions = `<option value="One Size">One Size</option>`; }
+  } else { sizeOptions = `<option value="Please DM">Please DM</option>`; }
   sizeOptions += `<option value="Need sizing advice">${_t('szAdvice')}</option>`;
 
   let mediaHtml = ''; let hwArr = [];
@@ -3349,8 +3345,7 @@ function openAddProduct() {
   document.getElementById('productModalTitle').textContent = "ADD PRODUCT"; 
   ['pName','pPriceVND','pPriceFinal','pBadge','pDescEN','pDescVI','pSizes','pVideoLink'].forEach(id => document.getElementById(id).value = ''); 
   document.getElementById('pPriceType').value = 'diff'; 
-renderAdminSmartFilters(""); // Dán dòng này vào đây
-openOverlay('productOverlay'); 
+  openOverlay('productOverlay'); 
 }
 
 function openEditProduct(id) { 
@@ -3373,7 +3368,6 @@ function openEditProduct(id) {
 
   try { uploadedHowItWearsArray = JSON.parse(p.how_it_wears || '[]'); } catch(e) { uploadedHowItWearsArray = []; }
   renderGalleryManager('howItWearsPreviewGrid', uploadedHowItWearsArray);
-  renderAdminSmartFilters(p.badge || "");
   openOverlay('productOverlay');
 }
 
@@ -3763,9 +3757,12 @@ function renderProducts() {
   if (currentPage < 1) currentPage = 1;
   const currentProducts = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  grid.innerHTML = currentProducts.map(p => `
+  grid.innerHTML = currentProducts.map(p => {
+    const badgeHtml = p.badge ? `<div style="position:absolute; top:12px; right:12px; background:var(--white); color:var(--navy); font-size:9px; font-weight:800; letter-spacing:0.1em; padding:4px 8px; z-index:10; text-transform:uppercase; box-shadow:0 4px 10px rgba(0,0,0,0.2);">${p.badge}</div>` : '';
+    return `
     <div class="vl-card" onclick="openInterest('${p.id}')">
       <div class="vl-img-wrap">
+        ${badgeHtml}
         <img src="${p.image||''}" loading="lazy" onerror="this.style.display='none'">
       </div>
       <div class="vl-info">
@@ -3773,7 +3770,8 @@ function renderProducts() {
         <div class="vl-name">${p.name}</div>
         <div class="vl-price">${p.price||_t('noPr')}</div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 renderPagination(totalPages);
 }
 // HÀM VẼ THANH CHUYỂN TRANG
