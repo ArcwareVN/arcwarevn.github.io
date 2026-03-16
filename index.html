@@ -2434,9 +2434,9 @@ async function refreshProducts() {
   renderAdminList();
   injectProductSchema();
 
-  // Tự động mở pop-up nếu có người gửi link (Hỗ trợ cả link ID cũ và link Tên mới)
+  // Tự động mở pop-up nếu có người gửi link (Hỗ trợ cả link ID cũ và link Tên mới siêu ngắn)
   const urlParams = new URLSearchParams(window.location.search);
-  const pid = urlParams.get('id') || urlParams.get('p');
+  const pid = urlParams.get('p') || urlParams.get('id');
   if (pid && !window.hasOpenedDeepLink) {
     window.hasOpenedDeepLink = true;
     setTimeout(() => { openInterest(pid); }, 600);
@@ -2705,7 +2705,15 @@ let cart = JSON.parse(localStorage.getItem('aw_cart') || '[]');
 setTimeout(() => { if (typeof updateCartButton === 'function') updateCartButton(); }, 500);
 
 window.openInterest = function(id) {
-  const p = products.find(x => x.id === id); if (!p) return;
+  // BẢN VÁ: Tìm theo ID (cho link cũ) HOẶC tìm theo Tên Slug (cho link mới siêu ngắn)
+  let p = products.find(x => x.id === id); 
+  if (!p) {
+      p = products.find(x => {
+          const slug = x.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+          return slug === id;
+      });
+  }
+  if (!p) return;
   let galHtml = ''; let firstImg = p.image || '';
   try { const galArr = JSON.parse(p.gallery); if(galArr && galArr.length > 0) { firstImg = galArr[0]; if(galArr.length > 1) { galHtml = `<div class="gallery-thumbs">` + galArr.map((img, i) => `<img src="${img}" onclick="swapMainImage('${img}')" class="${i===0?'active':''}">`).join('') + `</div>`; } } } catch(e){}
   
@@ -2808,16 +2816,17 @@ ${sizeChartHtml}
     </div>`;
   
   // Tạo link ảo có chứa Tên Sản Phẩm chuẩn SEO
+  // Tạo link ảo SIÊU NGẮN (Chỉ dùng Tên Sản Phẩm)
   const slug = p.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-  const newUrl = window.location.origin + window.location.pathname + '?name=' + slug + '&id=' + p.id;
+  const newUrl = window.location.origin + window.location.pathname + '?p=' + slug;
   window.history.replaceState({path: newUrl}, '', newUrl);
 
   openOverlay('intOverlay');
 };
 window.copyProductLink = function(id) {
-    const p = window.products.find(x => x.id === id);
+    const p = products.find(x => x.id === id);
     const slug = p ? p.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'product';
-    const link = window.location.origin + window.location.pathname + '?name=' + slug + '&id=' + id;
+    const link = window.location.origin + window.location.pathname + '?p=' + slug;
     navigator.clipboard.writeText(link).then(() => {
         showToast(currentLang === 'vi' ? "ĐÃ COPY LINK SẢN PHẨM ✓" : "PRODUCT LINK COPIED ✓");
     }).catch(err => {
