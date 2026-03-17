@@ -2481,7 +2481,7 @@ async function refreshProducts() {
   modifiedProductIds.clear(); 
   renderProducts(); 
   renderAdminList();
-  injectProductSchema();
+ 
 
   // Tự động mở pop-up nếu có người gửi link (Hỗ trợ cả link ID cũ và link Tên mới siêu ngắn)
   const urlParams = new URLSearchParams(window.location.search);
@@ -2492,53 +2492,7 @@ async function refreshProducts() {
   }
 }
 
-function injectProductSchema() {
-  document.querySelectorAll('script.dynamic-product-schema').forEach(el => el.remove());
-  if (!products || products.length === 0) return;
 
-  const schemaList = products.map(p => {
-    let cleanPrice = "0";
-    if (p.price) {
-      const match = p.price.replace(/[.,]/g, '').match(/\d+/);
-      if (match) cleanPrice = match[0];
-    }
-    
-    let itemCondition = "https://schema.org/UsedCondition";
-    if (p.condition && p.condition.toLowerCase().startsWith('brand new')) {
-      itemCondition = "https://schema.org/NewCondition";
-    }
-    
-    const imageUrl = p.image ? p.image : "https://arcware.store/logo.jpg";
-    const safeName = p.name ? p.name.trim() : "Arc'teryx Item";
-    const safeDesc = p.description_vi || p.description_en || safeName;
-    
-    return {
-      "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": safeName,
-      "image": imageUrl,
-      "description": safeDesc,
-      "brand": { "@type": "Brand", "name": "Arc'teryx" },
-      "offers": {
-        "@type": "Offer",
-        "url": "https://arcware.store",
-        "priceCurrency": "VND",
-        "price": cleanPrice,
-        "availability": "https://schema.org/InStock",
-        "itemCondition": itemCondition,
-        "seller": { "@type": "Organization", "name": "ARC'WARE VN" }
-      }
-    };
-  });
-  
-  if (schemaList.length > 0) {
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.className = 'dynamic-product-schema';
-    script.text = JSON.stringify(schemaList);
-    document.head.appendChild(script);
-  }
-}
 async function convertCurrency() {
   const vndInput = document.getElementById('pPriceVND').value.trim();
   if(!vndInput) { document.getElementById('pPriceFinal').value = ''; return; }
@@ -2800,6 +2754,34 @@ window.openInterest = function(id) {
       });
   }
   if (!p) return;
+// --- SEO MŨ TRẮNG: KHAI BÁO SẢN PHẨM CHUẨN GOOGLE ---
+    let oldSchema = document.getElementById('seo-schema-single');
+    if (oldSchema) oldSchema.remove();
+
+    let cleanPrice = p.price ? p.price.toString().split('/')[0].replace(/[^0-9]/g, '') : "0";
+    let schemaData = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": p.name,
+        "image": p.img1 ? [p.img1] : (p.image ? [p.image] : []),
+        "description": p.description_vi || p.description_en || "Áo khoác và phụ kiện Arc'teryx chính hãng tại Arcware Vietnam.",
+        "sku": p.id,
+        "brand": { "@type": "Brand", "name": "Arc'teryx" },
+        "offers": {
+            "@type": "Offer",
+            "url": window.location.href,
+            "priceCurrency": "VND",
+            "price": cleanPrice,
+            "availability": "https://schema.org/InStock",
+            "itemCondition": (p.condition && p.condition.toLowerCase().includes('brand new')) ? "https://schema.org/NewCondition" : "https://schema.org/UsedCondition"
+        }
+    };
+    let schemaScript = document.createElement('script');
+    schemaScript.type = 'application/ld+json';
+    schemaScript.id = 'seo-schema-single';
+    schemaScript.text = JSON.stringify(schemaData);
+    document.head.appendChild(schemaScript);
+    // -----------------------------------------------------------
   let galHtml = ''; let firstImg = p.image || '';
   try { const galArr = JSON.parse(p.gallery); if(galArr && galArr.length > 0) { firstImg = galArr[0]; if(galArr.length > 1) { galHtml = `<div class="gallery-thumbs">` + galArr.map((img, i) => `<img src="${img}" onclick="swapMainImage('${img}')" class="${i===0?'active':''}">`).join('') + `</div>`; } } } catch(e){}
   
