@@ -1805,7 +1805,10 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
     
    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:20px;">
       <button class="btn-primary" onclick="openAddProduct()">+ THÊM MỚI SẢN PHẨM</button>
-      
+      <div style="display: flex; align-items: center; gap: 8px;">
+    <input type="number" id="usdBufferInput" value="999" placeholder="Buffer" style="width: 80px; padding: 6px 10px; border-radius: 4px; border: 1px solid #2b4c7e; background: transparent; color: var(--white); font-family: 'Space Mono', monospace; font-size: 13px; text-align: center;" title="Nhập số tiền Buffer (VNĐ) muốn TRỪ đi">
+    <button class="btn-primary" style="background: #2b4c7e; border-color: #2b4c7e;" onclick="autoUpdateMassExchangeRate()">🔄 UPDATE USD (BUFFER)</button>
+</div>
       <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
         <input type="text" id="adminSearchInput" placeholder="TÌM TÊN ÁO..." style="width:150px; padding:8px 15px; background:var(--navy-2); border:1px solid var(--border); color:var(--white); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; outline:none;" oninput="searchAdminProducts(this.value)">
         <select class="form-select" id="adminCategoryFilter" style="width:auto; padding:8px 15px; background:var(--navy-2); border:1px solid var(--border); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; cursor:pointer;" onchange="filterAdminProducts(this.value)">
@@ -2519,14 +2522,37 @@ async function convertCurrency() {
   if(!vndInput) { document.getElementById('pPriceFinal').value = ''; return; }
   try {
     document.getElementById('pPriceFinal').value = "Loading rate...";
-    const res = await fetch('https://open.er-api.com/v6/latest/USD'); const data = await res.json();
-    const usd = Math.round(parseInt(vndInput) / data.rates.VND);
+    const res = await fetch('https://open.er-api.com/v6/latest/USD'); 
+    const data = await res.json();
+    
+    // 🔥 ĐÚNG BÀI: TRỪ 999Đ ĐỂ ÉP GIÁ USD LÊN CAO (LỜI)
+    const actualRate = data.rates.VND - 999; 
+    
+    const usd = Math.round(parseInt(vndInput) / actualRate);
     const formattedVND = new Intl.NumberFormat('vi-VN').format(vndInput);
     document.getElementById('pPriceFinal').value = `${formattedVND} VND / ~$${usd}`;
   } catch(e) {
-    const usdFallback = Math.round(parseInt(vndInput) / 25000);
+    // 🔥 CƠ CHẾ SELF-HEALING: TÌM TỈ GIÁ TỪ ÁO TRONG KHO
+    let fallbackRate = 25000; // Sơ cua cấp 2 (Lỡ kho hàng trống không)
+    if (typeof products !== 'undefined' && products.length > 0) {
+        // Tìm cái áo đầu tiên có chứa giá USD
+        const sampleProduct = products.find(p => p.price && p.price.includes('/ ~$'));
+        if (sampleProduct) {
+            let parts = sampleProduct.price.split('/ ~$');
+            let oldVnd = parseInt(parts[0].replace(/[^0-9]/g, ''));
+            let oldUsd = parseInt(parts[1]);
+            if (oldVnd && oldUsd) {
+                fallbackRate = oldVnd / oldUsd; // Tính ngược ra tỉ giá cũ
+            }
+        }
+    }
+    
+    const usdFallback = Math.round(parseInt(vndInput) / fallbackRate);
     const formattedVND = new Intl.NumberFormat('vi-VN').format(vndInput);
     document.getElementById('pPriceFinal').value = `${formattedVND} VND / ~$${usdFallback}`;
+    
+    // Báo nhẹ cho Admin biết
+    alert("⚠️ LƯU Ý: API Tỉ giá đang rớt mạng.\nHệ thống đã tự động lấy tỉ giá từ sản phẩm cũ trong kho để áp dụng cho sản phẩm này.");
   }
 }
 
@@ -4811,6 +4837,68 @@ window.finInflowFilter = 'ALL';
                 let wsMix = XLSX.utils.aoa_to_sheet(mixRows); wsMix['!cols'] = [{wch: 12}, {wch: 20}, {wch: 30}, {wch: 12}, {wch: 30}, {wch: 15}]; XLSX.utils.book_append_sheet(wb, wsMix, "5. SOURCING_TASKS");
                 XLSX.writeFile(wb, `ARCWARE_ERP_Report_${today}.xlsx`);
             } catch (err) { console.error(err); alert("❌ Lỗi xuất Excel: " + err.message); } finally { btn.textContent = origText; btn.disabled = false; }
+        };
+
+
+        window.autoUpdateMassExchangeRate = async function() {
+            // Lấy linh hoạt số Buffer ông gõ trên màn hình (Nếu để trống thì tự hiểu là 0)
+            let bufferVal = parseInt(document.getElementById('usdBufferInput').value) || 0;
+
+            if (!confirm(`⚠️ LÀM MỚI TỈ GIÁ TOÀN KHO:\nHệ thống sẽ lấy tỉ giá API Quốc tế TRỪ ĐI ${bufferVal}đ (Buffer), sau đó tự động tính lại toàn bộ giá USD trên web.\nÔng có chắc chắn muốn chạy?`)) return;
+
+            const btn = document.querySelector('button[onclick*="autoUpdateMassExchangeRate"]');
+            let origText = "🔄 UPDATE USD WITH BUFFER";
+            if (btn) {
+                origText = btn.textContent;
+                btn.textContent = "⏳ ĐANG LẤY TỈ GIÁ...";
+                btn.disabled = true;
+            }
+            document.body.style.cursor = 'wait';
+
+            try {
+                const res = await fetch('https://open.er-api.com/v6/latest/USD'); 
+                const data = await res.json();
+                
+                // 🔥 ÉP GIÁ USD LÊN CAO: TRỪ ĐI SỐ BUFFER ÔNG ĐÃ NHẬP
+                const finalRate = data.rates.VND - bufferVal; 
+
+                if (!data.rates.VND || finalRate < 20000) throw new Error("Lỗi API Tỉ giá!");
+
+                if (btn) btn.textContent = `⏳ ĐANG UPDATE (1 USD = ${Math.round(finalRate)} VND)...`;
+
+                let updatedCount = 0;
+                for (let p of products) {
+                    if (!p.price) continue;
+                    
+                    let priceStr = String(p.price);
+                    let parts = priceStr.split('/');
+                    let vndStr = parts[0].trim(); 
+                    let rawVnd = parseInt(vndStr.replace(/[^0-9]/g, ''));
+                    if (!rawVnd) continue;
+
+                    let newUsd = Math.round(rawVnd / finalRate);
+                    let newPriceString = `${vndStr} / ~$${newUsd}`;
+
+                    if (priceStr !== newPriceString) {
+                        await sbClient.from('products').update({ price: newPriceString }).eq('id', p.id);
+                        updatedCount++;
+                    }
+                }
+                
+                alert(`✅ HOÀN TẤT! \nTỉ giá áp dụng: 1 USD = ${Math.round(finalRate)} VNĐ (Đã TRỪ ${bufferVal}đ buffer).\\nĐã cập nhật giá USD cho ${updatedCount} sản phẩm.`);
+                
+                if (typeof refreshProducts === 'function') await refreshProducts();
+
+            } catch (error) {
+                console.error("Lỗi update tỉ giá:", error);
+                alert("❌ API OFFLINE HOẶC CÓ LỖI CHẶN NGANG!\n\nHệ thống đã khóa lệnh cập nhật để bảo vệ dữ liệu giá trị USD cũ. Vui lòng thử lại sau.");
+            } finally {
+                if (btn) {
+                    btn.textContent = origText;
+                    btn.disabled = false;
+                }
+                document.body.style.cursor = 'default';
+            }
         };
 
         console.log("🔥 ARC'WARE ERP V13 (PRO UI/UX - DESKTOP WIDE) READY!");
