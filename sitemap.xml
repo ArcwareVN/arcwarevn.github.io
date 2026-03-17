@@ -4,27 +4,14 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml"
   xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
-  <!--
-    ARC'WARE STORE — sitemap.xml
-    Domain: https://arcware.store
-    Languages: EN / VI
-    Last updated: 2026-03-01
-    Submit to: https://search.google.com/search-console
-  -->
-
-  <!-- ══ HOMEPAGE ══ -->
   <url>
     <loc>https://arcware.store/</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <!-- EN version (default) -->
     <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/"/>
-    <!-- VI version (same page, language controlled by JS) -->
     <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/"/>
-    <!-- Fallback for all other languages -->
     <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/"/>
-    <!-- OG image as sitemap image signal -->
     <image:image>
       <image:loc>https://arcware.store/logo.jpg</image:loc>
       <image:title>ARC'WARE — Premium Arc'teryx Gear in Vietnam</image:title>
@@ -32,81 +19,437 @@
     </image:image>
   </url>
 
-  <!-- ══ COLLECTION / SHOP ══ -->
   <url>
-    <loc>https://arcware.store/#products</loc>
-    <lastmod>2026-03-01</lastmod>
+    <loc>https://arcware.store/?p=arc-teryx-rush-jacket-year-of-the-horse-2026</loc>
+    <lastmod>2026-03-17</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#products"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#products"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#products"/>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-rush-jacket-year-of-the-horse-2026"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-rush-jacket-year-of-the-horse-2026"/>
   </url>
-
-  <!-- ══ DWR SERVICE ══ -->
   <url>
-    <loc>https://arcware.store/#dwr</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#dwr"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#dwr"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#dwr"/>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-sv-year-of-the-dragon-2024</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-sv-year-of-the-dragon-2024"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-sv-year-of-the-dragon-2024"/>
   </url>
-
-  <!-- ══ ABOUT / BRAND STORY ══ -->
   <url>
-    <loc>https://arcware.store/#about</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.75</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#about"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#about"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#about"/>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-sv-year-of-the-snake-2025</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-sv-year-of-the-snake-2025"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-sv-year-of-the-snake-2025"/>
   </url>
-
-  <!-- ══ CUSTOMER REVIEWS ══ -->
   <url>
-    <loc>https://arcware.store/#reviews</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#reviews"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#reviews"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#reviews"/>
+    <loc>https://arcware.store/?p=arc-teryx-x-palace-alpha-sv</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-x-palace-alpha-sv"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-x-palace-alpha-sv"/>
   </url>
-
-  <!-- ══ AUTHENTIC GUARANTEE ══ -->
   <url>
-    <loc>https://arcware.store/#guarantee</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.70</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#guarantee"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#guarantee"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#guarantee"/>
+    <loc>https://arcware.store/?p=beams-x-arc-teryx-beta-jacket</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=beams-x-arc-teryx-beta-jacket"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=beams-x-arc-teryx-beta-jacket"/>
   </url>
-
-  <!-- ══ PAYMENT & SHIPPING POLICIES ══ -->
   <url>
-    <loc>https://arcware.store/#policies</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#policies"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#policies"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#policies"/>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-ar-glitch</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-ar-glitch"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-ar-glitch"/>
   </url>
-
-  <!-- ══ CONTACT ══ -->
   <url>
-    <loc>https://arcware.store/#contact</loc>
-    <lastmod>2026-03-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.65</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/#contact"/>
-    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/#contact"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://arcware.store/#contact"/>
+    <loc>https://arcware.store/?p=arc-teryx-zeta-sl-jacket-wildchild</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-zeta-sl-jacket-wildchild"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-zeta-sl-jacket-wildchild"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-beta-jacket</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-beta-jacket"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-beta-jacket"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-beta-ar-jacket</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-beta-ar-jacket"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-beta-ar-jacket"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-beta-lt-jacket</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-beta-lt-jacket"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-beta-lt-jacket"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-ar-tatsu</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-ar-tatsu"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-ar-tatsu"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-sv-dark-magic</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-sv-dark-magic"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-sv-dark-magic"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-sv-white-out</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-sv-white-out"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-sv-white-out"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-sv-24k-gold</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-sv-24k-gold"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-sv-24k-gold"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-sv-black</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-sv-black"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-sv-black"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-sv-tanager</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-sv-tanager"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-sv-tanager"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-alpha-sv-soulsonic</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpha-sv-soulsonic"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpha-sv-soulsonic"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-solano-jacket-solitude-white</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-solano-jacket-solitude-white"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-solano-jacket-solitude-white"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-solano-jacket-black</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-solano-jacket-black"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-solano-jacket-black"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-solano-hoody-solitude-white</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-solano-hoody-solitude-white"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-solano-hoody-solitude-white"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-solano-hoody-black</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-solano-hoody-black"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-solano-hoody-black"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-gamma-mx-rune</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-gamma-mx-rune"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-gamma-mx-rune"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-gamma-mx-forage</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-gamma-mx-forage"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-gamma-mx-forage"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-gamma-mx-black</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-gamma-mx-black"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-gamma-mx-black"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-gamma-mx-black-shappire</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-gamma-mx-black-shappire"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-gamma-mx-black-shappire"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-gamma-mx-carob-blk-dynasty</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-gamma-mx-carob-blk-dynasty"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-gamma-mx-carob-blk-dynasty"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-gamma-mx-solitude</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-gamma-mx-solitude"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-gamma-mx-solitude"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-gamma-mx-sea-salt</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-gamma-mx-sea-salt"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-gamma-mx-sea-salt"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-gamma-mx-heritage</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-gamma-mx-heritage"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-gamma-mx-heritage"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-zeta-sl-jacket-labyrinth</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-zeta-sl-jacket-labyrinth"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-zeta-sl-jacket-labyrinth"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-zeta-sl-jacket-dark-firoza-blue</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-zeta-sl-jacket-dark-firoza-blue"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-zeta-sl-jacket-dark-firoza-blue"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-zeta-sl-jacket-dynasty</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-zeta-sl-jacket-dynasty"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-zeta-sl-jacket-dynasty"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-atom-sl-mars</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-atom-sl-mars"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-atom-sl-mars"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-atom-sl-tatsu</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-atom-sl-tatsu"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-atom-sl-tatsu"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-atom-sl-black</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-atom-sl-black"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-atom-sl-black"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-atom-sl-euphoria</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-atom-sl-euphoria"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-atom-sl-euphoria"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-atom-sl-cloud-grey</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-atom-sl-cloud-grey"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-atom-sl-cloud-grey"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-atom-sl-arctic-silk</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-atom-sl-arctic-silk"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-atom-sl-arctic-silk"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-proton-lt-hoody-jacket</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-proton-lt-hoody-jacket"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-proton-lt-hoody-jacket"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-mantis-1-waist-bag</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-mantis-1-waist-bag"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-mantis-1-waist-bag"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-mantis-2-waist-bag</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-mantis-2-waist-bag"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-mantis-2-waist-bag"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-ion-chalk-bucket</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-ion-chalk-bucket"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-ion-chalk-bucket"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-bird-head-toque-beanie</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-bird-head-toque-beanie"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-bird-head-toque-beanie"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-axe-w-holder-magnesium-stick</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-axe-w-holder-magnesium-stick"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-axe-w-holder-magnesium-stick"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-utility-measure</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-utility-measure"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-utility-measure"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-alpine-spoon-set-of-2</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-alpine-spoon-set-of-2"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-alpine-spoon-set-of-2"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-sport-bottle</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-sport-bottle"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-sport-bottle"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-utility-knife</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-utility-knife"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-utility-knife"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-titanium-foldable-cup</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-titanium-foldable-cup"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-titanium-foldable-cup"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-titanium-tea-cup-set-of-4</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-titanium-tea-cup-set-of-4"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-titanium-tea-cup-set-of-4"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-multifunctional-keychain</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-multifunctional-keychain"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-multifunctional-keychain"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-void-flask</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-void-flask"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-void-flask"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-x-titianium-artisan-hip-flask</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-x-titianium-artisan-hip-flask"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-x-titianium-artisan-hip-flask"/>
+  </url>
+  <url>
+    <loc>https://arcware.store/?p=arc-teryx-camping-plate</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://arcware.store/?p=arc-teryx-camping-plate"/>
+    <xhtml:link rel="alternate" hreflang="vi" href="https://arcware.store/?p=arc-teryx-camping-plate"/>
   </url>
 
 </urlset>
