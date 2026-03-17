@@ -2316,15 +2316,21 @@ async function loadSettingsFromCloud() {
     const keysToLoad = ['ig', 'wa', 'zalo1', 'zalo2', 'phone1', 'phone2', 'smart_filter'];
     
     keysToLoad.forEach(k => {
-        const dbKey = (k === 'smart_filter') ? 'smart_filter' : k;
-        if (map.hasOwnProperty(dbKey)) {
-            settings[k === 'smart_filter' ? 'smartFilter' : k] = map[dbKey];
-            const inputEl = document.getElementById(k === 'smart_filter' ? 'sSmartFilter' : 's' + k.charAt(0).toUpperCase() + k.slice(1));
-            if (inputEl) inputEl.value = map[dbKey];
-        }
-    });
+            const dbKey = (k === 'smart_filter') ? 'smart_filter' : k;
+            if (map.hasOwnProperty(dbKey)) {
+                settings[k === 'smart_filter' ? 'smartFilter' : k] = map[dbKey];
+                const inputEl = document.getElementById(k === 'smart_filter' ? 'sSmartFilter' : 's' + k.charAt(0).toUpperCase() + k.slice(1));
+                if (inputEl) inputEl.value = map[dbKey];
+            }
+        });
 
-    if (!map['phone1'] && map['phone']) settings.phone1 = map['phone'];
+        if (!map['phone1'] && map['phone']) settings.phone1 = map['phone'];
+        
+        // KÉO SỐ BUFFER TỪ CLOUD XUỐNG Ô INPUT ĐÂY NHÉ
+        if (map['usd_buffer']) {
+            const bufferInput = document.getElementById('usdBufferInput');
+            if (bufferInput) bufferInput.value = map['usd_buffer'];
+        }
 
     localStorage.setItem('aw_settings', JSON.stringify(settings));
     updateContactSettingsDisplay();
@@ -4843,6 +4849,11 @@ window.finInflowFilter = 'ALL';
         window.autoUpdateMassExchangeRate = async function() {
             // Lấy linh hoạt số Buffer ông gõ trên màn hình (Nếu để trống thì tự hiểu là 0)
             let bufferVal = parseInt(document.getElementById('usdBufferInput').value) || 0;
+
+            // QUĂNG SỐ NÀY LÊN CLOUD SUPABASE
+            if (typeof saveToCloud === 'function') {
+                await saveToCloud('usd_buffer', bufferVal);
+            }
 
             if (!confirm(`⚠️ LÀM MỚI TỈ GIÁ TOÀN KHO:\nHệ thống sẽ lấy tỉ giá API Quốc tế TRỪ ĐI ${bufferVal}đ (Buffer), sau đó tự động tính lại toàn bộ giá USD trên web.\nÔng có chắc chắn muốn chạy?`)) return;
 
