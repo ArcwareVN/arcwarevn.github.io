@@ -1304,6 +1304,12 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
   <div class="section-header" style="border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding-top:20px; padding-bottom:20px; margin-bottom:40px; align-items:center;">
     <div class="section-title" data-i18n="curCol">COLLECTION</div>
     <div class="filter-tabs">
+      <div class="minimal-search-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="mainSearchBar" class="minimal-search-input" placeholder="FIND YOUR GEAR" oninput="searchStoreProducts(this.value)" autocomplete="off">
+      </div>
       <button class="filter-tab active" onclick="filterProducts('all',this)" data-i18n="fAll">ALL</button>
       <button class="filter-tab" onclick="filterProducts('Shell Jacket',this)" data-i18n="fShell">SHELL JACKET</button>
       <button class="filter-tab" onclick="filterProducts('Insulated Layer',this)" data-i18n="fInsul">INSULATED LAYER</button>
@@ -2018,6 +2024,16 @@ let settings = getSafeObject('aw_settings', { ig: 'arcwarevn', wa: '84901234567'
 let dbMode = 'local'; 
 let products = [];
 let currentFilter = 'all';
+
+// BẮT ĐẦU: LỆNH SEARCH CỦA KHÁCH
+let customerSearchQuery = '';
+window.searchStoreProducts = function(val) {
+    customerSearchQuery = val.toLowerCase().trim();
+    currentPage = 1;
+    renderProducts();
+};
+// KẾT THÚC: LỆNH SEARCH
+
 let currentPage = 1;
 const itemsPerPage = 30; // Chỉnh số lượng sản phẩm mỗi trang ở đây
 let sbClient = null; 
@@ -2069,7 +2085,12 @@ function setLang(lang, el) {
   if (el) el.classList.add('active');
   document.querySelectorAll('[data-i18n]').forEach(item => { item.innerHTML = _t(item.getAttribute('data-i18n')); });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(item => { item.placeholder = _t(item.getAttribute('data-i18n-placeholder')); });
-  renderProducts();
+          
+          // TỰ ĐỘNG ĐỔI CHỮ THANH SEARCH KHI ĐỔI NGÔN NGỮ
+          const searchInput = document.getElementById('mainSearchBar');
+          if (searchInput) searchInput.placeholder = currentLang === 'vi' ? 'TÌM SẢN PHẨM' : 'FIND YOUR GEAR';
+
+          renderProducts();
   if (typeof renderCartList === 'function') renderCartList();
   if (typeof renderSizeCharts === 'function') renderSizeCharts();
   if (typeof renderSmartFilterUI === 'function') renderSmartFilterUI();
@@ -2638,9 +2659,13 @@ window.filterProducts = function(cat, el) {
   document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
   if(el) el.classList.add('active');
 
-  // BẢN VÁ UX: Tự động xóa Smart Filter khi chuyển danh mục trên Thanh Ngang
   selectedSmartFilters = [];
   document.querySelectorAll('.sf-checkbox').forEach(cb => cb.checked = false);
+
+  // Xóa nội dung thanh Search khi chuyển Tab
+  customerSearchQuery = '';
+  const searchInput = document.querySelector('.minimal-search-input');
+  if (searchInput) searchInput.value = '';
 
   renderProducts();
 };
@@ -3765,8 +3790,12 @@ function renderProducts() {
   const grid = document.getElementById('productsGrid');
   if (!grid) return;
   
-  let filtered = currentFilter === 'all' ? [...products] : products.filter(p => p.category === currentFilter);
+let filtered = currentFilter === 'all' ? [...products] : products.filter(p => p.category === currentFilter);
 
+  // LỌC TÊN SẢN PHẨM TỪ THANH SEARCH
+  if (customerSearchQuery) {
+      filtered = filtered.filter(p => p.name.toLowerCase().includes(customerSearchQuery));
+  }
   // --- LOGIC SẮP XẾP TỔNG HỢP ---
   filtered.sort((a, b) => {
       // 1. Nếu khách có chọn Sort Giá -> Ưu tiên Giá tuyệt đối
@@ -3899,7 +3928,7 @@ function renderProducts() {
     <div class="vl-card" onclick="openInterest('${p.id}')">
       <div class="vl-img-wrap">
         ${badgeHtml}
-        <img src="${p.image||''}" loading="lazy" onerror="this.style.display='none'">
+        <img src="${p.image||''}" alt="Áo khoác ${p.name} chính hãng Arc'teryx Vietnam" loading="lazy" onerror="this.style.display='none'">
       </div>
       <div class="vl-info">
         <div class="vl-cat">${p.gender ? p.gender.toUpperCase() + ' · ' : ''}${_t(p.category)||p.category}</div>
@@ -4121,6 +4150,50 @@ function initAutoCat() {
   .live-search-drop { display:none; position:absolute; top:100%; left:0; right:0; background:var(--navy); border:1px solid #00ff88; max-height:150px; overflow-y:auto; z-index:10000; box-shadow:0 5px 15px rgba(0,0,0,0.5); margin-top:2px; border-radius:4px; }
   .live-search-item { padding:10px; border-bottom:1px solid var(--border-light); cursor:pointer; font-size:12px; color:var(--text-dim); }
   .live-search-item:hover { background:rgba(0, 255, 136, 0.1); color:var(--white); }
+
+/* ════ MINIMAL SEARCH BARS ════ */
+.minimal-search-box {
+    display: flex;
+    align-items: center;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 0 16px;
+    height: 40px;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+.minimal-search-box:focus-within {
+    border-color: var(--text-dim);
+}
+.minimal-search-box svg {
+    color: var(--text-muted);
+    margin-right: 10px;
+    transition: 0.3s ease;
+}
+.minimal-search-box:focus-within svg { color: var(--white); }
+.minimal-search-input {
+    background: transparent;
+    border: none;
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    outline: none;
+    width: 369px; /* Dài ra mặc định */
+    font-family: var(--font-main);
+}
+.minimal-search-input::placeholder {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .minimal-search-box { width: 100%; margin-right: 0; margin-bottom: 10px; justify-content: center; }
+    .minimal-search-input { width: 100px; }
+    .minimal-search-input:focus { width: 140px; }
+}
 </style>
 
 <script id="arcware-erp-engine">
