@@ -1148,6 +1148,26 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
       margin-bottom: 25px !important; /* Tạo khoảng trống 1 dòng với Giá */
       text-align: center !important; /* Căn giữa tên luôn cho chuẩn Minimalism */
     }
+
+    /* --- ĐIỀU CHỈNH LƯỚI 2 SẢN PHẨM RIÊNG CHO MOBILE --- */
+    @media (max-width: 768px) {
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important; /* Ép chia 2 cột đều nhau */
+        column-gap: 12px !important; /* Khoảng cách ngang vừa phải */
+        row-gap: 30px !important; /* Khoảng cách dọc sát lại cho gọn */
+      }
+      .vl-name {
+        font-size: 11px !important; /* Thu nhỏ chữ tên SP xíu cho đỡ chật */
+        margin-bottom: 12px !important;
+      }
+      .vl-price {
+        font-size: 11px !important; /* Thu nhỏ khung giá tiền */
+        padding: 4px 8px !important;
+      }
+      .vl-info {
+        padding: 0 5px 10px 5px !important;
+      }
+    }
     /* ==================================================== */
 </style>
 <script type="application/ld+json">
@@ -2006,7 +2026,27 @@ let uploadedImagesArray = [];
 let uploadedHowItWearsArray = [];
 let adminInterval;
 let orderModified = false; // Tracks whether admin has reordered products without saving
+let modifiedProductIds = new Set(); // BẢN VÁ: Chỉ lưu những SP bị đổi thứ tự để tối ưu DB
 
+// Bộ não quét từ khóa Smart Filter
+function getSmartFilterKeywords() {
+    const sfText = settings.smartFilter || '';
+    const keywords = [];
+    sfText.split('\n').forEach(line => {
+        const val = line.replace('-', '').trim().toLowerCase();
+        if (val) keywords.push(val);
+    });
+    return keywords;
+}
+
+// Chấm điểm cơ sở cho Sản phẩm dựa theo Smart Filter
+function getSfWeight(p, keywords) {
+    const str = ((p.name || '') + ' ' + (p.badge || '') + ' ' + (p.description_en || '')).toLowerCase();
+    for (let i = 0; i < keywords.length; i++) {
+        if (str.includes(keywords[i])) return i;
+    }
+    return 999; // Nếu không khớp Filter nào thì cho đứng bét
+}
 const catWeights = { 
   'Shell Jacket': 1, 
   'Insulated Layer': 2, 
@@ -2409,19 +2449,28 @@ function toggleTheme() {
 async function refreshProducts() {
   if (dbMode === 'supabase') {
     try {
-      const { data, error } = await sbClient.from('products')
-        .select('*')
-        .order('sort_order', { ascending: true, nullsFirst: false })
-        .order('created_at', { ascending: false });
+      const { data, error } = await sbClient.from('products').select('*');
       if (error) throw error;
       
       let fetchedProducts = data || [];
-      // Sắp xếp theo trọng số phân tầng ngay khi lấy dữ liệu về
+      const sfKeywords = getSmartFilterKeywords();
+
+      // 1. ĐỘNG CƠ TỌA ĐỘ TUYỆT ĐỐI (V3)
+      fetchedProducts.forEach(p => {
+          p._sfWeight = getSfWeight(p, sfKeywords);
+          // Nếu Admin ĐÃ XẾP (sort_order tồn tại) -> Lấy tọa độ đó làm VUA.
+          // Nếu chưa xếp (Sản phẩm mới) -> Lấy Điểm Smart Filter làm nền móng (100k, 200k...).
+          p._finalScore = p.sort_order != null ? p.sort_order : (p._sfWeight * 100000);
+      });
+
+      // 2. Sắp xếp hoàn chỉnh
       fetchedProducts.sort((a, b) => {
-        const weightA = catWeights[a.category] || 99;
-        const weightB = catWeights[b.category] || 99;
-        if (weightA !== weightB) return weightA - weightB;
-        return (a.sort_order || 0) - (b.sort_order || 0); 
+          const wA = catWeights[a.category] || 99;
+          const wB = catWeights[b.category] || 99;
+          if (wA !== wB) return wA - wB; // Luật Ranh Giới (Không bao giờ phá)
+
+          if (a._finalScore !== b._finalScore) return a._finalScore - b._finalScore; // Trật tự tuyệt đối
+          return new Date(b.created_at) - new Date(a.created_at); // Sản phẩm mới lên trên
       });
       
       products = fetchedProducts;
@@ -2429,6 +2478,7 @@ async function refreshProducts() {
     } catch (e) { document.getElementById('dbStatusAlert').innerHTML = "STATUS: ERROR FETCHING PRODUCTS"; }
   }
   orderModified = false; 
+  modifiedProductIds.clear(); 
   renderProducts(); 
   renderAdminList();
   injectProductSchema();
@@ -2681,11 +2731,22 @@ function closeLightbox() { document.getElementById('imageLightbox').classList.re
 function swapMainImage(src) { document.getElementById('mainGalleryImage').src = src; document.querySelectorAll('.gallery-thumbs img').forEach(t => t.classList.remove('active')); event.target.classList.add('active'); }
 
 function openVideo(url) {
+  if (!url || typeof url !== 'string') return;
   let embedUrl = '';
-  if(url.includes('tiktok.com')) { const match = url.match(/video\/(\d+)/); if(match) embedUrl = `https://www.tiktok.com/embed/v2/${match[1]}`; } 
-  else if(url.includes('youtube.com/watch') || url.includes('youtu.be/')) { const match = url.match(/(?:v=|youtu\.be\/)([^&?]+)/); if(match) embedUrl = `https://www.youtube.com/embed/${match[1]}`; } 
-  else if(url.includes('youtube.com/shorts/')) { const match = url.match(/shorts\/([^&?]+)/); if(match) embedUrl = `https://www.youtube.com/embed/${match[1]}`; }
-  if(embedUrl) { document.getElementById('videoIframe').src = embedUrl; openOverlay('videoOverlay'); } else { window.open(url, '_blank'); }
+  let cleanUrl = url.trim();
+  
+  // CHỈ xử lý Embed cho YouTube (Bỏ qua IG và TikTok để ép mở sang tab mới)
+  if(cleanUrl.includes('youtube.com/watch')) { const match = cleanUrl.match(/v=([^&?]+)/); if(match) embedUrl = `https://www.youtube.com/embed/${match[1]}`; } 
+  else if(cleanUrl.includes('youtu.be/')) { const match = cleanUrl.match(/youtu\.be\/([^&?]+)/); if(match) embedUrl = `https://www.youtube.com/embed/${match[1]}`; } 
+  else if(cleanUrl.includes('youtube.com/shorts/')) { const match = cleanUrl.match(/shorts\/([^&?]+)/); if(match) embedUrl = `https://www.youtube.com/embed/${match[1]}`; }
+  
+  // Nếu là YouTube thì mở Pop-up Video, nếu là Link khác (IG, TikTok) thì văng sang Tab/App
+  if(embedUrl) { 
+      document.getElementById('videoIframe').src = embedUrl; 
+      openOverlay('videoOverlay'); 
+  } else { 
+      window.open(cleanUrl, '_blank'); 
+  }
 }
 function closeVideo() { document.getElementById('videoIframe').src = ''; closeOverlay('videoOverlay'); }
 
@@ -2699,6 +2760,35 @@ function openLookbook(id) {
 
 let cart = JSON.parse(localStorage.getItem('aw_cart') || '[]');
 setTimeout(() => { if (typeof updateCartButton === 'function') updateCartButton(); }, 500);
+// Bộ lọc Video Bọc Thép - Chống sập web
+window.formatVideoEmbedUrl = function(url) {
+    if (!url || typeof url !== 'string') return ''; // Nếu không có link thì trả về rỗng, CHỐNG SẬP!
+    let cleanUrl = url.trim();
+    try {
+        if (cleanUrl.includes('youtube.com/watch')) {
+            let v = new URL(cleanUrl).searchParams.get('v');
+            return v ? 'https://www.youtube.com/embed/' + v : cleanUrl;
+        }
+        if (cleanUrl.includes('youtu.be/')) {
+            let v = cleanUrl.split('youtu.be/')[1].split('?')[0];
+            return 'https://www.youtube.com/embed/' + v;
+        }
+        if (cleanUrl.includes('youtube.com/shorts/')) {
+            let v = cleanUrl.split('youtube.com/shorts/')[1].split('?')[0];
+            return 'https://www.youtube.com/embed/' + v;
+        }
+        if (cleanUrl.includes('instagram.com/')) {
+            let base = cleanUrl.split('?')[0];
+            if (!base.endsWith('/')) base += '/';
+            return base + 'embed';
+        }
+        if (cleanUrl.includes('tiktok.com/')) {
+            let match = cleanUrl.match(/video\/(\d+)/);
+            if (match) return 'https://www.tiktok.com/embed/v2/' + match[1];
+        }
+    } catch(e) { return cleanUrl; } // Lỗi thì trả về link gốc
+    return cleanUrl;
+};
 
 window.openInterest = function(id) {
   // BẢN VÁ: Tìm theo ID (cho link cũ) HOẶC tìm theo Tên Slug (cho link mới siêu ngắn)
@@ -2769,7 +2859,9 @@ let sizeChartHtml = '';
         </div>
         <div class="info-desc">${displayDesc.replace(/\n/g, '<br>')}</div>
         <div style="margin-top: 30px; margin-bottom: 30px;">
-          <div class="info-price">${p.price||_t('noPr')}</div>
+          <div class="info-price" style="margin-bottom: 8px;">${p.price||_t('noPr')}</div>
+          ${priceNoteHtml}
+          <div style="font-size:11px; color:var(--text-dim); margin-top:4px;">* ${_t('shipNoteFull')}</div>
         </div>
         <div class="spec-grid" style="margin-bottom: 24px;">
           <div class="spec-item"><span class="spec-label">${_t('cnd')}</span><span class="spec-value">${_t(p.condition)||p.condition||'N/A'}</span></div>
@@ -2784,7 +2876,6 @@ let sizeChartHtml = '';
                 <div style="margin-bottom:10px; font-size:13px; color:var(--white);"><strong>${_t('payPolGl')}</strong></div>
                 <div style="margin-bottom:12px; font-size:13px; color:var(--white);"><strong>${_t('payPolVn')}</strong></div>
                 <div style="padding-top:12px; border-top:1px dashed var(--border-light);">
-                    ${priceNoteHtml}
                     <div style="font-size:11px; color:var(--text-dim); line-height:1.5;">• ${_t('shipNoteFull')}</div>
                 </div>
             </div>
@@ -3087,9 +3178,19 @@ window.submitCart = async function(method, btnEl, accessKey) {
     if (typeof window.logOrderToERP === 'function') {
         const autoProdName = cart.map(i => `${i.qty}x ${i.name}`).join(' + ');
         const autoProdSize = cart.map(i => i.size).join(', ');
-        const autoTotalPrice = cart.reduce((sum, i) => sum + ((i.price || 0) * i.qty), 0);
-        const autoContactInfo = `${code} ${phoneInput}` + (ig ? ` | IG: ${ig}` : '');
-        window.logOrderToERP(name, autoContactInfo, autoProdName, autoProdSize, autoTotalPrice);
+        // Sửa lỗi tính tổng tiền khi price đang là dạng chữ "8.500.000 VND / $340"
+        const autoTotalPrice = cart.reduce((sum, i) => {
+            let num = 0;
+            if (typeof i.price === 'string') {
+                let match = i.price.split('/')[0].replace(/[^0-9]/g, '');
+                num = parseInt(match) || 0;
+            } else { num = i.price || 0; }
+            return sum + (num * i.qty);
+        }, 0);
+        const finalPhone = `${code} ${phoneInput}`;
+        const finalIG = ig ? ig.trim() : '';
+        // Truyền tách bạch finalPhone và finalIG
+        window.logOrderToERP(name, finalPhone, finalIG, autoProdName, autoProdSize, autoTotalPrice, cart);
     }
 
     let txt = _t('tplOrder'); 
@@ -3281,11 +3382,11 @@ function renderAdminList() {
             <div style="font-weight:600; color:var(--white);">${p.name}</div>
             <div style="font-size:11px; color:var(--text-muted);">${p.price||''}</div>
           </div>
-          <div class="admin-sort-col">
-            <button class="btn-sort" onclick="moveProduct(${globalIdx}, -1)" ${disableUp ? 'disabled style="opacity:0.1"' : ''}>▲</button>
-            <button class="btn-sort" onclick="moveProduct(${globalIdx}, 1)" ${disableDown ? 'disabled style="opacity:0.1"' : ''}>▼</button>
-          </div>
-          <div class="admin-item-actions">
+          <div class="admin-item-actions" style="display:flex; align-items:center; gap:8px;">
+            <button class="btn-sort" title="Lên 1 bậc" onclick="moveProductAdmin('${p.id}', 'UP')" ${disableUp ? 'disabled style="opacity:0.1"' : ''}>▲</button>
+            <button class="btn-sort" title="Xuống 1 bậc" onclick="moveProductAdmin('${p.id}', 'DOWN')" ${disableDown ? 'disabled style="opacity:0.1"' : ''}>▼</button>
+            <button class="btn-sort" style="color:orange; border-color:orange; font-weight:800; font-size:9px; padding:4px 8px; margin-right:15px;" title="Lên ĐẦU BẢNG" onclick="moveProductAdmin('${p.id}', 'FIRST')" ${disableUp ? 'disabled style="opacity:0.1"' : ''}>⭐ UP FIRST</button>
+            
             <button class="btn-edit" onclick="openEditProduct('${p.id}')">SỬA</button>
             <button class="btn-del" onclick="deleteProduct('${p.id}')">XÓA</button>
           </div>
@@ -3296,48 +3397,92 @@ function renderAdminList() {
   list.innerHTML = html;
 }
 
-function moveProduct(idx, direction) {
-  const newIdx = idx + direction;
-  if (newIdx < 0 || newIdx >= products.length) return;
-  
-  // 1. Đổi chỗ 2 sản phẩm trong mảng
-  const temp = products[idx];
-  products[idx] = products[newIdx];
-  products[newIdx] = temp;
-  
-  // 2. BẢN VÁ: Ép máy tính ghi nhớ và cập nhật lại điểm thứ tự mới ngay lập tức
-  products.forEach((p, i) => { p.sort_order = i * 10; });
-  
-  orderModified = true;
-  renderAdminList();
-  renderProducts(); 
-}
-async function saveProductOrder() {
+window.moveProductAdmin = function(id, action) {
+    const pIndex = products.findIndex(x => x.id === id);
+    if (pIndex === -1) return;
+    const p1 = products[pIndex];
+
+    // Lấy danh sách sản phẩm CÙNG CATEGORY, ĐÃ ĐƯỢC SORT CHUẨN XÁC Y HỆT UI
+    const catProducts = products.filter(x => x.category === p1.category);
+    catProducts.sort((a, b) => {
+        if (a._finalScore !== b._finalScore) return a._finalScore - b._finalScore;
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    const catIdx = catProducts.findIndex(x => x.id === id);
+    if (catIdx === -1) return;
+
+    if (action === 'FIRST') {
+        if (catIdx === 0) return; // Đã ở top
+        const topScore = catProducts[0]._finalScore;
+        p1._finalScore = topScore - 10; // Đẩy lên trước Top 1 hiện tại
+        p1.sort_order = p1._finalScore;
+        modifiedProductIds.add(p1.id);
+    } 
+    else if (action === 'UP') {
+        if (catIdx === 0) return;
+        const p2 = catProducts[catIdx - 1];
+        let s1 = p1._finalScore;
+        let s2 = p2._finalScore;
+        if (s1 === s2) { s1 += 5; s2 -= 5; } // Ép tách điểm nếu lỡ trùng nhau
+        
+        // Tráo đổi tọa độ
+        p1._finalScore = s2; p1.sort_order = s2;
+        p2._finalScore = s1; p2.sort_order = s1;
+        modifiedProductIds.add(p1.id); modifiedProductIds.add(p2.id);
+    }
+    else if (action === 'DOWN') {
+        if (catIdx === catProducts.length - 1) return;
+        const p2 = catProducts[catIdx + 1];
+        let s1 = p1._finalScore;
+        let s2 = p2._finalScore;
+        if (s1 === s2) { s1 -= 5; s2 += 5; }
+        
+        p1._finalScore = s2; p1.sort_order = s2;
+        p2._finalScore = s1; p2.sort_order = s1;
+        modifiedProductIds.add(p1.id); modifiedProductIds.add(p2.id);
+    }
+
+    orderModified = true;
+    
+    // Xếp lại toàn bộ mảng gốc ngay lập tức
+    products.sort((a, b) => {
+        const wA = catWeights[a.category] || 99;
+        const wB = catWeights[b.category] || 99;
+        if (wA !== wB) return wA - wB; 
+        if (a._finalScore !== b._finalScore) return a._finalScore - b._finalScore;
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    renderAdminList();
+    renderProducts();
+};
+
+window.saveProductOrder = async function() {
   if (dbMode !== 'supabase') return alert("Supabase not connected!");
   const btn = document.getElementById('saveOrderBtn');
   btn.textContent = "SAVING...";
   btn.disabled = true;
   try {
-    for (let i = 0; i < products.length; i++) {
-      const newOrder = i * 10;
-      if (products[i].sort_order !== newOrder) { 
-        const { error } = await sbClient.from('products')
-          .update({ sort_order: newOrder })
-          .eq('id', products[i].id);
-        if (error) throw error;
-        products[i].sort_order = newOrder; 
-      }
+    // Chỉ lưu những SP có sự dịch chuyển
+    for (let id of modifiedProductIds) {
+        const p = products.find(x => x.id === id);
+        if (p && p.sort_order != null) {
+            const { error } = await sbClient.from('products').update({ sort_order: p.sort_order }).eq('id', p.id);
+            if (error) throw error;
+        }
     }
+    modifiedProductIds.clear();
     orderModified = false;
     showToast("ORDER SAVED ✓");
     renderAdminList();
   } catch(e) {
     alert("ERROR saving order: " + e.message);
   } finally {
-    btn.textContent = "SAVE NEW ORDER ✓";
+    btn.textContent = "LƯU THỨ TỰ MỚI ✓";
     btn.disabled = false;
   }
-}
+};
 
 function openAddProduct() { 
   editingId = null; uploadedImagesArray = []; document.getElementById('imgPreviewGrid').innerHTML='';
@@ -3650,11 +3795,13 @@ function renderProducts() {
           if (pA === -1) return 1; if (pB === -1) return -1;
           return currentSort === 'price_asc' ? pA - pB : pB - pA;
       }
-      // 2. Mặc định: Theo phân tầng và sort_order
+      // 2. Sắp xếp UI: Phân Tầng > Tọa Độ Tuyệt Đối
       const wA = catWeights[a.category] || 99;
       const wB = catWeights[b.category] || 99;
       if (wA !== wB) return wA - wB;
-      return (a.sort_order || 0) - (b.sort_order || 0);
+
+      if (a._finalScore !== b._finalScore) return a._finalScore - b._finalScore;
+      return new Date(b.created_at) - new Date(a.created_at);
   });
   
 // --- LOGIC LỌC THÔNG MINH (FACETED) - BẢN HOÀN THIỆN V3 (2-TIER ENGINE) ---
@@ -3759,6 +3906,13 @@ function renderProducts() {
 
   grid.innerHTML = currentProducts.map(p => {
     const badgeHtml = p.badge ? `<div style="position:absolute; top:12px; right:12px; background:var(--white); color:var(--navy); font-size:9px; font-weight:800; letter-spacing:0.1em; padding:4px 8px; z-index:10; text-transform:uppercase; box-shadow:0 4px 10px rgba(0,0,0,0.2);">${p.badge}</div>` : '';
+    
+    // Đồng bộ logic đọc từ điển y hệt như trong Pop-up
+    let pText = '';
+    if (p.price_type === 'same') pText = _t('priceSame');
+    else if (p.price_type === 'diff' || !p.price_type) pText = _t('priceDiff');
+    else pText = p.price_type;
+
     return `
     <div class="vl-card" onclick="openInterest('${p.id}')">
       <div class="vl-img-wrap">
@@ -3769,6 +3923,7 @@ function renderProducts() {
         <div class="vl-cat">${p.gender ? p.gender.toUpperCase() + ' · ' : ''}${_t(p.category)||p.category}</div>
         <div class="vl-name">${p.name}</div>
         <div class="vl-price">${p.price||_t('noPr')}</div>
+        <div style="font-size:10px; color:var(--text-dim); margin-top:10px; font-weight:400; line-height:1.4; text-align:center; text-transform:none;">${pText}</div>
       </div>
     </div>`;
   }).join('');
@@ -4183,8 +4338,25 @@ function initAutoCat() {
             if(!rawPhone || !name) return alert("SĐT và Tên là bắt buộc!");
             const cleanedInput = window.cleanPhone(rawPhone); let id = document.getElementById('crmCustId').value;
             if(!id && window.erpState.realCustomers.find(c => window.cleanPhone(c.phone) === cleanedInput)) return alert("⚠️ LỖI: SĐT này đã tồn tại.");
-            const cData = { name: name, phone: rawPhone, address: document.getElementById('crmCustAddress').value, social: document.getElementById('crmCustSocial').value }; 
-            try { if(id) await sbClient.from('customers').update(cData).eq('id', id); else await sbClient.from('customers').insert([cData]); closeOverlay('erpCustomerModal'); await window.fetchErpData(); alert("Đã lưu Hồ sơ!"); } catch (e) { alert("Lỗi: " + e.message); }
+            
+            // Ép đồng bộ cả 2 cột social và contact_info để xóa rác dữ liệu cũ
+            const socialInput = document.getElementById('crmCustSocial').value.trim();
+            const cData = { name: name, phone: rawPhone, address: document.getElementById('crmCustAddress').value, social: socialInput, contact_info: socialInput }; 
+            
+            try { 
+                if(id) {
+                    // Truy quét TẤT CẢ các dòng ẩn bị trùng SĐT để "diệt cỏ tận gốc"
+                    const idsToUpdate = window.erpState.customers.filter(c => window.cleanPhone(c.phone) === cleanedInput).map(c => c.id);
+                    if (idsToUpdate.length > 0) {
+                        await sbClient.from('customers').update(cData).in('id', idsToUpdate);
+                    } else {
+                        await sbClient.from('customers').update(cData).eq('id', id);
+                    }
+                } 
+                else { await sbClient.from('customers').insert([cData]); }
+                
+                closeOverlay('erpCustomerModal'); await window.fetchErpData(); alert("Đã lưu Hồ sơ!"); 
+            } catch (e) { alert("Lỗi: " + e.message); }
         };
 
         window.deleteCustomerSingle = async function() {
@@ -4308,7 +4480,16 @@ function initAutoCat() {
                 const cleanPhoneInbox = window.cleanPhone(rawPhone);
                 const isQuen = window.erpState.realCustomers.some(c => window.cleanPhone(c.phone) === cleanPhoneInbox);
                 const quenBadge = isQuen ? `<br><span style="background:orange; color:#000; font-size:9px; padding:2px 4px; border-radius:3px; font-weight:bold;">🌟 KHÁCH QUEN</span>` : `<br><span style="background:var(--navy-2); color:var(--text-dim); font-size:9px; padding:2px 4px; border-radius:3px; border:1px solid var(--border);">Khách Mới</span>`;
-                return `<tr><td style="color:var(--text-dim); font-size:11px;">${new Date(o.created_at).toLocaleDateString('vi-VN')}</td><td style="font-weight:700;">${cName} ${quenBadge}</td><td style="color:var(--text-dim);">${rawPhone}</td><td style="max-width:200px; overflow:hidden; text-overflow:ellipsis;">${o.product_name}</td><td style="color:#00ff88; font-weight:700; font-family:monospace;">${window.fVND(o.price_sold)}</td><td style="text-align:right;"><button onclick="editErpOrder('${o.id}', false)" style="background:#00ff88; color:#000; border:none; padding:4px 8px; font-weight:700; cursor:pointer;">XỬ LÝ ĐƠN</button> <button onclick="deleteErpRecord('orders', '${o.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; margin-left:10px;">XÓA</button></td></tr>`;
+                
+                // Hiển thị JSON Array rõ ràng từng món ở Inbox
+                let productDisplay = o.product_name; 
+                if (o.items && Array.isArray(o.items) && o.items.length > 0) {
+                    productDisplay = o.items.map(i => `<div style="font-size:11px; padding:4px 0; border-bottom:1px dashed var(--border-light); white-space:normal; line-height:1.4;">- ${i.name} <span style="color:var(--text-dim);">(Size: ${i.size})</span></div>`).join('');
+                } else {
+                    productDisplay = `<div style="max-width:250px; white-space:normal; line-height:1.4;">${o.product_name}</div>`;
+                }
+
+                return `<tr><td style="color:var(--text-dim); font-size:11px;">${new Date(o.created_at).toLocaleDateString('vi-VN')}</td><td style="font-weight:700;">${cName} ${quenBadge}</td><td style="color:var(--text-dim);">${rawPhone}</td><td>${productDisplay}</td><td style="color:#00ff88; font-weight:700; font-family:monospace;">${window.fVND(o.price_sold)}</td><td style="text-align:right;"><button onclick="editErpOrder('${o.id}', false)" style="background:#00ff88; color:#000; border:none; padding:4px 8px; font-weight:700; cursor:pointer;">XỬ LÝ ĐƠN</button> <button onclick="deleteErpRecord('orders', '${o.id}')" style="background:none; border:none; color:var(--red); cursor:pointer; margin-left:10px;">XÓA</button></td></tr>`;
             }).join('') || '<tr><td colspan="6" style="text-align:center; padding:20px;">Hộp thư trống.</td></tr>';
         };
 
@@ -4488,13 +4669,40 @@ window.finInflowFilter = 'ALL';
         window.deleteErpRecord = async function(table, id) { if(!confirm("XÓA DỮ LIỆU NÀY?")) return; await sbClient.from(table).delete().eq('id', id); await window.fetchErpData(); };
 
         // --- 6. API BẮN ĐƠN MÙ TỪ WEB (BLIND INSERT) ---
-        window.logOrderToERP = async function(customerName, contactInfo, productName, size, price) {
+        // --- 6. API BẮN ĐƠN MÙ TỪ WEB (BLIND INSERT) ---
+        window.logOrderToERP = async function(customerName, finalPhone, finalIG, productName, size, price, cartArray = []) {
             if (typeof sbClient === 'undefined') return;
             try {
-                const phone = window.cleanPhone(contactInfo.split('|')[0].trim());
+                const phone = window.cleanPhone(finalPhone);
                 const rawId = crypto.randomUUID(); 
-                await sbClient.from('customers').insert([{ id: rawId, name: customerName, phone: phone, contact_info: contactInfo }]);
-                await sbClient.from('orders').insert([{ customer_id: rawId, order_date: new Date().toISOString(), product_name: productName, product_size: size, price_sold: price || 0, status: 'NEW', order_notes: 'Đơn từ Web' }]);
+                // Cất Social siêu sạch sẽ, trống là trống, có là có.
+                await sbClient.from('customers').insert([{ id: rawId, name: customerName, phone: phone, contact_info: finalIG }]);
+                
+                // Đóng gói mảng JSON chuẩn xác cho ERP đọc
+                const itemsJson = cartArray.map(i => {
+                    let num = 0;
+                    if (typeof i.price === 'string') {
+                        let match = i.price.split('/')[0].replace(/[^0-9]/g, '');
+                        num = parseInt(match) || 0;
+                    } else { num = i.price || 0; }
+                    return {
+                        name: `${i.qty}x ${i.name}`,
+                        size: i.size === 'Need sizing advice' ? 'Tư vấn' : i.size,
+                        price: num * i.qty, // Tiền tương ứng với số lượng món này
+                        cogs: 0
+                    };
+                });
+
+                await sbClient.from('orders').insert([{ 
+                    customer_id: rawId, 
+                    order_date: new Date().toISOString(), 
+                    product_name: productName, 
+                    product_size: size, 
+                    price_sold: price || 0, 
+                    items: itemsJson, // Cấy mảng tách lớp vào thẳng Database
+                    status: 'NEW', 
+                    order_notes: 'Đơn từ Web' 
+                }]);
             } catch (err) { console.error("ERP Auto-log Failed:", err); }
         };
 
