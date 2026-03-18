@@ -1308,7 +1308,7 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" id="mainSearchBar" class="minimal-search-input" placeholder="SEARCH PRODUCT" oninput="searchStoreProducts(this.value)" autocomplete="off">
+        <input type="text" id="mainSearchBar" class="minimal-search-input" placeholder="SEARCH" oninput="searchStoreProducts(this.value)" autocomplete="off">
       </div>
       <button class="filter-tab active" onclick="filterProducts('all',this)" data-i18n="fAll">ALL</button>
       <button class="filter-tab" onclick="filterProducts('Shell Jacket',this)" data-i18n="fShell">SHELL JACKET</button>
@@ -2091,7 +2091,7 @@ function setLang(lang, el) {
           
           // TỰ ĐỘNG ĐỔI CHỮ THANH SEARCH KHI ĐỔI NGÔN NGỮ
           const searchInput = document.getElementById('mainSearchBar');
-          if (searchInput) searchInput.placeholder = currentLang === 'vi' ? 'TÌM SẢN PHẨM' : 'SEARCH PRODUCT';
+          if (searchInput) searchInput.placeholder = currentLang === 'vi' ? 'TÌM SẢN PHẨM' : 'SEARCH';
 
           renderProducts();
   if (typeof renderCartList === 'function') renderCartList();
